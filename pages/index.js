@@ -1,115 +1,122 @@
-import Image from "next/image";
-import { Geist, Geist_Mono } from "next/font/google";
+// pages/index.js
+import { useState } from "react";
+import CandidateFilterForm from "./components/CandidateFilterForm";
+import FilterResults from "./components/FilterResults";
+import Layout from "./components/Layout";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+// Mock data for demonstration
+const mockCandidates = [
+  {
+    id: 1,
+    name: "Jane Doe",
+    location: "New York",
+    experience: 5,
+    title: "Software Engineer",
+    education: "Masters",
+  },
+  {
+    id: 2,
+    name: "John Smith",
+    location: "San Francisco",
+    experience: 3,
+    title: "Product Manager",
+    education: "Bachelors",
+  },
+  {
+    id: 3,
+    name: "Emily Johnson",
+    location: "Chicago",
+    experience: 7,
+    title: "Data Scientist",
+    education: "PhD",
+  },
+  {
+    id: 4,
+    name: "Michael Brown",
+    location: "Boston",
+    experience: 2,
+    title: "UI Designer",
+    education: "Bachelors",
+  },
+  {
+    id: 5,
+    name: "Sarah Williams",
+    location: "Seattle",
+    experience: 4,
+    title: "Full Stack Developer",
+    education: "Masters",
+  },
+];
 
 export default function Home() {
+  const [filters, setFilters] = useState({
+    location: "",
+    minExperience: "",
+    title: "",
+    education: "",
+    skills: [],
+  });
+
+  const [filteredCandidates, setFilteredCandidates] = useState(mockCandidates);
+
+  const handleFilter = (formData) => {
+    setFilters(formData);
+
+    // Filter candidates based on form data
+    const filtered = mockCandidates.filter((candidate) => {
+      // Location filter
+      if (
+        formData.location &&
+        !candidate.location
+          .toLowerCase()
+          .includes(formData.location.toLowerCase())
+      ) {
+        return false;
+      }
+
+      // Experience filter
+      if (
+        formData.minExperience &&
+        candidate.experience < parseInt(formData.minExperience)
+      ) {
+        return false;
+      }
+
+      // Title filter
+      if (
+        formData.title &&
+        !candidate.title.toLowerCase().includes(formData.title.toLowerCase())
+      ) {
+        return false;
+      }
+
+      // Education filter
+      if (formData.education && candidate.education !== formData.education) {
+        return false;
+      }
+
+      // All filters passed
+      return true;
+    });
+
+    setFilteredCandidates(filtered);
+  };
+
   return (
-    <div
-      className={`${geistSans.className} ${geistMono.className} grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]`}
-    >
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              pages/index.js
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <Layout>
+      <div className="max-w-6xl mx-auto px-4 py-8">
+        <h1 className="text-3xl font-bold text-center mb-8">
+          Find Your Ideal Candidate
+        </h1>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-1">
+            <CandidateFilterForm onFilter={handleFilter} />
+          </div>
+          <div className="lg:col-span-2">
+            <FilterResults candidates={filteredCandidates} />
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+      </div>
+    </Layout>
   );
 }

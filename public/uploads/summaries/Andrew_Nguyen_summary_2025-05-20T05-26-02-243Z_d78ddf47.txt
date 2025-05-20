@@ -1,0 +1,20 @@
+**Andrew Nguyen: Software Engineer Summary**
+Andrew Nguyen is a highly skilled and motivated full-stack software developer specializing in JavaScript and TypeScript. His resume highlights significant experience in various roles, showcasing strong problem-solving abilities and a collaborative work ethic. He is proficient in numerous programming languages, frameworks, databases, and cloud platforms.
+**Key Skills & Technologies:**
+* **Programming Languages:** C++, Python, JavaScript, TypeScript, HTML, CSS, MATLAB, SQL
+* **Frameworks & Tools:** NodeJS, Next.js, Vue.js, React.js, Express.js, Docker, Git, GitLab (CI/CD), Bash, Jira, Confluence
+* **Databases & Cloud:** MySQL, PostgreSQL, SQLite, MongoDB, Microsoft Azure, AWS (S3, Elastic Beanstalk, EC2)
+* **Architecture:** Microservices, Serverless, Parallel & Distributed Computing
+**Professional Experience Highlights:**
+* **Deloitte (Summer Intern):** Improved data query efficiency by 30% using OpenStreetMap's Overpass Turbo API; optimized database queries and data accuracy; boosted data processing speed by 40% through efficient handling of REST API data; created interactive map visualizations enhancing user engagement by 35%.
+* **University of Adelaide (Research Assistant):** Developed a cut tree representation for meat production, improving efficiency and boosting profits by at least 25%; implemented an algorithm to optimize meat production using Python and Integer Linear Programming (ILP).
+* **VNPT (Data Engineer):** Increased data processing efficiency by 20% using Apache Spark; developed predictive models using machine learning techniques; created dynamic dashboards and interactive visualizations.
+**Personal Projects Highlights:**
+* **ImaGIaI:** A full-stack AI-powered image generator using JavaScript, Node.js, Express.js, MongoDB, and React.js.
+* **Blogify:** A full-stack blogging platform with user authentication (Google OAuth), CRUD operations, and file uploads.
+* **InsightFactoryAI:** A predictive maintenance model for rail break detection using Australian Rail Track Corporation data, achieving an F1 score of 0.7.
+* **CryptoVerse:** A cryptocurrency web app with real-time stats, crypto details, and news updates.
+* **Universe:** A student club platform with social media login, user authentication, and a chat feature.
+**Education:**
+* **Bachelor of Computer Science (Artificial Intelligence), University of Adelaide (expected graduation Dec 2024)**
+**Overall:** Andrew Nguyen possesses a strong technical skillset, proven experience in various development roles, and a portfolio of impressive personal projects, making him a strong candidate for software engineering positions.
