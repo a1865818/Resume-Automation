@@ -1,0 +1,21 @@
+**Andrew Nguyen: Software Engineer Summary**
+
+**Professional Summary:** A highly skilled and adaptable full-stack software engineer with experience in JavaScript, TypeScript, React, Express.js, and .NET.  Proven ability to build data-driven applications, optimize performance, and deliver intuitive user experiences in fast-paced environments.  Strong communication and problem-solving skills.
+
+**Key Skills:**
+
+* **Programming Languages:** JavaScript, TypeScript, Python, C#, HTML, CSS3, SQL
+* **Frameworks & Tools:** React, Angular, Node.js, Next.js, Jest, ASP.NET/.NET Core, Git, Jira, Confluence, Tailwind, Bootstrap
+* **Databases & Cloud:** MySQL, PostgreSQL, SQLite, MongoDB, AWS (S3, RDS, EC2)
+* **Architecture:** Object-Oriented Design, Parallel & Distributed Computing, Microservices, Serverless
+
+**Experience Highlights:**
+
+* **UPP Global Technology JSC (Jan 2025 – Mar 2025):** Developed a data-driven prospecting system using Python, automating client discovery and improving outreach workflows by 60% and client engagement by 25%.  Built a resilient automation framework with API integration to Salesforce, eliminating manual data entry.
+* **Deloitte (Nov 2023 – Jan 2024):** Developed a dynamic map using React and Leaflet to visualize public transport data for the Smarter Roads platform (30,000+ users), improving accessibility by 35%.  Utilized Node.js to handle data from RESTful APIs.
+* **The University of Adelaide (Nov 2023 – Jan 2024):** Designed algorithms in Python to optimize meat cutting patterns, resulting in a 40% reduction in planning time and a 25% increase in production profits. Implemented an Integer Linear Programming (ILP) model to automate cutting sequences, boosting operational efficiency by 35%.
+* **Vietnam Posts and Telecommunications Group (VNPT) (Nov 2022 – Mar 2023):** Developed and optimized the UI for the CUSTOMER 360 project using ReactJS and Redux, improving page load time by 30%.  Designed an intuitive dashboard using D3.js and Chart.js.
+
+**Personal Projects:**  Demonstrates proficiency in full-stack development with projects showcasing skills in various technologies (React, Node.js, Next.js, AWS, MongoDB, Angular, .NET Core).  Projects include an inventory dashboard (AndyStock), AI image generator (ImagiAI), crypto tracker (Cryptovere), AI text summarizer (Sumz), and an employee management system (StaffHub).
+
+**Education:** Bachelor of Computer Science, The University of Adelaide.  Recipient of Global Citizen Scholarship and Summer Research Scholarship.
