@@ -1,0 +1,68 @@
+{
+  "candidateName": "Andrew Nguyen",
+  "jobTitle": "Software Engineer | Full Stack Developer",
+  "yearsOfExperience": 2,
+  "location": "Adelaide, SA",
+  "email": "minhnt10122003@gmail.com",
+  "phone": "0406 171 012",
+  "industries": [
+    "Technology",
+    "Software Development",
+    "Data Engineering"
+  ],
+  "topSkills": [
+    "JavaScript",
+    "TypeScript",
+    "Python",
+    "React",
+    "Node.js",
+    "SQL",
+    "Machine Learning",
+    "Docker"
+  ],
+  "educationLevel": "Bachelor's Degree",
+  "educationDetails": [
+    {
+      "degree": "Bachelor of Computer Science (Artificial Intelligence)",
+      "institution": "University of Adelaide",
+      "graduationYear": "2024"
+    }
+  ],
+  "workExperience": [
+    {
+      "jobTitle": "Software Engineer Summer Intern",
+      "company": "Deloitte",
+      "duration": "Nov 2023 – Jan 2024",
+      "description": "Developed streamlined process for querying Victoria Public Transport data using Overpass Turbo API, improving efficiency by 30%. Built interactive map visualizations and optimized database queries."
+    },
+    {
+      "jobTitle": "Research Assistant",
+      "company": "The University of Adelaide",
+      "duration": "Nov 2023 – Jan 2024",
+      "description": "Led creation of cut tree representation for meat production optimization. Implemented algorithms using Python and Integer Linear Programming, boosting profits by 25%."
+    },
+    {
+      "jobTitle": "Data Engineer",
+      "company": "Vietnam Posts and Telecommunications Group (VNPT)",
+      "duration": "Nov 2022 – Feb 2023",
+      "description": "Collaborated with team to increase data processing efficiency by 20% using Apache Spark. Developed predictive models and created dynamic dashboards for data visualization."
+    }
+  ],
+  "keyAchievements": [
+    "Improved data processing efficiency by 30% using Overpass Turbo API",
+    "Boosted meat production profits by 25% through optimization algorithms",
+    "Increased data processing speed by 40% through efficient API handling",
+    "Enhanced user engagement by 35% with interactive visualizations"
+  ],
+  "certifications": [],
+  "languages": [
+    "English",
+    "Vietnamese"
+  ],
+  "summary": "Eager and resourceful Software Developer specializing in JavaScript and TypeScript. Experienced in full-stack development with React and Node from professional work experiences. Known for strong problem-solving abilities and collaborative work ethic, passionate about creating user-centric software solutions.",
+  "seniorityLevel": "Junior",
+  "pdfFileName": "Andrew_Nguyen_resume_2025-05-23T08-15-02-363Z_f81d51df.json",
+  "originalFileName": "Resume.pdf",
+  "createdAt": "2025-05-23T08:15:00.074Z",
+  "updatedAt": "2025-05-23T08:15:02.364Z"
+}

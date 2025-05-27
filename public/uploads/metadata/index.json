@@ -1,55 +1,46 @@
 [
   {
-    "id": "Andrew_Nguyen_summary_2025-05-20T06-33-41-307Z_afb27584.txt",
+    "id": "Andrew_Nguyen_resume_2025-05-23T08-37-51-213Z_c6ec6c76.json",
+    "fileName": "Andrew_Nguyen_resume_2025-05-23T08-37-51-213Z_c6ec6c76.json",
     "candidateName": "Andrew Nguyen",
-    "jobTitle": "Andrew Nguyen",
-    "yearsOfExperience": 0,
-    "seniorityLevel": "Not specified",
-    "location": "JavaScript and TypeScript",
+    "jobTitle": "Software Engineer",
+    "yearsOfExperience": 2,
+    "seniorityLevel": "Junior",
+    "location": "Adelaide, SA",
     "industries": [
-      "Software",
-      "Education",
-      "media",
-      "engineering"
+      "Technology"
     ],
-    "topSkills": [],
-    "educationLevel": "Bachelor of",
-    "createdAt": "2025-05-20T06:33:41.307Z",
-    "filePath": "/uploads/summaries/Andrew_Nguyen_summary_2025-05-20T06-33-41-307Z_afb27584.txt"
+    "topSkills": [
+      "JavaScript",
+      "TypeScript",
+      "React"
+    ],
+    "educationLevel": "Bachelor's Degree",
+    "createdAt": "2025-05-23T08:37:44.995Z",
+    "filePath": "/uploads/summaries/Andrew_Nguyen_resume_2025-05-23T08-37-51-213Z_c6ec6c76.txt",
+    "jsonFilePath": "/uploads/summaries/Andrew_Nguyen_resume_2025-05-23T08-37-51-213Z_c6ec6c76.json"
   },
   {
-    "id": "Andrew_Nguyen_summary_2025-05-20T06-33-25-662Z_01913ecb.txt",
+    "id": "Andrew_Nguyen_resume_2025-05-23T08-15-02-363Z_f81d51df.json",
+    "fileName": "Andrew_Nguyen_resume_2025-05-23T08-15-02-363Z_f81d51df.json",
     "candidateName": "Andrew Nguyen",
-    "jobTitle": "Andrew Nguyen",
-    "yearsOfExperience": 0,
-    "seniorityLevel": "Not specified",
-    "location": "JavaScript and TypeScript",
-    "industries": [
-      "Software",
-      "Education",
-      "media",
-      "engineering"
-    ],
-    "topSkills": [],
-    "educationLevel": "Bachelor of",
-    "createdAt": "2025-05-20T06:33:25.663Z",
-    "filePath": "/uploads/summaries/Andrew_Nguyen_summary_2025-05-20T06-33-25-662Z_01913ecb.txt"
-  },
-  {
-    "id": "Andrew_Nguyen_summary_2025-05-20T06-10-39-833Z_7f65e1c2.txt",
-    "candidateName": "Andrew Nguyen",
-    "jobTitle": "Andrew Nguyen",
-    "yearsOfExperience": 0,
-    "seniorityLevel": "Not specified",
-    "location": "JavaScript, TypeScript",
+    "jobTitle": "Software Engineer | Full Stack Developer",
+    "yearsOfExperience": 2,
+    "seniorityLevel": "Junior",
+    "location": "Adelaide, SA",
     "industries": [
       "Technology",
-      "Software",
-      "Education"
+      "Software Development",
+      "Data Engineering"
     ],
-    "topSkills": [],
-    "educationLevel": "Bachelor of",
-    "createdAt": "2025-05-20T06:10:39.833Z",
-    "filePath": "/uploads/summaries/Andrew_Nguyen_summary_2025-05-20T06-10-39-833Z_7f65e1c2.txt"
+    "topSkills": [
+      "JavaScript",
+      "TypeScript",
+      "Python"
+    ],
+    "educationLevel": "Bachelor's Degree",
+    "createdAt": "2025-05-23T08:15:00.074Z",
+    "filePath": "/uploads/summaries/Andrew_Nguyen_resume_2025-05-23T08-15-02-363Z_f81d51df.txt",
+    "jsonFilePath": "/uploads/summaries/Andrew_Nguyen_resume_2025-05-23T08-15-02-363Z_f81d51df.json"
   }
 ]

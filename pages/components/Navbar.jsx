@@ -31,6 +31,7 @@ const Navbar = () => {
                   Saved Summaries
                 </span>
               </Link>
+             
             </div>
           </div>
 

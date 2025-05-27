@@ -1,0 +1,41 @@
+**Andrew Nguyen**
+
+Eager and resourceful Software Developer specializing in JavaScript and TypeScript. Experienced in full-stack development with React and Node from professional work experiences. Known for strong problem-solving abilities and collaborative work ethic, passionate about creating user-centric software solutions.
+
+**Job Title:** Software Engineer | Full Stack Developer
+**Experience:** 2 years
+**Location:** Adelaide, SA
+**Seniority Level:** Junior
+
+**Industries:**
+* Technology
+* Software Development
+* Data Engineering
+
+**Key Skills:**
+* JavaScript
+* TypeScript
+* Python
+* React
+* Node.js
+* SQL
+* Machine Learning
+* Docker
+
+**Work Experience:**
+* **Software Engineer Summer Intern** at Deloitte (Nov 2023 – Jan 2024)
+  Developed streamlined process for querying Victoria Public Transport data using Overpass Turbo API, improving efficiency by 30%. Built interactive map visualizations and optimized database queries.
+* **Research Assistant** at The University of Adelaide (Nov 2023 – Jan 2024)
+  Led creation of cut tree representation for meat production optimization. Implemented algorithms using Python and Integer Linear Programming, boosting profits by 25%.
+* **Data Engineer** at Vietnam Posts and Telecommunications Group (VNPT) (Nov 2022 – Feb 2023)
+  Collaborated with team to increase data processing efficiency by 20% using Apache Spark. Developed predictive models and created dynamic dashboards for data visualization.
+
+**Education:**
+* Bachelor of Computer Science (Artificial Intelligence) - University of Adelaide (2024)
+
+**Key Achievements:**
+* Improved data processing efficiency by 30% using Overpass Turbo API
+* Boosted meat production profits by 25% through optimization algorithms
+* Increased data processing speed by 40% through efficient API handling
+* Enhanced user engagement by 35% with interactive visualizations
+

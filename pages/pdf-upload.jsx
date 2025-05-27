@@ -3,7 +3,6 @@ import Link from "next/link";
 import { useState } from "react";
 import Layout from "./components/Layout";
 import PdfSummary from "./components/PdfSummary";
-import PdfTextDisplay from "./components/PdfTextDisplay";
 
 export default function PdfUpload() {
   const [pdfText, setPdfText] = useState("");
@@ -58,6 +57,7 @@ export default function PdfUpload() {
 
   return (
     <Layout>
+      {/* Header and Upload Section - Constrained Width */}
       <div className="max-w-6xl mx-auto px-4 py-8">
         <div className="mb-6 flex items-center justify-between">
           <h1 className="text-3xl font-bold">PDF Text Extractor</h1>
@@ -130,20 +130,14 @@ export default function PdfUpload() {
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"></div>
           </div>
         )}
-
-        {pdfText && (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-            <div className="bg-white rounded-lg shadow-md p-6">
-              <h2 className="text-xl font-semibold mb-4">Extracted PDF Text</h2>
-              <PdfTextDisplay pdfText={pdfText} />
-            </div>
-            
-            <div>
-              <PdfSummary pdfText={pdfText} fileName={fileName} />
-            </div>
-          </div>
-        )}
       </div>
+
+      {/* PdfSummary Component - Full Width */}
+      {pdfText && (
+        <div className="w-full">
+          <PdfSummary pdfText={pdfText} fileName={fileName} />
+        </div>
+      )}
     </Layout>
   );
 }

@@ -1,0 +1,47 @@
+**Andrew Nguyen**
+
+Full-Stack Software Engineer specializing in JavaScript, TypeScript, and React for front-end, with Express.js and .NET for scalable back-end solutions. Skilled in building data-driven applications, optimizing performance, and delivering intuitive user experiences. Adaptable team player with strong problem-solving skills, clear communication, and a proactive mindset, ensuring high-quality solutions in fast-paced environments.
+
+**Job Title:** Software Engineer
+**Experience:** 2 years
+**Location:** Adelaide, SA
+**Seniority Level:** Junior
+
+**Industries:**
+* Technology
+
+**Key Skills:**
+* JavaScript
+* TypeScript
+* React
+* Node.js
+* .NET
+* Python
+* AWS
+* SQL
+* Agile
+* Scrum
+
+**Work Experience:**
+* **Software Engineer** at UPP Global Technology JSC (Jan 2025 – March 2025)
+  Collaborated in a team to deliver a data-driven prospecting system, developed an intelligent automation system using Python, engineered a resilient automation framework, and assisted in building CI/CD processes.
+* **Software Engineer** at Deloitte (Nov 2023 – Jan 2024)
+  Assisted in developing a method to handle public transport data using Node.js, developed a dynamic map using React and Leaflet, and participated in Scrum and Agile processes.
+* **Research Assistant** at The University of Adelaide (Nov 2023 – Jan 2024)
+  Accelerated lamb production planning time by designing a logic cut tree algorithm in Python, boosted production profits by developing a constraint generation algorithm, increased operational efficiency by implementing an Integer Linear Programming (ILP) optimization model, and collaborated with researchers to provide training and support.
+* **Software Engineer** at Vietnam Posts and Telecommunications Group (VNPT) (Nov 2022 – Mar 2023)
+  Collaborated to develop and optimize the UI for displaying customer behavior insights, worked with backend teams to integrate APIs, contributed to optimizing the React.js codebase, and played a key role in designing an intuitive dashboard.
+
+**Education:**
+* Bachelor of Computer Science - The University of Adelaide
+
+**Key Achievements:**
+* Streamlined outreach workflows by 60% and improved client engagement rates by 25%
+* Extracted and processed over 500 qualified sales leads
+* Reduced manual data entry time by 100%
+* Enhanced accessibility by 35%
+* Accelerated lamb production planning time by 40%
+* Boosted production profits by 25%
+* Increased operational efficiency by 35%
+* Reduced page load time by 30%
+

@@ -15,13 +15,12 @@ export default async function handler(req, res) {
 
     console.log("Attempting to delete file:", fileName);
 
-    // Accept both .pdf and .txt files with very permissive validation
-    // This matches the full filename pattern used by the system (e.g., Andrew_Nguyen_summary_2025-05-20T06-03-55-743Z_989d4be3.txt)
-    if (!fileName.match(/\.(pdf|txt)$/i)) {
+    // Accept .pdf, .txt, and .json files with improved validation
+    if (!fileName.match(/\.(pdf|txt|json)$/i)) {
       console.log("Invalid file extension:", fileName);
       return res.status(400).json({
         message: "Invalid file extension",
-        details: "File must be a PDF or TXT file",
+        details: "File must be a PDF, TXT, or JSON file",
       });
     }
 
@@ -33,6 +32,41 @@ export default async function handler(req, res) {
     );
     const filePath = path.join(uploadsDir, fileName);
 
+    // Try to find the corresponding files (txt, pdf, json) based on the provided fileName
+    const baseFileName = fileName.replace(/\.(pdf|txt|json)$/i, "");
+    const possibleExtensions = [".txt", ".pdf", ".json"];
+    let fileExists = false;
+    let filesDeleted = [];
+
+    // Check for all possible related files and delete them
+    for (const ext of possibleExtensions) {
+      const currentFileName = `${baseFileName}${ext}`;
+      const currentFilePath = path.join(uploadsDir, currentFileName);
+
+      try {
+        // Check if this variant exists
+        await fs.access(currentFilePath);
+        fileExists = true;
+
+        // Delete this variant if it exists
+        await fs.unlink(currentFilePath);
+        filesDeleted.push(currentFileName);
+        console.log(`Deleted file: ${currentFilePath}`);
+      } catch (error) {
+        // It's okay if this variant doesn't exist
+        console.log(`File variant not found (ok): ${currentFilePath}`);
+      }
+    }
+
+    // If not a single file was found
+    if (!fileExists && filesDeleted.length === 0) {
+      console.log("No matching files found for:", fileName);
+      return res.status(404).json({
+        message: "File not found",
+        details: "No matching files were found for deletion",
+      });
+    }
+
     // Also try to delete the metadata file if it exists
     const metadataDir = path.join(
       process.cwd(),
@@ -40,35 +74,17 @@ export default async function handler(req, res) {
       "uploads",
       "metadata"
     );
-    const metadataPath = path.join(
-      metadataDir,
-      fileName.replace(".pdf", ".json").replace(".txt", ".json")
-    );
 
-    console.log("Checking if file exists:", filePath);
+    // Generate metadata filename (always .json regardless of source file extension)
+    const metadataFileName = `${baseFileName}.json`;
+    const metadataPath = path.join(metadataDir, metadataFileName);
 
-    // Check if file exists
-    try {
-      await fs.access(filePath);
-    } catch (error) {
-      console.log("File not found:", filePath);
-      return res
-        .status(404)
-        .json({ message: "File not found", path: filePath });
-    }
-
-    // Delete the file
-    console.log("Deleting file:", filePath);
-    await fs.unlink(filePath);
-
-    // Try to delete metadata file if it exists (don't fail if it doesn't)
     try {
       await fs.access(metadataPath);
       await fs.unlink(metadataPath);
       console.log("Deleted metadata file:", metadataPath);
     } catch (error) {
       console.log("Metadata file not found, skipping deletion");
-      // It's okay if the metadata file doesn't exist
     }
 
     // Update the metadata index if it exists
@@ -80,20 +96,28 @@ export default async function handler(req, res) {
       const indexData = await fs.readFile(indexPath, "utf8");
       const index = JSON.parse(indexData);
 
-      // Remove the entry for the deleted file - matching by either id or fileName
-      const updatedIndex = index.filter(
-        (entry) => entry.id !== fileName && entry.fileName !== fileName
-      );
+      // Remove entries that match any of our deleted files
+      const updatedIndex = index.filter((entry) => {
+        // Check if the id or fileName matches any of our deleted files or base filename
+        return (
+          !filesDeleted.includes(entry.fileName) &&
+          !filesDeleted.includes(entry.id) &&
+          entry.id !== baseFileName &&
+          entry.fileName !== baseFileName
+        );
+      });
 
       // Save the updated index
       await fs.writeFile(indexPath, JSON.stringify(updatedIndex, null, 2));
       console.log("Updated metadata index");
     } catch (error) {
-      console.log("Could not update metadata index, skipping");
-      // It's okay if we can't update the index
+      console.log("Could not update metadata index, skipping:", error);
     }
 
-    return res.status(200).json({ message: "Summary deleted successfully" });
+    return res.status(200).json({
+      message: "Summary deleted successfully",
+      filesDeleted,
+    });
   } catch (error) {
     console.error("Error deleting summary:", error);
     return res
