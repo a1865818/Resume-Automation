@@ -1,0 +1,97 @@
+{
+  "profile": {
+    "name": "Connie Fong",
+    "title": "SENIOR SOFTWARE ENGINEER",
+    "location": "Canberra",
+    "clearance": "NV1",
+    "photo": "/api/placeholder/400/600",
+    "description": "A highly accomplished and NV1-cleared Senior IAM Software Engineer with over 22 years of progressive experience at IBM Global Finance and IBM Global Marketing, specializing in designing, developing, and implementing secure identity and access management (IAM) solutions within complex enterprise Microsoft environments.  Proven expertise in architecting and delivering hybrid IAM systems, integrating authentication protocols (OAuth2, OpenID Connect, SAML), and automating lifecycle processes using PowerShell and Azure tools.  Adept at leveraging Active Directory, ADFS, Microsoft Entra ID (Azure AD), and .NET for building scalable and secure enterprise applications.  Demonstrates a strong commitment to secure, compliant, and efficient access governance, consistently exceeding expectations and achieving recognition for innovative solutions.",
+    "description2": "Connie's extensive experience encompasses the full lifecycle of IAM projects, from initial design and architecture to implementation, deployment, and ongoing support.  She possesses a deep understanding of cloud technologies (Azure) and on-premise systems (z/OS), enabling her to seamlessly integrate and manage identities across hybrid environments.  Her expertise extends to DevOps practices, including CI/CD pipeline creation and automation using tools like UrbanCode Deploy and GitHub.  A collaborative and results-oriented leader, Connie has mentored global teams, guided development squads on IAM best practices, and consistently delivered high-impact solutions, as evidenced by her IBM CIO Award (2022) and second-place win in a global IBM Hackathon.  Her proven ability to deliver secure, scalable, and efficient IAM solutions makes her an ideal candidate for challenging roles requiring strong technical expertise and leadership skills."
+  },
+  "qualifications": [
+    "Bachelor of Science in Computer Science – Macquarie University"
+  ],
+  "affiliations": [],
+  "skills": [
+    "Enterprise IAM Design",
+    "Authentication Protocols (OAuth2, OpenID Connect, SAML)",
+    "PowerShell Automation",
+    "Azure Cloud & Hybrid Identity",
+    "Active Directory/ADFS/Microsoft Entra ID",
+    ".NET",
+    "DevOps (CI/CD)",
+    "Ansible"
+  ],
+  "keyAchievements": [
+    "Won IBM CIO Award (2022) for excellence in Agile-based delivery of secure deployments.",
+    "Achieved 2nd place in a global IBM Hackathon showcasing IAM automation solutions.",
+    "Delivered over 160 enhancements while mentoring global teams on IAM integration practices."
+  ],
+  "experience": [
+    {
+      "title": "Senior Software Engineer - IBM Global Finance",
+      "period": "Jan 2022 - Present",
+      "responsibilities": [
+        "Designed and delivered IAM components integrated with z/OS systems, applying Entra ID and ADFS configurations.",
+        "Automated identity workflows using PowerShell.",
+        "Migrated financial applications to hybrid cloud, integrating Active Directory with Azure AD Connect."
+      ]
+    },
+    {
+      "title": "DevOps Specialist - IBM Global Finance",
+      "period": "Apr 2017 - Dec 2021",
+      "responsibilities": [
+        "Created CI/CD pipelines using UrbanCode Deploy and GitHub.",
+        "Integrated OAuth2/ADFS authentication with developer platforms.",
+        "Used Ansible and PowerShell to automate identity code deployment."
+      ]
+    }
+  ],
+  "fullExperience": [
+    {
+      "title": "Senior Software Engineer - IBM Global Finance",
+      "period": "Jan 2022 - Present",
+      "responsibilities": [
+        "Designed and delivered IAM components integrated with z/OS systems, applying Entra ID and ADFS configurations.",
+        "Automated identity workflows using PowerShell to streamline provisioning, access control, and audit readiness.",
+        "Migrated financial applications to hybrid cloud, integrating Active Directory with Azure AD Connect.",
+        "Documented and implemented IAM change plans, asset protection, and technical environment plans.",
+        "Led Agile-based delivery of secure deployments, recognized with IBM CIO Award (2022) for excellence."
+      ]
+    },
+    {
+      "title": "DevOps Specialist - IBM Global Finance",
+      "period": "Apr 2017 - Dec 2021",
+      "responsibilities": [
+        "Created CI/CD pipelines to manage IAM workflows using UrbanCode Deploy and GitHub.",
+        "Integrated OAuth2/ADFS authentication with developer platforms, supporting secured collaboration globally.",
+        "Used Ansible and PowerShell to automate identity code deployment to cloud and on-prem systems.",
+        "Showcased IAM automation solutions in global IBM Hackathon, winning 2nd prize.",
+        "Provided guidance to development squads to align with IAM and InfoSec requirements."
+      ]
+    },
+    {
+      "title": "IAM Architect / Tech Lead - IBM Global Marketing (MPW)",
+      "period": "2007 - 2017",
+      "responsibilities": [
+        "Architected identity-enabled data pipelines for global marketing data warehouse using ETL and IAM integration.",
+        "Designed secure access controls using Active Directory roles for Netezza-based cloud environments.",
+        "Delivered over 160 enhancements while mentoring global teams on IAM integration practices.",
+        "Migrated marketing platforms with centralized authentication and access governance controls."
+      ]
+    },
+    {
+      "title": "Senior Software Engineer",
+      "period": "2002 - 2007",
+      "responsibilities": []
+    }
+  ],
+  "referees": [],
+  "templateId": "Connie_Fong_template_2025-05-28T05-39-19-575Z_6c3c9193.json",
+  "candidateName": "Connie Fong",
+  "originalFileName": "PappsPM - LH 02946 - Connie Fong CV - Senior Software Engineer - Rev 1 (1).pdf",
+  "createdAt": "2025-05-28T05:39:19.575Z",
+  "updatedAt": "2025-05-28T05:39:19.575Z",
+  "isTemplate": true,
+  "type": "resume-template"
+}

@@ -10,35 +10,23 @@ const Navbar = () => {
             <div className="flex-shrink-0 flex items-center">
               <Link href="/">
                 <span className="text-xl font-bold text-indigo-600 cursor-pointer">
-                  CandidateFinder
+                    ResumeRender
                 </span>
               </Link>
             </div>
             
             <div className="hidden sm:flex sm:items-center">
-              <Link href="/">
-                <span className="text-gray-700 hover:text-indigo-600 cursor-pointer px-3 py-2 text-sm font-medium">
-                  Candidates
-                </span>
-              </Link>
-              <Link href="/pdf-upload">
+              <Link href="pdf-upload">
                 <span className="text-gray-700 hover:text-indigo-600 cursor-pointer px-3 py-2 text-sm font-medium">
                   PDF Tool
                 </span>
               </Link>
-              <Link href="/saved-summaries">
+              <Link href="/saved-resumes">
                 <span className="text-gray-700 hover:text-indigo-600 cursor-pointer px-3 py-2 text-sm font-medium">
-                  Saved Summaries
+                  Saved Resumes
                 </span>
               </Link>
-             
             </div>
-          </div>
-
-          <div className="hidden sm:ml-6 sm:flex sm:items-center">
-            <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium">
-              Post a Job
-            </button>
           </div>
 
           <div className="flex items-center sm:hidden">

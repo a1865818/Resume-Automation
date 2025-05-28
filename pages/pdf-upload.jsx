@@ -1,5 +1,4 @@
 // pages/pdf-upload.js
-import Link from "next/link";
 import { useState } from "react";
 import Layout from "./components/Layout";
 import PdfSummary from "./components/PdfSummary";
@@ -60,24 +59,13 @@ export default function PdfUpload() {
       {/* Header and Upload Section - Constrained Width */}
       <div className="max-w-6xl mx-auto px-4 py-8">
         <div className="mb-6 flex items-center justify-between">
-          <h1 className="text-3xl font-bold">PDF Text Extractor</h1>
-          <div className="flex space-x-4">
-            <Link href="/">
-              <span className="text-indigo-600 hover:text-indigo-800 cursor-pointer">
-                ← Back to Candidates
-              </span>
-            </Link>
-            <Link href="/saved-summaries">
-              <span className="text-indigo-600 hover:text-indigo-800 cursor-pointer">
-                View Saved Summaries
-              </span>
-            </Link>
-          </div>
+          <h1 className="text-3xl font-bold">PDF Resume Generator</h1>
+        
         </div>
 
         <div className="bg-white rounded-lg shadow-md p-6 mb-8">
           <div className="mb-6">
-            <h2 className="text-xl font-semibold mb-4">Upload PDF</h2>
+            <h2 className="text-xl font-semibold mb-4">Upload PDF Resume</h2>
             <div className="flex items-center justify-center w-full">
               <label
                 htmlFor="pdf-upload"

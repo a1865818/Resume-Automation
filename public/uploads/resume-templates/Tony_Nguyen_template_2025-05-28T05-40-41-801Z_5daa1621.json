@@ -1,0 +1,164 @@
+{
+  "profile": {
+    "name": "Tony Nguyen",
+    "title": "ICT HEAD OF DELIVERY",
+    "location": "Canberra",
+    "clearance": "NV1",
+    "photo": "/_next/static/media/image.fc282139.jpeg",
+    "description": "Tony Nguyen is a highly accomplished ICT Head of Delivery with a distinguished background in project and program management, boasting extensive experience leading complex software asset and lifecycle management initiatives. His career at IBM has spanned various leadership roles, including Senior Project Manager, Senior Program Manager, Transformation Program Lead, and Asia Pacific CIO Program Director. In these roles, he has consistently demonstrated the ability to oversee large-scale IT transformation programs, manage multi-million-dollar portfolios, and successfully deliver complex projects ahead of schedule. His expertise encompasses software procurement, licensing compliance, vendor negotiations, software deployment, governance, and risk mitigation strategies. Tony's proficiency extends to Agile methodologies, stakeholder engagement, and optimizing project processes, driving efficiency and operational excellence across diverse sectors, including government and defense. His proven ability to navigate complex regulatory landscapes while ensuring software efficiency and compliance makes him a strategic asset for organizations requiring meticulous software management and governance oversight.",
+    "description2": "Tony's expertise includes software procurement, licensing compliance, vendor negotiations, deployment, governance, and risk mitigation. He is highly skilled in Agile methodologies, stakeholder engagement, and optimizing project processes across government and defense sectors. Known for leading high-performing teams of up to 600 across Asia, he has driven strategic transformations and saved IBM over AUD$1 million annually through operational improvements and new delivery models. Tony is also recognized for innovation, mentoring, and thought leadership in IT transformation."
+  },
+  "qualifications": [
+    "Bachelor of Science (Computer Science)",
+    "Project Management Professional (PMP)",
+    "Professional Scrum Master",
+    "Professional Agile Leadership™ (PAL I)",
+    "Certified Manager (IBM)",
+    "Microsoft Certified: Azure Fundamentals"
+  ],
+  "affiliations": [
+    "Project Management Institute",
+    "Toastmasters",
+    "Association of Information Technology Professionals"
+  ],
+  "skills": [
+    "Project Management",
+    "Digital Transformation",
+    "Agile Methodologies",
+    "Change Management",
+    "Software Development Life Cycle",
+    "Stakeholder Engagement",
+    "Team Leadership & Collaboration",
+    "IT Infrastructure Management"
+  ],
+  "keyAchievements": [
+    "Developed and implemented a new Project Management Framework and Agile Transformation program across Asia Pacific 6 months ahead of schedule",
+    "Established IBM delivery centers in India, China, and the Philippines, growing the team from 0 to over 600 practitioners",
+    "Created a New Delivery Operating Model that saved IBM over AUD$1 million per year"
+  ],
+  "experience": [
+    {
+      "title": "Senior Project Manager – IBM (NSW Department of Fair Trading)",
+      "period": "Jul 2022 – Present",
+      "responsibilities": [
+        "Led a team of IT professionals and Project Managers in delivering business transformation programs",
+        "Oversaw application support services aligned with SLAs and managed contract performance",
+        "Monitored risks and implemented proactive mitigation strategies",
+        "Established change management processes for smooth project transitions"
+      ]
+    },
+    {
+      "title": "Asia Pacific CIO Program Director – IBM",
+      "period": "Jan 2016 – Jun 2020",
+      "responsibilities": [
+        "Led a team of 500+ IT professionals across the Asia Pacific region",
+        "Managed a portfolio exceeding AUD$50 million in projects and support services",
+        "Implemented Agile Transformation and New Way of Working initiatives",
+        "Built organizational capability in leading-edge skills and delivery excellence"
+      ]
+    }
+  ],
+  "fullExperience": [
+    {
+      "title": "Senior Project Manager – IBM (NSW Department of Fair Trading)",
+      "period": "Jul 2022 – Present",
+      "responsibilities": [
+        "Led a team of IT Professionals and Project Managers in delivering comprehensive business transformation programs",
+        "Delivered application support services and business transformation programs aligned with organizational objectives",
+        "Partnered with project team members to address problems promptly and maintain project momentum",
+        "Monitored contracts and service level agreements, identifying potential risks and implementing mitigation actions",
+        "Maintained schedules to meet key milestones at every project phase ensuring timely delivery",
+        "Communicated project plans and progress to key stakeholders and project contributors effectively",
+        "Monitored project progress, identified risks, and took corrective measures for successful project outcomes",
+        "Developed and maintained relationships with key stakeholders across all organizational levels",
+        "Established and managed change management processes for successful project transitions",
+        "Coordinated cross-functional teams for timely project delivery and compliance, including testing teams, functional teams, and developers"
+      ]
+    },
+    {
+      "title": "Senior Program Manager | IBM",
+      "period": "September 2021 - June 2022",
+      "responsibilities": [
+        "Led a team of 34 PeopleSoft consultants in delivering complex enterprise solutions",
+        "Delivered the PeopleSoft Time and Labour module across Suncorp organisation successfully",
+        "Facilitated requirements gathering workshops and developed comprehensive project plans",
+        "Maintained schedules to meet key milestones and ensured project deliverables quality",
+        "Partnered with project team members, vendors, and clients to address issues promptly and effectively",
+        "Monitored project progress, identified risks, and implemented corrective measures proactively",
+        "Developed and maintained relationships with key stakeholders at all organizational levels",
+        "Tracked project and team member performance to intervene in mistakes or delays before escalation"
+      ]
+    },
+    {
+      "title": "Transformation Program Lead | IBM",
+      "period": "July 2020 - August 2021",
+      "responsibilities": [
+        "Led a comprehensive digital transformation program at Westpac, focusing on Agile, Automation, DevOps, and AI initiatives",
+        "Established Vision, Mission, Governance, and Framework for digital transformation across the organization",
+        "Provided industry thought leadership, strategic solution advisory, and expert consultation to senior executives",
+        "Developed and delivered comprehensive IT and digital transformation strategy aligned with business objectives",
+        "Managed and delivered processes, system and cultural change initiatives across multiple business units",
+        "Developed and implemented innovation programs to drive competitive advantage and operational efficiency"
+      ]
+    },
+    {
+      "title": "Asia Pacific CIO Program Director | IBM",
+      "period": "January 2016 - June 2020",
+      "responsibilities": [
+        "Led a team of 500+ IT professionals across Asia Pacific region delivering technology solutions",
+        "Defined technology strategies and provided comprehensive application services to enterprise clients",
+        "Established a centralised shared service as a single IT department improving operational efficiency",
+        "Implemented Agile Transformation and New Way of Working for AP region ahead of schedule",
+        "Managed and accountable for a portfolio of over AUD$50 million projects and support services",
+        "Built organisation capabilities on leading-edge skills and enhanced technical competencies",
+        "Provided leadership and mentorship to Program Managers and Project Managers across the region"
+      ]
+    },
+    {
+      "title": "Asia Pacific CIO Delivery Project Executive | IBM",
+      "period": "January 2010 - December 2015",
+      "responsibilities": [
+        "Led a team of 250 IT professionals across Australia, India, China, and the Philippines",
+        "Provided comprehensive application support services and managed extensive project portfolios",
+        "Established governance frameworks and relationships with IBM extended teams across multiple countries",
+        "Chaired steering committee meetings for key strategic projects ensuring alignment with business objectives",
+        "Oversaw project implementation, financial management, and administrative oversight for multiple concurrent projects",
+        "Mentored, empowered, and developed careers of Senior Managers across the Asia Pacific region",
+        "Provided advisory services to top-tier client executives on strategic technology initiatives"
+      ]
+    },
+    {
+      "title": "Service Delivery Manager | IBM",
+      "period": "January 2006 - December 2009",
+      "responsibilities": [
+        "Managed the full project lifecycle for 15 billing Vodafone applications ensuring seamless operations",
+        "Ensured compliance with service level agreements and maintained high customer satisfaction scores",
+        "Participated in drafting service budgeting and advised on cost reduction opportunities",
+        "Maintained proper staffing levels for timely deliveries across multiple concurrent projects",
+        "Managed client and supplier contracts ensuring mutually beneficial outcomes",
+        "Built strong, lasting client relationships that contributed to long-term business success"
+      ]
+    }
+  ],
+  "referees": [
+    {
+      "name": "Siva Rajeswaran",
+      "title": "Business Development Manager (IBM)",
+      "email": "srajeswaran@au1.ibm.com",
+      "phone": "+61 401 145 640"
+    },
+    {
+      "name": "Edelize Lipski",
+      "title": "Practice Area Lead (IBM)",
+      "email": "elipski@au1.ibm.com",
+      "phone": "+61 403 066 896"
+    }
+  ],
+  "templateId": "Tony_Nguyen_template_2025-05-28T05-40-41-801Z_5daa1621.json",
+  "candidateName": "Tony Nguyen",
+  "originalFileName": "Tony_Nguyen_Resume (1).pdf",
+  "createdAt": "2025-05-28T05:40:41.801Z",
+  "updatedAt": "2025-05-28T05:40:41.801Z",
+  "isTemplate": true,
+  "type": "resume-template"
+}
