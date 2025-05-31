@@ -158,12 +158,29 @@ const ResumeTemplate = ({ resumeData, onBackToSummary, viewMode = 'generate' }) 
         <div style={{ backgroundColor: '#1e293b', color: 'white' }}>
           {/* Profile Photo */}
           <div>
+            {resumeData.profile.photo && resumeData.profile.photo !== "/api/placeholder/400/600" ? (
+              <img
+                src={resumeData.profile.photo}
+                alt={`${resumeData.profile.name} profile`}
+                style={{ 
+                  width: '100%', 
+                  height: '15rem', 
+                  objectFit: 'cover',
+                  backgroundColor: '#374151'
+                }}
+                onError={(e) => {
+                  // Fallback to placeholder if image fails to load
+                  e.target.style.display = 'none';
+                  e.target.nextSibling.style.display = 'flex';
+                }}
+              />
+            ) : null}
             <div
               style={{ 
                 width: '100%', 
                 height: '15rem', 
                 backgroundColor: '#374151',
-                display: 'flex',
+                display: resumeData.profile.photo && resumeData.profile.photo !== "/api/placeholder/400/600" ? 'none' : 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 fontSize: '0.875rem',

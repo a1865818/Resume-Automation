@@ -1,11 +1,10 @@
-// components/PdfSummary.js
 import config from '@/configs';
 import Avatar from "@/public/image.jpeg";
 import { useEffect, useState } from 'react';
 import { generateResumeJSON } from '../api/geminiApi';
 import ResumeTemplate from './ResumeTemplate'; // Import the resume template
 
-const PdfSummary = ({ pdfText, fileName }) => {
+const PdfSummary = ({ pdfText, fileName, profilePicture, profilePicturePreview }) => {
   const [resumeData, setResumeData] = useState(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [apiKey, setApiKey] = useState('');
@@ -18,6 +17,10 @@ const PdfSummary = ({ pdfText, fileName }) => {
   const [isSaving, setIsSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState('');
   const [isSaved, setIsSaved] = useState(false);
+
+  // State for uploaded profile picture URL
+  const [uploadedProfilePictureUrl, setUploadedProfilePictureUrl] = useState('');
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
   
   const mockResumeData = {
     profile: {
@@ -184,6 +187,54 @@ const PdfSummary = ({ pdfText, fileName }) => {
     }
   }, []);
 
+  // Function to upload profile picture to server
+  const uploadProfilePicture = async (file) => {
+    if (!file) return null;
+    
+    setIsUploadingImage(true);
+    try {
+      // Convert file to base64
+      const reader = new FileReader();
+      const base64Promise = new Promise((resolve, reject) => {
+        reader.onload = () => {
+          const base64 = reader.result.split(',')[1]; // Remove data:image/...;base64, prefix
+          resolve(base64);
+        };
+        reader.onerror = reject;
+      });
+      
+      reader.readAsDataURL(file);
+      const base64Data = await base64Promise;
+
+      // Upload to server
+      const response = await fetch('/api/uploadImage', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          imageData: base64Data,
+          fileName: file.name,
+          mimeType: file.type
+        })
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        setUploadedProfilePictureUrl(result.url);
+        return result.url;
+      } else {
+        console.error('Failed to upload image:', response.status);
+        return null;
+      }
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      return null;
+    } finally {
+      setIsUploadingImage(false);
+    }
+  };
+
   // Add save template function
   const saveTemplateToHistory = async (resumeData, originalFileName) => {
     try {
@@ -229,7 +280,20 @@ const PdfSummary = ({ pdfText, fileName }) => {
     
     // If using mock data, just set it and show template
     if (useMockData) {
-      setResumeData(mockResumeData);
+      let mockDataWithPhoto = { ...mockResumeData };
+      
+      // Upload profile picture if provided
+      if (profilePicture) {
+        const uploadedUrl = await uploadProfilePicture(profilePicture);
+        if (uploadedUrl) {
+          mockDataWithPhoto.profile.photo = uploadedUrl;
+        }
+      } else if (profilePicturePreview) {
+        // Use preview URL for mock data if no file to upload
+        mockDataWithPhoto.profile.photo = profilePicturePreview;
+      }
+      
+      setResumeData(mockDataWithPhoto);
       setShowResumeTemplate(true);
       return;
     }
@@ -246,6 +310,18 @@ const PdfSummary = ({ pdfText, fileName }) => {
     try {
       // Use the new JSON-based API that returns resume-test.jsx compatible format
       const generatedResumeData = await generateResumeJSON(pdfText, apiKey || undefined);
+      
+      // Upload profile picture if provided and update resume data
+      if (profilePicture) {
+        const uploadedUrl = await uploadProfilePicture(profilePicture);
+        if (uploadedUrl) {
+          generatedResumeData.profile.photo = uploadedUrl;
+        }
+      } else if (profilePicturePreview) {
+        // Use preview URL if available
+        generatedResumeData.profile.photo = profilePicturePreview;
+      }
+      
       setResumeData(generatedResumeData);
       setShowResumeTemplate(true);
     } catch (err) {
@@ -298,6 +374,9 @@ const PdfSummary = ({ pdfText, fileName }) => {
                 </h3>
                 <div className="mt-1 text-sm text-green-700">
                   <p>Your professional resume template is ready to view and download.</p>
+                  {uploadedProfilePictureUrl && (
+                    <p>✓ Profile picture has been uploaded and included.</p>
+                  )}
                 </div>
               </div>
             </div>
@@ -417,17 +496,62 @@ const PdfSummary = ({ pdfText, fileName }) => {
         <div className="bg-white rounded-lg shadow-md p-6">
         <h2 className="text-xl font-semibold mb-4">Professional Resume Generator</h2>
         
+        {/* Profile Picture Status */}
+        {(profilePicturePreview || isUploadingImage) && (
+          <div className="mb-6 p-4 bg-blue-50 border-l-4 border-blue-400 rounded-r-lg">
+            <div className="flex items-center">
+              <div className="flex-shrink-0">
+                {isUploadingImage ? (
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600"></div>
+                ) : (
+                  <svg className="h-5 w-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                  </svg>
+                )}
+              </div>
+              <div className="ml-3 flex items-center space-x-4">
+                <div>
+                  <p className="text-sm font-medium text-blue-800">
+                    {isUploadingImage ? 'Uploading profile picture...' : 'Profile picture ready'}
+                  </p>
+                  <p className="text-sm text-blue-600">
+                    {isUploadingImage ? 'Please wait while we process your image.' : 'Your profile picture will be included in the generated resume.'}
+                  </p>
+                </div>
+                {profilePicturePreview && !isUploadingImage && (
+                  <img 
+                    src={profilePicturePreview} 
+                    alt="Profile preview" 
+                    className="w-12 h-12 object-cover rounded-lg border-2 border-blue-200"
+                  />
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+        
         {!resumeData && !isGenerating && (
           <div className="mb-6">
             <p className="text-gray-600 mb-4">
               Generate a professional resume template from "{fileName}" using Google's Gemini AI.
+              {profilePicturePreview && (
+                <span className="text-blue-600"> Your uploaded profile picture will be included.</span>
+              )}
             </p>
             <div className="flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-4">
               <button
                 onClick={handleGenerateResume}
-                className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium"
+                disabled={isUploadingImage}
+                className="bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400 text-white px-4 py-2 rounded-md text-sm font-medium flex items-center"
               >
-                {useMockData ? 'Generate with Mock Data' : 'Generate Resume with AI'}
+                {isUploadingImage ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    Processing...
+                  </>
+                ) : (
+                  useMockData ? 'Generate with Mock Data' : 'Generate Resume with AI'
+                )}
               </button>
               
               <div className="flex items-center mt-4 sm:mt-0">
@@ -450,6 +574,9 @@ const PdfSummary = ({ pdfText, fileName }) => {
           <div className="flex flex-col items-center justify-center py-8">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500 mb-4"></div>
             <p className="text-gray-600">Generating professional resume with Gemini AI...</p>
+            {profilePicturePreview && (
+              <p className="text-gray-500 text-sm mt-2">Including your uploaded profile picture...</p>
+            )}
           </div>
         )}
         

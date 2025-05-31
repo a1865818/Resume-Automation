@@ -4,22 +4,22 @@
     "title": "SOFTWARE ENGINEER | FULL STACK DEVELOPER",
     "location": "Adelaide, SA",
     "clearance": "",
-    "photo": "/api/placeholder/400/600",
-    "description": "Highly skilled and adaptable Full-Stack Software Engineer with proven experience in designing, developing, and deploying scalable and data-driven applications.  Adept at leveraging JavaScript, TypeScript, and React for front-end development, complemented by expertise in Express.js and .NET for robust back-end solutions.  Possessing a strong foundation in object-oriented design, parallel and distributed computing, and microservices architecture, I consistently deliver intuitive user experiences while optimizing performance and ensuring high-quality solutions in fast-paced environments. My experience spans diverse projects, from automating sales lead generation and optimizing meat cutting patterns to developing real-time data visualization dashboards and AI-powered image generation platforms.  I am a proactive team player with excellent communication and problem-solving skills, consistently exceeding expectations and contributing to successful project outcomes.",
-    "description2": "My background encompasses a diverse range of projects, showcasing my versatility and adaptability as a full-stack developer.  I have a proven track record of improving efficiency and productivity through automation, as demonstrated by streamlining outreach workflows by 60% and reducing manual data entry time by 100% in previous roles.  My expertise extends to integrating various APIs, optimizing codebases for performance enhancements (reducing page load time by 30%), and creating intuitive user interfaces that enhance accessibility and improve decision-making processes.  I am proficient in Agile methodologies and thrive in collaborative environments, consistently delivering high-quality solutions that meet project goals and client needs.  My passion for continuous learning and innovation ensures I remain at the forefront of technological advancements, making me a valuable asset to any team."
+    "photo": "/uploads/profile-pictures/340cb1c0-861c-4417-affe-070ec285648a.jpg",
+    "description": "Highly skilled and adaptable Full-Stack Software Engineer with proven experience in designing, developing, and deploying scalable and data-driven applications.  Adept at leveraging JavaScript, TypeScript, and React for front-end development, complemented by expertise in Express.js and .NET for robust back-end solutions.  Possessing a strong foundation in object-oriented design, parallel and distributed computing, and microservices architecture, I consistently deliver intuitive user experiences while optimizing performance and ensuring high-quality solutions in fast-paced environments. My experience spans diverse projects, from automating sales lead generation and optimizing meat cutting patterns to building real-time data visualization dashboards and AI-powered image generators.  I am a proactive team player with excellent communication and problem-solving skills, consistently exceeding expectations and contributing to successful project outcomes.",
+    "description2": "My background encompasses a diverse range of projects, demonstrating proficiency in various technologies and methodologies.  I have a proven track record of improving efficiency and productivity through automation, as evidenced by a 60% streamlining of outreach workflows and a 100% reduction in manual data entry time in a previous role.  My expertise extends to data visualization, with successful implementations enhancing user accessibility by 35% and improving decision-making processes.  I am proficient in Agile and Scrum methodologies, collaborating effectively with cross-functional teams to deliver high-quality, timely solutions.  My passion for continuous learning and innovation, coupled with my strong technical skills and collaborative spirit, makes me a valuable asset to any team seeking to build cutting-edge applications."
   },
   "qualifications": [
-    "Bachelor of Computer Science, The University of Adelaide",
-    "Global Citizen Scholarship",
-    "Summer Research Scholarship"
+    "Bachelor of Computer Science, The University of Adelaide"
   ],
-  "affiliations": [],
+  "affiliations": [
+    "Information not available"
+  ],
   "skills": [
     "JavaScript/TypeScript/React",
     "Python",
     "C#/.NET",
     "Node.js/Express.js",
-    "SQL/Databases (MySQL, PostgreSQL, MongoDB)",
+    "SQL/Databases (MySQL, PostgreSQL, SQLite, MongoDB)",
     "AWS (S3, RDS, EC2)",
     "Agile/Scrum",
     "Git"
@@ -34,17 +34,17 @@
       "title": "Software Engineer - UPP Global Technology JSC (Remote)",
       "period": "Jan 2025 – March 2025",
       "responsibilities": [
-        "Developed an intelligent automation system using Python, streamlining workflows and improving client engagement.",
-        "Engineered a resilient automation framework with API integration to Salesforce, reducing manual data entry time by 100%.",
-        "Collaborated on a data-driven prospecting system, automating client discovery and improving efficiency."
+        "Developed a data-driven prospecting system that automated client discovery and streamlined workflows by 60%",
+        "Developed an intelligent automation system using Python to extract and process over 500 qualified sales leads.",
+        "Engineered a resilient automation framework with API integration to Salesforce Sales Cloud, reducing manual data entry time by 100%"
       ]
     },
     {
       "title": "Software Engineer - Deloitte (Adelaide, SA)",
       "period": "Nov 2023 – Jan 2024",
       "responsibilities": [
-        "Developed a dynamic map using React and Leaflet to visualize transport data, enhancing accessibility by 35%.",
-        "Assisted in developing an efficient method to handle public transport data from RESTful APIs using Node.js.",
+        "Developed an efficient method to handle public transport data from RESTful APIs using Node.js, serving over 30,000 users.",
+        "Developed a dynamic map using React and Leaflet to visualize transport data, enhancing accessibility by 35%",
         "Actively participated in Scrum and Agile processes, collaborating with cross-functional teams."
       ]
     }
@@ -58,8 +58,8 @@
         "Developed an intelligent automation system using Python, and custom network request capture techniques to extract and process over 500 qualified sales leads from an external platform.",
         "Engineered a resilient automation framework with bot detection bypass mechanisms and API integration to Salesforce Sales Cloud, reducing manual data entry time by 100% and enhancing lead generation workflow.",
         "Assisted in building continuous integration/deployment processes using GitLab CI/CD, enabling automated testing and reliable production deployments for the system.",
-        "Consistently met project deadlines and collaborated effectively with team members to ensure successful project delivery.",
-        "Proactively identified and resolved technical challenges, contributing to the overall efficiency and success of the project."
+        "Consistently met project deadlines and exceeded expectations in a fast-paced environment.",
+        "Effectively communicated technical concepts to both technical and non-technical stakeholders."
       ]
     },
     {
@@ -69,9 +69,9 @@
         "Assisted in developing an efficient method to handle public transport data from external RESTful APIs using Node.js, incorporating user parameters to filter and enable real-time data access and integrate it with the Smarter Roads platform, serving over 30,000 users with seamless transport data insights.",
         "Developed a dynamic map using React and Leaflet library to visualize backend transport data that transforms complex data into intuitive visualizations, enhancing accessibility by 35%, and enabling users to seamlessly explore bus, tram, and train routes.",
         "Actively participated in Scrum and Agile processes, collaborating with cross-functional teams to deliver iterative solutions on time, fostering a culture of continuous improvement and adaptability while meeting project goals and client needs in a fast-paced environment.",
-        "Consistently contributed to team discussions and provided valuable insights during sprint planning and retrospectives.",
-        "Effectively communicated technical concepts to both technical and non-technical stakeholders, ensuring clear understanding and alignment.",
-        "Proactively sought opportunities to learn new technologies and improve existing processes, contributing to the overall improvement of team efficiency."
+        "Successfully integrated the developed features into the existing Smarter Roads platform with minimal disruption to the user experience.",
+        "Consistently met project deadlines and exceeded expectations in a fast-paced environment.",
+        "Effectively communicated technical concepts to both technical and non-technical stakeholders."
       ]
     },
     {
@@ -82,8 +82,8 @@
         "Boosted production profits by 25% by developing a constraint generation algorithm that converts cut tree structures into optimized cutting patterns for minimizing waste.",
         "Increased operational efficiency by 35% by implementing an Integer Linear Programming (ILP) optimization model that automates cutting sequence decisions based on product specifications.",
         "Collaborated with researchers to provide training and support that sped up onboarding by 25%, while promoting knowledge-sharing and teamwork to ensure smooth integration and sustainable impact on the production process.",
-        "Conducted thorough research and analysis to identify areas for improvement in the production process.",
-        "Presented findings and recommendations to stakeholders, effectively communicating complex technical information in a clear and concise manner."
+        "Successfully presented research findings to a team of researchers and stakeholders.",
+        "Consistently met project deadlines and exceeded expectations in a fast-paced environment."
       ]
     },
     {
@@ -95,16 +95,23 @@
         "Contributed to optimizing the React.js codebase through code splitting and lazy loading, reducing page load time by 30%, and enhancing system performance—ensuring that both the technical team and end-users experienced smooth and efficient interaction with the platform.",
         "Played a key role in designing an intuitive dashboard and adjusting multi-dimensional network-wide views using D3.js and Chart.js, making complex data accessible and actionable for non-technical users and improving decision-making processes.",
         "Worked collaboratively in an agile environment using JIRA and Git workflow with project managers and cross-functional team to meet deadlines, resolve challenges, and deliver high-quality software solutions that contributed directly to the success of the project.",
-        "Actively participated in code reviews and provided constructive feedback to team members, contributing to the overall quality of the codebase."
+        "Successfully implemented new features and improvements that enhanced the user experience and improved the overall performance of the platform."
       ]
     }
   ],
-  "referees": [],
-  "templateId": "Andrew_Nguyen_template_2025-05-28T05-43-43-940Z_15591e19.json",
+  "referees": [
+    {
+      "name": "Name not provided",
+      "title": "Reference available upon request",
+      "email": "Email not provided",
+      "phone": "Phone not provided"
+    }
+  ],
+  "templateId": "Andrew_Nguyen_template_2025-05-31T07-42-58-955Z_25629393.json",
   "candidateName": "Andrew Nguyen",
   "originalFileName": "New Resume.pdf",
-  "createdAt": "2025-05-28T05:43:43.941Z",
-  "updatedAt": "2025-05-28T05:43:43.941Z",
+  "createdAt": "2025-05-31T07:42:58.956Z",
+  "updatedAt": "2025-05-31T07:42:58.956Z",
   "isTemplate": true,
   "type": "resume-template"
 }

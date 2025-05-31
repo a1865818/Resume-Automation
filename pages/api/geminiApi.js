@@ -81,7 +81,7 @@ export async function generateResumeJSON(text, apiKey = null) {
   ],
   "referees": [
     {
-      "title": "Job title of referees with their (Company)",
+      "title": "Referee's Job title (Company)",
       "name": "Referee Name",
       "email": "email@example.com",
       "phone": "+61 XXX XXX XXX"
@@ -94,10 +94,11 @@ Important instructions:
 - For the profile descriptions, write comprehensive paragraphs (150-200 words each) that highlight the candidate's background, experience, and suitability
 - Include quantifiable achievements where mentioned
 - Format job titles as "Position - Company (Department/Organization)" if applicable
-- Include security clearance only if explicitly mentioned
+- Include security clearance only if explicitly mentioned. if not mentioned, return "Unspecified security clearance"
 - List qualifications in order of relevance/importance
 - Include both technical and soft skills (top 8 skills, if there are skills that are related to each other (e.g., Python and Django, or Java and Spring), list them as one skill - e.g., "Python/Django")
-- If referees are not provided, return empty array
+- If referees are not provided, return "information not available".
+- Similarly, for affiliations, clearance or any other section that is not available, return a formal message indicating that the information is not available.
 - Keep formatting professional and consistent
 - For experience section, if the resume has a lot of experience, provide only 2 positions that are the most impressive. Moreover, for every position, include only 3-4 main bullet points that are noticeable.
 - For fullExperience section, include ALL work experiences from the resume with comprehensive details. For each position, include 6-8 detailed responsibilities and achievements.
