@@ -41,9 +41,14 @@ export async function generateResumeJSON(text, apiKey = null) {
     "name": "Full Name",
     "title": "PROFESSIONAL TITLE IN CAPS",
     "location": "city",
-    "clearance": "Security clearance level (e.g., NV1, Baseline) or leave empty if not mentioned",
+    "clearance": "Security clearance level (e.g., NV1, Baseline) or null if not mentioned",
     "description": "First paragraph of professional summary focusing on background, experience, and key strengths",
     "description2": "Second paragraph of professional summary focusing on additional experience, skills, and suitability for roles"
+  },
+  "contact": {
+    "email": "email@example.com or null if not provided",
+    "phone": "+61 XXX XXX XXX or null if not provided", 
+    "linkedin": "LinkedIn profile URL or null if not provided"
   },
   "qualifications": [
     "List of degrees, certifications, and professional qualifications"
@@ -76,12 +81,13 @@ export async function generateResumeJSON(text, apiKey = null) {
         "Detailed responsibility or achievement 2",
         "Detailed responsibility or achievement 3",
         "Additional detailed responsibilities..."
+        "Maximum 6-8 detailed responsibilities per position, grouped where necessary"
       ]
     }
   ],
   "referees": [
     {
-      "title": "Referee's Job title (Company)",
+      "title": "Job title (Company)",
       "name": "Referee Name",
       "email": "email@example.com",
       "phone": "+61 XXX XXX XXX"
@@ -91,17 +97,17 @@ export async function generateResumeJSON(text, apiKey = null) {
 
 Important instructions:
 - Extract actual information from the resume text
+- For fullExperience section, include ALL work experiences from the resume. For each position, include 6-8 responsibilities and achievements. Do not exceed the limit by summarizing if neccessary. If the candidate provides too much information, group related details into concise, high-level points to stay within the limit
 - For the profile descriptions, write comprehensive paragraphs (150-200 words each) that highlight the candidate's background, experience, and suitability
 - Include quantifiable achievements where mentioned
 - Format job titles as "Position - Company (Department/Organization)" if applicable
-- Include security clearance only if explicitly mentioned. if not mentioned, return "Unspecified security clearance"
+- For security clearance: ONLY include if explicitly mentioned in the resume. Do NOT include words like "NONE", "Unspecified", or any placeholder text. If no clearance is mentioned, return null.
 - List qualifications in order of relevance/importance
 - Include both technical and soft skills (top 8 skills, if there are skills that are related to each other (e.g., Python and Django, or Java and Spring), list them as one skill - e.g., "Python/Django")
-- If referees are not provided, return "information not available".
-- Similarly, for affiliations, clearance or any other section that is not available, return a formal message indicating that the information is not available.
+- If referees are not provided, return an empty array[] for the fields like "title", "name", "email", "phone". Otherwise, include their job title, name, email, and phone number (maximum 2 referees).
+- For affiliations, if it is not available, return a formal message indicating that the information is not available. Otherwise, list the affiliations in a concise manner.
 - Keep formatting professional and consistent
 - For experience section, if the resume has a lot of experience, provide only 2 positions that are the most impressive. Moreover, for every position, include only 3-4 main bullet points that are noticeable.
-- For fullExperience section, include ALL work experiences from the resume with comprehensive details. For each position, include 6-8 detailed responsibilities and achievements.
 - For Key Achievements, include the most 3 impressive achievements.
 
 Resume text to analyze:
@@ -134,6 +140,7 @@ Return ONLY the JSON object, no additional text or formatting.`,
     // Extract text from the response
     if (data.candidates && data.candidates[0]?.content?.parts) {
       const responseText = data.candidates[0].content.parts[0].text;
+      console.log("Response text:", responseText);
 
       // Try to parse the JSON response
       try {
@@ -151,7 +158,7 @@ Return ONLY the JSON object, no additional text or formatting.`,
             name: parsedJSON.profile?.name || "Unknown Candidate",
             title: parsedJSON.profile?.title || "PROFESSIONAL",
             location: parsedJSON.profile?.location || "",
-            clearance: parsedJSON.profile?.clearance || "",
+            clearance: parsedJSON.profile?.clearance || null, // Changed to null instead of empty string
             photo: "/api/placeholder/400/600", // Default placeholder since we don't have actual photos
             description:
               parsedJSON.profile?.description ||
@@ -159,6 +166,11 @@ Return ONLY the JSON object, no additional text or formatting.`,
             description2:
               parsedJSON.profile?.description2 ||
               "Skilled professional with a strong background in project management and technical expertise.",
+          },
+          contact: {
+            email: parsedJSON.contact?.email || null,
+            phone: parsedJSON.contact?.phone || null,
+            linkedin: parsedJSON.contact?.linkedin || null,
           },
           qualifications: Array.isArray(parsedJSON.qualifications)
             ? parsedJSON.qualifications
@@ -188,14 +200,15 @@ Return ONLY the JSON object, no additional text or formatting.`,
                   : [],
               }))
             : [],
-          referees: Array.isArray(parsedJSON.referees)
-            ? parsedJSON.referees.map((ref) => ({
-                name: ref.name || "Name not provided",
-                title: ref.title || "Title not provided",
-                email: ref.email || "Email not provided",
-                phone: ref.phone || "Phone not provided",
-              }))
-            : [],
+          referees:
+            Array.isArray(parsedJSON.referees) && parsedJSON.referees.length > 0
+              ? parsedJSON.referees.map((ref) => ({
+                  name: ref.name,
+                  title: ref.title,
+                  email: ref.email,
+                  phone: ref.phone,
+                }))
+              : null, // Changed to null when no referees are provided
         };
       } catch (parseError) {
         console.error("Failed to parse JSON response:", parseError);
@@ -239,6 +252,24 @@ function formatResumeDataToText(resumeData) {
 
   if (resumeData.profile.clearance) {
     summary += `**Security Clearance:** ${resumeData.profile.clearance}\n`;
+  }
+
+  // Add contact information
+  if (
+    resumeData.contact?.email ||
+    resumeData.contact?.phone ||
+    resumeData.contact?.linkedin
+  ) {
+    summary += `**Contact:**\n`;
+    if (resumeData.contact?.email) {
+      summary += `* Email: ${resumeData.contact.email}\n`;
+    }
+    if (resumeData.contact?.phone) {
+      summary += `* Phone: ${resumeData.contact.phone}\n`;
+    }
+    if (resumeData.contact?.linkedin) {
+      summary += `* LinkedIn: ${resumeData.contact.linkedin}\n`;
+    }
   }
 
   summary += "\n";

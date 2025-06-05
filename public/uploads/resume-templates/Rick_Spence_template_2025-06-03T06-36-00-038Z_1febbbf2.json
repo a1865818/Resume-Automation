@@ -1,0 +1,176 @@
+{
+  "profile": {
+    "name": "Rick Spence",
+    "title": "PROGRAM/PROJECT MANAGER",
+    "location": "Canberra",
+    "clearance": "NV2 & AFP NV1",
+    "photo": "/api/placeholder/400/600",
+    "description": "Rick Spence is a highly accomplished and results-oriented Program/Project Manager with extensive experience in leading and delivering complex projects and programs within the Australian Defence Force and various government agencies.  His expertise spans end-to-end project management, risk mitigation, milestone achievement, and the management of diverse deliverables.  A highly organized and detail-oriented leader, Rick possesses exceptional communication and negotiation skills, effectively collaborating with internal teams, vendors, and stakeholders.  His proven ability to manage multiple teams, coordinate resources, and solve problems quickly ensures projects remain on track and achieve their objectives.  Rick's ambition and career focus align perfectly with opportunities to contribute significantly to organizational goals while furthering his own professional development.",
+    "description2": "With a strong background in Agile methodologies (SAFe, Scrum), Rick has a consistent track record of successfully implementing and coaching teams in Agile ways of working.  His experience encompasses various roles, including Program Manager, Product Owner, Scrum Master, and Agile Coach, demonstrating versatility and adaptability across diverse project environments.  He is proficient in utilizing project management tools such as Jira and Confluence, and has a deep understanding of ITIL, PRINCE2, and other project management frameworks.  Rick's expertise extends to cloud computing (Azure, AWS), cyber security, and digital transformation initiatives, making him a valuable asset for organizations seeking to optimize their project delivery and achieve strategic objectives.  His commitment to continuous improvement is evident in his proactive approach to process optimization and his dedication to mentoring and developing team members."
+  },
+  "qualifications": [
+    "Certified SAFe Practitioner",
+    "P3M framework",
+    "MSP (Managing Successful projects/programs)",
+    "IT Project Management, PMP PMBOK",
+    "Project management leadership & communication",
+    "PRINCE2 & Scrum Agile (Axelos)",
+    "ITIL"
+  ],
+  "affiliations": [
+    "LACE Member",
+    "SAFe Studio Member"
+  ],
+  "skills": [
+    "Program Management",
+    "Project Management",
+    "Scrum/Agile",
+    "SAFe",
+    "Jira/Confluence",
+    "Microsoft Azure",
+    "AWS",
+    "Cyber Security"
+  ],
+  "keyAchievements": [
+    "Successfully implemented SAFe 6.0 for the DSE Program (JP9111, DEF2222, JP2181), optimizing Jira and Confluence and developing LACE Teams governance.",
+    "Created a chargeback system for Services Australia generating income streams from work done for DSS, NDIA, and DVA.",
+    "Successfully managed the ADF recompete bid, a significant opportunity holding a substantial value of 2.1 billion dollars, shaping the scheduling timeline and financial aspects."
+  ],
+  "experience": [
+    {
+      "title": "Principal Consultant - Jigsaw Notions (PgO Business Transformation Team)",
+      "period": "March 2024 - Present",
+      "responsibilities": [
+        "Served as RTE, Agile Coach, Scrum Master, and LACE member for Department of Defense projects.",
+        "Managed up to 9 teams comprising engineers, testers, developers, and cybersecurity professionals.",
+        "Mentored 6 project support officers/Scrum Masters.",
+        "Managed Jira boards and acted as Jira client-side admin for multiple projects."
+      ]
+    },
+    {
+      "title": "Senior Strategic Project Manager - Department of Industry and Science (Cloud Platforms)",
+      "period": "November 2023 - January 2024",
+      "responsibilities": [
+        "Identified improvements to move the Microsoft Azure Cloud Platforms Team into 2024.",
+        "Organized their DevOps environment, ensuring all necessary data was documented.",
+        "Built their first PowerBI dashboard, providing guidance to fellow cloud PMs.",
+        "Managed the \"Tech Readiness\" project for Microsoft Co-Pilot."
+      ]
+    }
+  ],
+  "fullExperience": [
+    {
+      "title": "Principal Consultant - Jigsaw Notions (PgO Business Transformation Team)",
+      "period": "March 2024 - Present",
+      "responsibilities": [
+        "Served as RTE; Agile Coach; Scrum Master and LACE member for the Department of Defense JP9111, DEF2222, and the PMO for the Digital Transformation program.",
+        "Managed up to 9 teams consisting of engineers, testers, developers, technical writers, and cybersecurity teams.",
+        "Managed/supported/mentored 6 project support officers/scrum masters.",
+        "Consulted on/created/configured all Jira boards and worked as JP9111, DEF2222, and JP2181 Jira client-side admin.",
+        "Coached PSOs on becoming Scrum Masters and Scrum Masters on furthering their skills.",
+        "Coached all team members (APS/ADF/Contractors) on PI/ART events, Agile ways of working, and Jira.",
+        "Worked with JP9111 & DEF2222 as the product manager.",
+        "Provided clarity/direction/execution on DDG ways of working and Agile best practices for JP9111 and DEF2222."
+      ]
+    },
+    {
+      "title": "Senior Strategic Project Manager - Department of Industry and Science (Cloud Platforms)",
+      "period": "November 2023 - January 2024",
+      "responsibilities": [
+        "Worked within the Microsoft Azure Cloud Platforms Team over the holiday period to identify improvements needed to move the team into 2024.",
+        "Agile Coach, RTE, STE, managed ADF Project Gates Process, Client Relationship Management, ITSM, SIAM/MSI, Cloud Computing, Training and mentoring, Agile Methodology, Microsoft Azure, AWS, APS & ADF Procurement Process, Business Case Development, Cyber Security, Telecommunications, Essential 8, MS project, DevOps, JIRA, Confluence, MIRO, Change Management, Team leadership & development, Digital Transformations, Relocations (locally & globally), COTS & Bespoke software development.",
+        "Organized their DevOps environment, ensuring all data needed was documented.",
+        "Built their first PowerBI dashboard to display important information from DevOps and provided guidance to fellow cloud PMs on their projects, governance, and best practices.",
+        "Managed their “Tech Readiness” project for Microsoft Co-Pilot in conjunction with the DTA."
+      ]
+    },
+    {
+      "title": "Senior Strategic - CSIRO",
+      "period": "December 2022 - November 2023",
+      "responsibilities": [
+        "Product Owner & project managed Data Stewards and Software Coding projects, implementing correct data management practices and industry-accepted software coding software and repository frameworks and best practices within Microsoft Azure.",
+        "Leveraged digital library, cybersecurity, and training teams to conduct initial and ongoing staff training for Data Stewardship and Software/Coding best practices.",
+        "Uplifted the cybersecurity maturity level within the projects.",
+        "Created their first PM mentorship program.",
+        "Worked with CSIRO executives on building their PMO."
+      ]
+    },
+    {
+      "title": "Senior Consultant - Jacobs Australia (DDG)",
+      "period": "July 2022 - November 2022",
+      "responsibilities": [
+        "Focused on clearing a backlog of over 120 projects as part of the PMO, analyzing in-flight projects against the gates process and reporting recommendations.",
+        "Worked with the executive team to hire additional PMs, BAs, and engineers.",
+        "Structured the program, including budgeting, for board approval.",
+        "Created the SAFe methodology framework tailored for the department and implemented as part of the contract."
+      ]
+    },
+    {
+      "title": "Senior Strategic Program Manager - Department of Defense (SOMIIC)",
+      "period": "May 2022 - July 2022",
+      "responsibilities": [
+        "Re-established alignment within the SOMIIC team and stakeholder connections.",
+        "Built and delivered their project/portfolio framework.",
+        "Managed budgets up to billions of dollars across the Australian Defence Force.",
+        "Managed the build-out of ServiceNow along the SAFe model."
+      ]
+    },
+    {
+      "title": "Senior Strategic Program Manager - The Architecture Practice (TAP) (Department of Defense, Dept. Aged Care)",
+      "period": "November 2021 - May 2022",
+      "responsibilities": [
+        "Collaborated with TAP ICT solution architects and partners to interview stakeholders and provide analysis and recommendations for work needing to be done within Microsoft Azure.",
+        "Guided the Defense cyber team through their iRAP process.",
+        "Helped shape the scheduling timeline and financial aspects for the ADF recompete bid (2.1 billion)."
+      ]
+    },
+    {
+      "title": "Senior Consultant - Projects Assured (Services Australia, NDIA, DSS, DVA)",
+      "period": "November 2020 - November 2021",
+      "responsibilities": [
+        "Created a Digital Transformation and Data Management program of work, comprising 6 internal work streams, 4 agencies, and a team of Microsoft, labor-to-hire contractors, and vendors in Microsoft Azure.",
+        "Created a chargeback system for Services Australia generating revenue for work done for DSS, NDIA, and DVA.",
+        "Successfully delivered a project for DSS to uplift their network to PROTECTED.",
+        "Managed the cyber team to bring the program to maturity level 2 and developed a future roadmap."
+      ]
+    },
+    {
+      "title": "Senior Consultant - Veritec (CDPP, The AEC, The Nine Network)",
+      "period": "January 2020 - October 2020",
+      "responsibilities": [
+        "Managed the upgrade of CDPP’s Mobile Device Management system and network uplift to PROTECTED.",
+        "Worked as a member of the PMO.",
+        "Managed the Nine Network’s digital transformation project from Google to Microsoft Azure."
+      ]
+    },
+    {
+      "title": "Program Director - Diversity Array Technologies (DArT) (CIMMYT Mexico, Internal company)",
+      "period": "January 2019 - January 2020",
+      "responsibilities": [
+        "Assessed, recommended changes, and executed plans, while hiring additional staff and managing their major client as the product owner.",
+        "Structured projects, resources, and budgeting, working with major clients.",
+        "Trained DArT staff and CIMMYT (Mexico) on Scrum Agile, implementing best practices and frameworks for bespoke software development in AWS.",
+        "Served as the direct customer-facing delivery manager for CIMMYT, visiting Mexico for on-site project work.",
+        "Managed framework improvements and updates to service integration and management systems."
+      ]
+    },
+    {
+      "title": "Program Director - American Driveline (AAMCO)",
+      "period": "January 2017 - January 2019",
+      "responsibilities": [
+        "Program managed the company’s largest modernization program, bringing it from below the line red to above the line green.",
+        "Built teams that delivered the Digital Modernization and Data Management program of work in Microsoft Azure for their automotive point-of-sale system (750 franchisees).",
+        "Traveled extensively throughout the US and Canada, training franchisees and conducting large-scale training sessions.",
+        "Created a CRM dashboard providing up-to-date data on job pricing, parts costs, and revenue information for franchisees."
+      ]
+    }
+  ],
+  "referees": [],
+  "templateId": "Rick_Spence_template_2025-06-03T06-36-00-038Z_1febbbf2.json",
+  "candidateName": "Rick Spence",
+  "originalFileName": "Demo_1.pdf",
+  "createdAt": "2025-06-03T06:36:00.038Z",
+  "updatedAt": "2025-06-03T06:36:00.038Z",
+  "isTemplate": true,
+  "type": "resume-template"
+}

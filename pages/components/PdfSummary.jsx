@@ -1,14 +1,18 @@
+
 import config from '@/configs';
 import Avatar from "@/public/image.jpeg";
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { generateResumeJSON } from '../api/geminiApi';
-import ResumeTemplate from './ResumeTemplate'; // Import the resume template
+import ErrorMessage from './PdfSummary/ErrorMessage';
+import GeneratorControls from './PdfSummary/GeneratorControls';
+import LoadingState from './PdfSummary/LoadingState';
+import ProfilePictureStatus from './PdfSummary/ProfilePictureStatus';
+import SaveBanner from './PdfSummary/SaveBanner';
+import ResumeTemplate from './ResumeTemplate';
 
 const PdfSummary = ({ pdfText, fileName, profilePicture, profilePicturePreview }) => {
   const [resumeData, setResumeData] = useState(null);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [apiKey, setApiKey] = useState('');
-  const [showApiKeyInput, setShowApiKeyInput] = useState(false);
   const [error, setError] = useState('');
   const [useMockData, setUseMockData] = useState(false);
   const [showResumeTemplate, setShowResumeTemplate] = useState(false);
@@ -181,11 +185,9 @@ const PdfSummary = ({ pdfText, fileName, profilePicture, profilePicturePreview }
   };
   
   // Initialize API key from environment variables
-  useEffect(() => {
-    if (config.geminiApiKey) {
-      setApiKey(config.geminiApiKey);
-    }
-  }, []);
+  if (!config.geminiApiKey) {
+    console.warn('NEXT_PUBLIC_GEMINI_API_KEY not found in environment variables');
+  }
 
   // Function to upload profile picture to server
   const uploadProfilePicture = async (file) => {
@@ -298,9 +300,9 @@ const PdfSummary = ({ pdfText, fileName, profilePicture, profilePicturePreview }
       return;
     }
     
-    // If no API key is set in env vars and no custom key provided, show input
-    if (!config.geminiApiKey && !apiKey) {
-      setShowApiKeyInput(true);
+    // Check if API key is available in environment variables
+    if (!config.geminiApiKey) {
+      setError('API key not configured. Please add NEXT_PUBLIC_GEMINI_API_KEY to your environment variables.');
       return;
     }
     
@@ -308,8 +310,8 @@ const PdfSummary = ({ pdfText, fileName, profilePicture, profilePicturePreview }
     setError('');
     
     try {
-      // Use the new JSON-based API that returns resume-test.jsx compatible format
-      const generatedResumeData = await generateResumeJSON(pdfText, apiKey || undefined);
+      // Use the environment API key
+      const generatedResumeData = await generateResumeJSON(pdfText);
       
       // Upload profile picture if provided and update resume data
       if (profilePicture) {
@@ -326,16 +328,10 @@ const PdfSummary = ({ pdfText, fileName, profilePicture, profilePicturePreview }
       setShowResumeTemplate(true);
     } catch (err) {
       console.error('Resume generation error:', err);
-      setError(err.message || 'Failed to generate resume. Please check your API key and try again.');
+      setError(err.message || 'Failed to generate resume. Please check your API configuration and try again.');
     } finally {
       setIsGenerating(false);
     }
-  };
-  
-  const handleApiKeySubmit = (e) => {
-    e.preventDefault();
-    setShowApiKeyInput(false);
-    handleGenerateResume();
   };
   
   const toggleMockData = () => {
@@ -359,133 +355,14 @@ const PdfSummary = ({ pdfText, fileName, profilePicture, profilePicturePreview }
   if (showResumeTemplate && resumeData) {
     return (
       <div>
-        {/* Save to History Banner - Shows above the resume template */}
-        <div className="bg-green-50 border-l-4 border-green-400 p-4 mb-6 mx-4">
-          <div className="flex items-center justify-between">
-            <div className="flex">
-              <div className="flex-shrink-0">
-                <svg className="h-5 w-5 text-green-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                </svg>
-              </div>
-              <div className="ml-3">
-                <h3 className="text-sm font-medium text-green-800">
-                  Resume Template Generated Successfully!
-                </h3>
-                <div className="mt-1 text-sm text-green-700">
-                  <p>Your professional resume template is ready to view and download.</p>
-                  {uploadedProfilePictureUrl && (
-                    <p>✓ Profile picture has been uploaded and included.</p>
-                  )}
-                </div>
-              </div>
-            </div>
-            
-            <div className="flex items-center space-x-3">
-              {!isSaved && (
-                <button
-                  onClick={() => saveTemplateToHistory(resumeData, fileName)}
-                  disabled={isSaving}
-                  className="bg-green-600 hover:bg-green-700 disabled:bg-green-400 text-white px-4 py-2 rounded-md text-sm font-medium flex items-center"
-                >
-                  {isSaving ? (
-                    <>
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                      Saving...
-                    </>
-                  ) : (
-                    <>
-                      <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3-3m0 0l-3 3m3-3v12"></path>
-                      </svg>
-                      Save to History
-                    </>
-                  )}
-                </button>
-              )}
-              
-              {isSaved && (
-                <div className="flex items-center text-green-600">
-                  <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                  </svg>
-                  <span className="text-sm font-medium">Saved to History</span>
-                </div>
-              )}
-            </div>
-          </div>
-          
-          {/* Save status message */}
-          {saveMessage && (
-            <div className="mt-3 text-sm">
-              {saveMessage}
-            </div>
-          )}
-        </div>
-
+        <SaveBanner
+          uploadedProfilePictureUrl={uploadedProfilePictureUrl}
+          isSaved={isSaved}
+          isSaving={isSaving}
+          saveMessage={saveMessage}
+          onSave={() => saveTemplateToHistory(resumeData, fileName)}
+        />
         <ResumeTemplate resumeData={resumeData} onBackToSummary={handleBackToSummary} />
-      </div>
-    );
-  }
-
-  if (showApiKeyInput) {
-    return (
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <h2 className="text-xl font-semibold mb-4">Generate Resume with Gemini</h2>
-        <div className="mb-4">
-          <p className="text-gray-600 mb-4">
-            To generate a structured resume, you need to provide your Google API key for the Gemini API.
-            You can get a key from the <a href="https://makersuite.google.com/app/apikey" target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:text-indigo-800">Google AI Studio</a>.
-          </p>
-          <div className="bg-amber-50 border-l-4 border-amber-400 p-4 mb-4">
-            <div className="flex">
-              <div className="flex-shrink-0">
-                <svg className="h-5 w-5 text-amber-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-                </svg>
-              </div>
-              <div className="ml-3">
-                <p className="text-sm text-amber-700">
-                  You can also set your API key in the .env.local file using the NEXT_PUBLIC_GEMINI_API_KEY variable.
-                </p>
-              </div>
-            </div>
-          </div>
-          <form onSubmit={handleApiKeySubmit}>
-            <div className="mb-4">
-              <label htmlFor="apiKey" className="block text-sm font-medium text-gray-700 mb-1">
-                Google API Key (Gemini)
-              </label>
-              <input
-                type="text"
-                id="apiKey"
-                value={apiKey}
-                onChange={(e) => setApiKey(e.target.value)}
-                placeholder="Enter your Google API key"
-                className="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 px-3 py-2 text-sm"
-                required
-              />
-              <p className="mt-1 text-xs text-gray-500">
-                Your API key is used only in your browser and is not stored on any server.
-              </p>
-            </div>
-            <div className="flex space-x-4">
-              <button
-                type="submit"
-                className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium"
-              >
-                Continue
-              </button>
-              <button
-                type="button"
-                onClick={() => setShowApiKeyInput(false)}
-                className="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-md text-sm font-medium"
-              >
-                Cancel
-              </button>
-            </div>
-          </form>
-        </div>
       </div>
     );
   }
@@ -494,126 +371,34 @@ const PdfSummary = ({ pdfText, fileName, profilePicture, profilePicturePreview }
     <div className="w-full px-4 py-8">
       <div className="max-w-6xl mx-auto space-y-6">
         <div className="bg-white rounded-lg shadow-md p-6">
-        <h2 className="text-xl font-semibold mb-4">Professional Resume Generator</h2>
-        
-        {/* Profile Picture Status */}
-        {(profilePicturePreview || isUploadingImage) && (
-          <div className="mb-6 p-4 bg-blue-50 border-l-4 border-blue-400 rounded-r-lg">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                {isUploadingImage ? (
-                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600"></div>
-                ) : (
-                  <svg className="h-5 w-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                  </svg>
-                )}
-              </div>
-              <div className="ml-3 flex items-center space-x-4">
-                <div>
-                  <p className="text-sm font-medium text-blue-800">
-                    {isUploadingImage ? 'Uploading profile picture...' : 'Profile picture ready'}
-                  </p>
-                  <p className="text-sm text-blue-600">
-                    {isUploadingImage ? 'Please wait while we process your image.' : 'Your profile picture will be included in the generated resume.'}
-                  </p>
-                </div>
-                {profilePicturePreview && !isUploadingImage && (
-                  <img 
-                    src={profilePicturePreview} 
-                    alt="Profile preview" 
-                    className="w-12 h-12 object-cover rounded-lg border-2 border-blue-200"
-                  />
-                )}
-              </div>
-            </div>
-          </div>
-        )}
-        
-        {!resumeData && !isGenerating && (
-          <div className="mb-6">
-            <p className="text-gray-600 mb-4">
-              Generate a professional resume template from "{fileName}" using Google's Gemini AI.
-              {profilePicturePreview && (
-                <span className="text-blue-600"> Your uploaded profile picture will be included.</span>
-              )}
-            </p>
-            <div className="flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-4">
-              <button
-                onClick={handleGenerateResume}
-                disabled={isUploadingImage}
-                className="bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400 text-white px-4 py-2 rounded-md text-sm font-medium flex items-center"
-              >
-                {isUploadingImage ? (
-                  <>
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                    Processing...
-                  </>
-                ) : (
-                  useMockData ? 'Generate with Mock Data' : 'Generate Resume with AI'
-                )}
-              </button>
-              
-              <div className="flex items-center mt-4 sm:mt-0">
-                <input
-                  type="checkbox"
-                  id="useMockData"
-                  checked={useMockData}
-                  onChange={toggleMockData}
-                  className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
-                />
-                <label htmlFor="useMockData" className="ml-2 block text-sm text-gray-700">
-                  Use mock data (save API credits)
-                </label>
-              </div>
-            </div>
-          </div>
-        )}
-        
-        {isGenerating && (
-          <div className="flex flex-col items-center justify-center py-8">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500 mb-4"></div>
-            <p className="text-gray-600">Generating professional resume with Gemini AI...</p>
-            {profilePicturePreview && (
-              <p className="text-gray-500 text-sm mt-2">Including your uploaded profile picture...</p>
-            )}
-          </div>
-        )}
-        
-        {error && (
-          <div className="bg-red-50 border-l-4 border-red-500 p-4 mb-4">
-            <div className="flex">
-              <div className="flex-shrink-0">
-                <svg className="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                </svg>
-              </div>
-              <div className="ml-3">
-                <p className="text-sm text-red-700">
-                  {error}
-                </p>
-                <button 
-                  onClick={() => setShowApiKeyInput(true)}
-                  className="mt-2 text-sm text-red-700 underline"
-                >
-                  Update API Key
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {(resumeData || error) && (
-          <div className="mt-4 text-right">
-            <button
-              onClick={() => setShowApiKeyInput(true)}
-              className="text-gray-500 hover:text-gray-700 text-sm"
-            >
-              Change API Key
-            </button>
-          </div>
-        )}
-              </div>
+          <h2 className="text-xl font-semibold mb-4">Professional Resume Generator</h2>
+          
+          <ProfilePictureStatus
+            profilePicturePreview={profilePicturePreview}
+            isUploadingImage={isUploadingImage}
+          />
+          
+          <GeneratorControls
+            resumeData={resumeData}
+            isGenerating={isGenerating}
+            useMockData={useMockData}
+            fileName={fileName}
+            profilePicturePreview={profilePicturePreview}
+            isUploadingImage={isUploadingImage}
+            onGenerate={handleGenerateResume}
+            onToggleMockData={toggleMockData}
+          />
+          
+          {isGenerating && (
+            <LoadingState
+              profilePicturePreview={profilePicturePreview}
+            />
+          )}
+          
+          {error && (
+            <ErrorMessage error={error} />
+          )}
+        </div>
       </div>
     </div>
   );
