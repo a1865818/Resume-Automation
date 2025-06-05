@@ -1,4 +1,3 @@
-// import PappsPMLogo from '@/public/PappspmLogo.jpeg';
 import ContactSection from './ContactSection';
 import ExperienceItem from './ExperienceItem';
 import KeyAchievementsSection from './KeyAchievementsSection';
@@ -17,32 +16,32 @@ const FirstPage = ({ resumeData, mainExperience }) => {
       }}
     >
       <div style={{ display: 'grid', gridTemplateColumns: '350px 1fr' }}>
-      <ProfileSection resumeData={resumeData} />
-
+        <ProfileSection resumeData={resumeData} />
       
         {/* Right Section */}
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr auto' }}>
             {/* Middle Column - Profile */}
             <div style={{ padding: '1.5rem', backgroundColor: '#f9fafb' }}>
-              <div style={{ marginBottom: '1.5rem' }}>
-                <h2 style={{ 
-                  fontSize: '1.25rem', 
-                  fontWeight: 'bold', 
-                  marginBottom: '0.75rem', 
-                  color: '#1e293b', 
-                  letterSpacing: '0.05em',
-                  margin: '0 0 0.75rem 0'
-                }}>
-                  PROFILE
-                </h2>
+              <div>
+                <div style={{ height: '55px', display: 'flex', alignItems: 'center' }}>
+                  <h2 style={{ 
+                    fontSize: '1.25rem', 
+                    fontWeight: 'bold',
+                    color: '#1e293b', 
+                    letterSpacing: '0.05em',
+                    margin: 0
+                  }}>
+                    PROFILE
+                  </h2>
+                </div>
                 <p style={{ 
                   fontSize: '14px', 
                   color: '#374151', 
                   lineHeight: '1.625', 
                   textAlign: 'justify', 
                   marginBottom: '0.75rem',
-                  margin: '0 0 0.75rem 0'
+                  margin: '0.75rem 0'
                 }}>
                   {resumeData.profile.description}
                 </p>
@@ -60,14 +59,18 @@ const FirstPage = ({ resumeData, mainExperience }) => {
 
             {/* Right Column - References and Experience */}
             <div style={{ width: '650px', padding: '1.5rem', backgroundColor: '#f3f4f6' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
+              <div style={{ 
+                display: 'flex', 
+                justifyContent: 'space-between', 
+                alignItems: 'center', 
+                height: '55px' // Same height as profile header
+              }}>
                 <h2 style={{ 
                   fontSize: '1.25rem', 
-                  fontWeight: 'bold', 
-                  marginBottom: '0.5rem', 
+                  fontWeight: 'bold',
                   color: '#1e293b', 
                   letterSpacing: '0.05em',
-                  margin: '0 0 0.5rem 0'
+                  margin: 0
                 }}>
                   RECENT EXPERIENCE
                 </h2>
@@ -75,14 +78,14 @@ const FirstPage = ({ resumeData, mainExperience }) => {
                   src="/PappspmLogo.jpeg" 
                   alt="PappsPM" 
                   style={{ 
-                    height: '70px', 
+                    height: '70px', // Increased logo height
                     width: 'auto',
                     objectFit: 'contain'
                   }}
                 />
               </div>
               
-              <div style={{ display: 'flex', flexDirection: 'column'}}>
+              <div style={{ display: 'flex', flexDirection: 'column', marginTop: '0.75rem' }}>
                 {mainExperience.map((exp, index) => (
                   <ExperienceItem key={index} exp={exp} />
                 ))}
@@ -100,8 +103,7 @@ const FirstPage = ({ resumeData, mainExperience }) => {
           <KeyAchievementsSection resumeData={resumeData} />
         </div>
       </div>
-        </div>  
-
+    </div>  
   );
 };
 
