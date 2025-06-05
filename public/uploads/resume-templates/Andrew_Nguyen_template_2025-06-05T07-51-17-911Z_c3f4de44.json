@@ -1,0 +1,102 @@
+{
+  "profile": {
+    "name": "Andrew Nguyen",
+    "title": "SOFTWARE ENGINEER | FULL STACK DEVELOPER",
+    "location": "Adelaide, SA",
+    "clearance": "",
+    "photo": "/api/placeholder/400/600",
+    "description": "Highly skilled and adaptable Full-Stack Software Engineer with proven experience in designing, developing, and deploying scalable and data-driven applications.  Adept at leveraging JavaScript, TypeScript, and React for front-end development, complemented by expertise in Express.js and .NET for robust back-end solutions.  Possessing a strong foundation in object-oriented design, parallel and distributed computing, and microservices architectures, I consistently deliver intuitive user experiences while optimizing performance and ensuring high-quality solutions in fast-paced environments. My experience spans diverse industries, including technology, consulting, and research, showcasing my ability to quickly adapt to new challenges and collaborate effectively within cross-functional teams.  I am proficient in utilizing various databases (MySQL, PostgreSQL, MongoDB) and cloud platforms (AWS S3, RDS, EC2), and I am committed to continuous learning and improvement, staying abreast of the latest technologies and best practices.",
+    "description2": "My background encompasses a blend of practical experience and academic research, resulting in a unique skillset that combines technical proficiency with analytical problem-solving abilities.  I have a proven track record of successfully delivering projects that meet and exceed client expectations, consistently demonstrating a proactive mindset and a commitment to exceeding expectations.  My experience in streamlining workflows, automating processes, and optimizing data visualization has resulted in significant improvements in efficiency and productivity for various organizations.  I am confident in my ability to contribute meaningfully to a challenging and dynamic role, leveraging my technical expertise and collaborative spirit to drive innovation and achieve ambitious goals.  I am eager to apply my skills and experience to a new opportunity where I can continue to learn and grow while making a significant contribution to a team's success."
+  },
+  "qualifications": [
+    "Bachelor of Computer Science, The University of Adelaide"
+  ],
+  "affiliations": [
+    "Professional memberships and associations not provided"
+  ],
+  "skills": [
+    "JavaScript/TypeScript",
+    "React",
+    ".NET",
+    "Python",
+    "Node.js",
+    "SQL",
+    "AWS",
+    "Agile/Scrum"
+  ],
+  "keyAchievements": [
+    "Streamlined outreach workflows by 60% and improved client engagement rates by 25% at UPP Global Technology JSC through the development of a data-driven prospecting system.",
+    "Accelerated lamb production planning time by 40% by designing a logic cut tree algorithm in Python at The University of Adelaide.",
+    "Reduced page load time by 30% and enhanced system performance at VNPT by optimizing React.js codebase through code splitting and lazy loading."
+  ],
+  "experience": [
+    {
+      "title": "Software Engineer - UPP Global Technology JSC (Remote)",
+      "period": "Jan 2025 – March 2025",
+      "responsibilities": [
+        "Developed a data-driven prospecting system that automated client discovery and streamlined outreach workflows by 60%, improving client engagement rates by 25%.",
+        "Developed an intelligent automation system using Python to extract and process over 500 qualified sales leads.",
+        "Engineered a resilient automation framework with bot detection bypass and API integration to Salesforce."
+      ]
+    },
+    {
+      "title": "Software Engineer - Deloitte (Adelaide, SA)",
+      "period": "Nov 2023 – Jan 2024",
+      "responsibilities": [
+        "Developed an efficient method to handle public transport data from RESTful APIs using Node.js, serving over 30,000 users.",
+        "Developed a dynamic map using React and Leaflet to visualize transport data, enhancing accessibility by 35%.",
+        "Actively participated in Scrum and Agile processes, collaborating with cross-functional teams."
+      ]
+    }
+  ],
+  "fullExperience": [
+    {
+      "title": "Software Engineer - UPP Global Technology JSC (Remote)",
+      "period": "Jan 2025 – March 2025",
+      "responsibilities": [
+        "Collaborated in a team of two under senior mentorship, working closely with different sales teams to deliver a data-driven prospecting system that automated client discovery, streamlined outreach workflows by 60%, and improved client engagement rates by 25%.",
+        "Developed an intelligent automation system using Python, and custom network request capture techniques to extract and process over 500 qualified sales leads from an external platform.",
+        "Engineered a resilient automation framework with bot detection bypass mechanisms and API integration to Salesforce Sales Cloud, reducing manual data entry time by 100% and enhancing lead generation workflow.",
+        "Assisted in building continuous integration/deployment processes using GitLab CI/CD, enabling automated testing and reliable production deployments for the system."
+      ]
+    },
+    {
+      "title": "Software Engineer - Deloitte (Adelaide, SA)",
+      "period": "Nov 2023 – Jan 2024",
+      "responsibilities": [
+        "Assisted in developing an efficient method to handle public transport data from external RESTful APIs using Node.js, incorporating user parameters to filter and enable real-time data access and integrate it with the Smarter Roads platform, serving over 30,000 users with seamless transport data insights.",
+        "Developed a dynamic map using React and Leaflet library to visualize backend transport data that transforms complex data into intuitive visualizations, enhancing accessibility by 35%, and enabling users to seamlessly explore bus, tram, and train routes.",
+        "Actively participated in Scrum and Agile processes, collaborating with cross-functional teams to deliver iterative solutions on time, fostering a culture of continuous improvement and adaptability while meeting project goals and client needs in a fast-paced environment."
+      ]
+    },
+    {
+      "title": "Research Assistant - The University of Adelaide (Adelaide, SA)",
+      "period": "Nov 2023 – Jan 2024",
+      "responsibilities": [
+        "Accelerated lamb production planning time by 40% by designing a logic cut tree algorithm in Python to optimize meat cutting patterns.",
+        "Boosted production profits by 25% by developing a constraint generation algorithm that converts cut tree structures into optimized cutting patterns for minimizing waste.",
+        "Increased operational efficiency by 35% by implementing an Integer Linear Programming (ILP) optimization model that automates cutting sequence decisions based on product specifications.",
+        "Collaborated with researchers to provide training and support that sped up onboarding by 25%, while promoting knowledge-sharing and teamwork to ensure smooth integration and sustainable impact on the production process."
+      ]
+    },
+    {
+      "title": "Software Engineer - Vietnam Posts and Telecommunications Group (VNPT) (Ha Noi, Viet Nam)",
+      "period": "Nov 2022 – Mar 2023",
+      "responsibilities": [
+        "Collaborated with cross-functional teams to develop and optimize the UI for displaying customer behavior insights (Social Class, Relationship Prediction, Air Travel) in the CUSTOMER 360 project using ReactJS and Redux.",
+        "Worked closely with backend teams to integrate APIs and synchronize real-time data, streamlining the flow of customer insights and enabling more accurate, data-driven decisions.",
+        "Contributed to optimizing the React.js codebase through code splitting and lazy loading, reducing page load time by 30%, and enhancing system performance.",
+        "Played a key role in designing an intuitive dashboard and adjusting multi-dimensional network-wide views using D3.js and Chart.js, making complex data accessible and actionable for non-technical users.",
+        "Worked collaboratively in an agile environment using JIRA and Git workflow with project managers and cross-functional team to meet deadlines, resolve challenges, and deliver high-quality software solutions."
+      ]
+    }
+  ],
+  "referees": [],
+  "templateId": "Andrew_Nguyen_template_2025-06-05T07-51-17-911Z_c3f4de44.json",
+  "candidateName": "Andrew Nguyen",
+  "originalFileName": "Demo_8.pdf",
+  "createdAt": "2025-06-05T07:51:17.912Z",
+  "updatedAt": "2025-06-05T07:51:17.912Z",
+  "isTemplate": true,
+  "type": "resume-template"
+}

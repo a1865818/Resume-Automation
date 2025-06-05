@@ -1,4 +1,5 @@
-const SaveBanner = ({ uploadedProfilePictureUrl, isSaved, isSaving, saveMessage, onSave }) => {
+
+const SaveBanner = ({ uploadedProfilePictureUrl, isSaved, isSaving, saveMessage, onSave, isJobTailored = false }) => {
     return (
       <div className="bg-green-50 border-l-4 border-green-400 p-4 mb-6 mx-4">
         <div className="flex items-center justify-between">
@@ -10,12 +11,20 @@ const SaveBanner = ({ uploadedProfilePictureUrl, isSaved, isSaving, saveMessage,
             </div>
             <div className="ml-3">
               <h3 className="text-sm font-medium text-green-800">
-                Resume Template Generated Successfully!
+                {isJobTailored ? 'Tailored Resume Generated Successfully!' : 'Resume Template Generated Successfully!'}
               </h3>
               <div className="mt-1 text-sm text-green-700">
-                <p>Your professional resume template is ready to view and download.</p>
+                <p>
+                  Your professional resume template is ready to view and download.
+                  {isJobTailored && (
+                    <span className="font-medium"> This resume has been tailored to match the job requirements.</span>
+                  )}
+                </p>
                 {uploadedProfilePictureUrl && (
                   <p>✓ Profile picture has been uploaded and included.</p>
+                )}
+                {isJobTailored && (
+                  <p>🎯 Resume optimized for the specific job opportunity.</p>
                 )}
               </div>
             </div>
