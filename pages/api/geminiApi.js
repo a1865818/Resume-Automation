@@ -1,13 +1,658 @@
 import config from "@/configs";
 
 /**
- * Calls the Gemini API to generate a structured JSON summary compatible with resume-test.jsx
- * @param {string} text - The resume text content to analyze
- * @param {string} [apiKey] - Optional Google API key for Gemini (overrides config)
- * @returns {Promise<Object>} - A promise that resolves to the structured resume data for resume-test.jsx
+ * Three-step pipeline for tailored resume generation
+ * Step 1: Analyze job description
+ * Step 2: Tailor resume based on analysis
+ * Step 3: Refine and optimize the tailored resume
+ * Step 4: Final keyword optimization and recruiter impact maximization
  */
-export async function generateResumeJSON(text, apiKey = null) {
-  // Use provided API key or fall back to environment variable
+
+/**
+ * Step 1: Analyze the job description or tender request
+ * @param {string} jobDescription - The job description to analyze
+ * @param {string} [apiKey] - Optional API key
+ * @returns {Promise<Object>} - Structured job analysis
+ */
+export async function analyzeJobDescription(jobDescription, apiKey = null) {
+  const effectiveApiKey = apiKey || config.geminiApiKey;
+
+  if (!effectiveApiKey) {
+    throw new Error("Gemini API key is required.");
+  }
+
+  if (!jobDescription || jobDescription.trim() === "") {
+    throw new Error("Job description is required for analysis.");
+  }
+
+  const prompt = `You are an expert HR analyst and recruitment specialist. Analyze the following job description or tender request and provide a comprehensive breakdown that will be used to tailor a candidate's resume.
+
+Return a JSON object with this exact structure:
+
+{
+  "jobTitle": "The main job title or position",
+  "industry": "The industry or sector",
+  "companyType": "Type of organization (government, corporate, startup, etc.)",
+  "keyResponsibilities": [
+    "Primary responsibility 1",
+    "Primary responsibility 2",
+    "List 5-8 main responsibilities"
+  ],
+  "requiredTechnicalSkills": [
+    "Technical skill 1",
+    "Technical skill 2",
+    "List all technical skills mentioned"
+  ],
+  "requiredSoftSkills": [
+    "Soft skill 1",
+    "Soft skill 2",
+    "List all soft skills mentioned"
+  ],
+  "preferredQualifications": [
+    "Qualification 1",
+    "Qualification 2",
+    "List degrees, certifications, experience levels"
+  ],
+  "mandatoryRequirements": [
+    "Must-have requirement 1",
+    "Must-have requirement 2",
+    "List non-negotiable requirements"
+  ],
+  "desiredExperience": {
+    "yearsRequired": "Number of years or range",
+    "specificExperience": ["Type of experience 1", "Type of experience 2"],
+    "industryExperience": "Specific industry experience if mentioned"
+  },
+  "keywordsAndPhrases": [
+    "Important keyword 1",
+    "Important phrase 2",
+    "List 15-20 keywords/phrases that should appear in resume"
+  ],
+  "toneAndStyle": {
+    "communicationStyle": "Professional tone expected (formal, collaborative, innovative, etc.)",
+    "culturalFit": "Company culture indicators",
+    "valueAlignment": "Values or principles mentioned"
+  },
+  "assessmentCriteria": [
+    "How candidates will be evaluated - criterion 1",
+    "How candidates will be evaluated - criterion 2"
+  ],
+  "priorityRanking": {
+    "criticalSkills": ["Top 3-5 most important skills"],
+    "niceToHaveSkills": ["Secondary skills that would be beneficial"],
+    "dealBreakers": ["Things that would disqualify a candidate"]
+  }
+}
+
+Instructions:
+- Extract information ONLY from the provided job description
+- Be comprehensive but accurate - don't invent requirements
+- Focus on actionable insights for resume tailoring
+- Identify both explicit and implicit requirements
+- Consider ATS (Applicant Tracking System) keywords
+- Note any specific formatting or presentation preferences mentioned
+
+
+Job Description/Tender Request:
+${jobDescription}
+
+Return ONLY the JSON object, no additional text.`;
+
+  try {
+    const response = await makeGeminiRequest(
+      prompt,
+      effectiveApiKey,
+      0.2,
+      4096
+    );
+    return response;
+  } catch (error) {
+    console.error("Error in Step 1 - Job Analysis:", error);
+    throw new Error(`Job analysis failed: ${error.message}`);
+  }
+}
+
+/**
+ * Step 2: Tailor resume based on job analysis
+ * @param {string} resumeText - Original resume text
+ * @param {Object} jobAnalysis - Output from Step 1
+ * @param {string} [apiKey] - Optional API key
+ * @returns {Promise<Object>} - Tailored resume JSON
+ */
+export async function tailorResumeToJob(
+  resumeText,
+  jobAnalysis,
+  apiKey = null
+) {
+  const effectiveApiKey = apiKey || config.geminiApiKey;
+
+  if (!effectiveApiKey) {
+    throw new Error("Gemini API key is required.");
+  }
+
+  const prompt = `You are an elite resume strategist specializing in ATS optimization and recruiter psychology. Using the detailed job analysis provided, transform this candidate's resume into a perfectly tailored match for the target position.
+
+🎯 JOB ANALYSIS:
+${JSON.stringify(jobAnalysis, null, 2)}
+
+🚀 STRATEGIC TAILORING APPROACH:
+
+1. **KEYWORD OPTIMIZATION**: Integrate the identified keywords naturally throughout all sections
+2. **PRIORITY ALIGNMENT**: Emphasize skills and experiences that match critical requirements
+3. **NARRATIVE RESTRUCTURING**: Reframe experiences to highlight job-relevant value
+4. **ATS COMPATIBILITY**: Ensure optimal keyword density and formatting
+5. **RECRUITER APPEAL**: Create compelling, results-focused content
+
+JSON SCHEMA - Every field strategically tailored:
+
+{
+  "profile": {
+    "name": "Full Name",
+    "title": "Professional title that aligns with target role terminology",
+    "location": "Candidate's actual location (DO NOT change to match job location)",
+    "clearance": "Security clearance level or null if not mentioned",
+    "description": "150-200 words addressing top 3-4 job requirements with relevant keywords and proof points",
+    "description2": "150-200 words showcasing additional value propositions and cultural fit indicators"
+  },
+  "contact": {
+    "email": "email@example.com or null if not provided",
+    "phone": "+61 XXX XXX XXX or null if not provided", 
+    "linkedin": "LinkedIn profile URL or null if not provided"
+  },
+  "qualifications": ["Education/certifications prioritized by job relevance, using job terminology"],
+  "affiliations": ["Professional memberships that signal industry credibility and alignment"],
+  "skills": ["Top 8 skills in order of job importance - lead with critical requirements, combine related skills"],
+  "keyAchievements": ["3 achievements that prove capability for specific job challenges - quantified and relevant"],
+  "experience": [
+    {
+      "title": "Job Title - Company",
+      "period": "Date Range",
+      "responsibilities": ["4 power bullets showing direct relevance using job keywords and demonstrating required competencies"]
+    },
+      
+  ],
+  "fullExperience": [
+    {
+      "title": "Job Title - Company",
+      "period": "Date Range", 
+      "responsibilities": ["6-8 strategic bullets per role proving value for target position using job terminology and STAR method"]
+    }
+  ],
+  "referees": [
+    {
+      "title": "Job title (Company)" or return empty array if not provided,
+      "name": "Referee Name" or return empty array if not provided, 
+      "email": "email@example.com" or return empty array if not provided,
+      "phone": "+61 XXX XXX XXX" or return empty array if not provided
+    }
+  ]
+}
+
+🔥 CRITICAL TAILORING RULES:
+- Use EXACT keywords and phrases from the job analysis
+- For experience section, provide 2 most relevant positions to the requirements with 3-4 main bullet points each
+- Prioritize experiences that match key responsibilities
+- Quantify achievements relevant to the role
+- Mirror the communication style and tone identified
+- Address mandatory requirements prominently
+- Emphasize critical skills in multiple sections
+- Maintain authenticity - enhance, don't fabricate
+- Location should remain candidate's actual location
+- Include ALL work experiences in fullExperience
+- For each position, include 6-8 responsibilities maximum
+- Format job titles as "Position - Company (Department)" if applicable
+- Security clearance: ONLY include if explicitly mentioned in original resume
+- List qualifications in order of job relevance
+- Include both technical and soft skills (top 8 skills)
+- If referees not provided, return empty arrays for fields
+- Keep formatting professional and consistent
+- For experience section, provide 2 most impressive positions with 3-4 bullets each
+- Include 3 most impressive and relevant achievements.
+- For affiliations, must return professional message ("No information given") if not available, otherwise list concisely
+
+
+CANDIDATE'S RESUME:
+${resumeText}
+
+Return ONLY the JSON object, no additional text.`;
+
+  try {
+    const response = await makeGeminiRequest(
+      prompt,
+      effectiveApiKey,
+      0.3,
+      8192
+    );
+    return response;
+  } catch (error) {
+    console.error("Error in Step 2 - Resume Tailoring:", error);
+    throw new Error(`Resume tailoring failed: ${error.message}`);
+  }
+}
+
+/**
+ * Step 3: Refine and optimize the tailored resume
+ * @param {Object} tailoredResume - Output from Step 2
+ * @param {Object} jobAnalysis - Output from Step 1
+ * @param {string} [apiKey] - Optional API key
+ * @returns {Promise<Object>} - Refined resume JSON
+ */
+export async function refineeTailoredResume(
+  tailoredResume,
+  jobAnalysis,
+  apiKey = null
+) {
+  const effectiveApiKey = apiKey || config.geminiApiKey;
+
+  if (!effectiveApiKey) {
+    throw new Error("Gemini API key is required.");
+  }
+
+  const prompt = `You are a senior resume optimization specialist conducting a final quality review. Analyze the tailored resume against the job requirements and make strategic refinements for maximum impact.
+
+🎯 ORIGINAL JOB ANALYSIS:
+${JSON.stringify(jobAnalysis, null, 2)}
+
+📄 CURRENT TAILORED RESUME:
+${JSON.stringify(tailoredResume, null, 2)}
+
+🔍 OPTIMIZATION REVIEW CRITERIA:
+
+1. **KEYWORD COVERAGE**: Ensure all critical keywords are naturally integrated
+2. **PRIORITY ALIGNMENT**: Verify critical skills are prominently featured
+3. **QUANTIFICATION**: Add specific metrics where possible
+4. **FLOW & READABILITY**: Optimize for recruiter scanning patterns
+5. **ATS OPTIMIZATION**: Perfect keyword density and formatting
+6. **IMPACT AMPLIFICATION**: Strengthen weak bullets with action verbs and results
+7. **GAP ANALYSIS**: Address any missing mandatory requirements
+8. **CONSISTENCY**: Ensure terminology matches job description throughout
+
+REFINEMENT FOCUS AREAS:
+- Strengthen profile descriptions with more compelling value propositions
+- Enhance bullet points with stronger action verbs and quantified results
+- Optimize keyword placement and density
+- Improve readability and recruiter appeal
+- Address any gaps in addressing key requirements
+- Ensure perfect alignment with assessment criteria
+
+Return the refined resume using the SAME JSON structure as provided, with improvements made throughout:
+
+{
+  "profile": {
+    "name": "Full Name (unchanged)",
+    "title": "Optimized professional title",
+    "location": "Candidate's actual location (DO NOT CHANGE)",
+    "clearance": "Security clearance or null (unchanged from original)",
+    "description": "Enhanced 150-200 word description with stronger value propositions and keyword optimization",
+    "description2": "Refined 150-200 word second paragraph with improved flow and impact"
+  },
+  "contact": {
+    "email": "Unchanged",
+    "phone": "Unchanged", 
+    "linkedin": "Unchanged"
+  },
+  "qualifications": ["Refined list optimized for job relevance"],
+  "affiliations": ["Enhanced professional memberships list"] ,
+  "skills": ["Optimized top 8 skills with perfect job alignment"],
+  "keyAchievements": ["Strengthened 3 achievements with better quantification and relevance"],
+  "experience": [
+    {
+      "title": "Unchanged",
+      "period": "Unchanged",
+      "responsibilities": ["Enhanced 4 bullets with stronger action verbs and results"]
+    }
+  ],
+  "fullExperience": [
+    {
+      "title": "Unchanged",
+      "period": "Unchanged", 
+      "responsibilities": ["Refined 6-8 bullets with improved impact and keyword optimization"]
+    }
+  ],
+  "referees": ["Unchanged array structure"]
+}
+
+🚨 MAINTAIN ALL ORIGINAL RULES:
+- Location must remain candidate's actual location
+- For experience section, provide 2 most relevant positions to the requirements with 3-4 main bullet points each
+- Include ALL work experiences in fullExperience
+- 6-8 responsibilities maximum per position
+- Security clearance only if mentioned in original resume
+- Professional formatting consistency
+- Top 8 skills combining related technologies
+- 3 most impressive achievements
+- Empty arrays for missing referee information
+- APPLY ALL THE JOB ANALYSIS INSIGHTS AND TAILORING STRATEGIES AND CRITICAL TAILORING RULES:
+
+Return ONLY the refined JSON object, no additional text.`;
+
+  try {
+    const response = await makeGeminiRequest(
+      prompt,
+      effectiveApiKey,
+      0.2,
+      8192
+    );
+    return response;
+  } catch (error) {
+    console.error("Error in Step 3 - Resume Refinement:", error);
+    throw new Error(`Resume refinement failed: ${error.message}`);
+  }
+}
+
+/**
+ * Step 4: Final keyword optimization and recruiter impact maximization
+ * @param {Object} refinedResume - Output from Step 3
+ * @param {Object} jobAnalysis - Output from Step 1
+ * @param {string} originalJobDescription - Original job description text
+ * @param {string} [apiKey] - Optional API key
+ * @returns {Promise<Object>} - Final optimized resume JSON
+ */
+export async function maximizeRecruiterImpact(
+  refinedResume,
+  jobAnalysis,
+  originalJobDescription,
+  apiKey = null
+) {
+  const effectiveApiKey = apiKey || config.geminiApiKey;
+
+  if (!effectiveApiKey) {
+    throw new Error("Gemini API key is required.");
+  }
+
+  const prompt = `🚀 FINAL STAGE: RECRUITER IMPACT MAXIMIZATION & KEYWORD SATURATION
+  
+  You are the world's most elite resume strategist conducting the FINAL optimization round. Your mission: Transform this resume into an absolute show-stopper that makes recruiters think "I MUST interview this candidate immediately!"
+  
+  🎯 ORIGINAL JOB DESCRIPTION (for maximum keyword extraction):
+  ${originalJobDescription}
+  
+  📊 JOB ANALYSIS INSIGHTS:
+  ${JSON.stringify(jobAnalysis, null, 2)}
+  
+  📄 CURRENT REFINED RESUME:
+  ${JSON.stringify(refinedResume, null, 2)}
+  
+  🔥 FINAL OPTIMIZATION PROTOCOL - MAKE THIS RESUME IRRESISTIBLE:
+  
+  1. **KEYWORD SATURATION ANALYSIS**:
+     - Extract EVERY possible relevant keyword from the original job description
+     - Integrate them naturally without keyword stuffing
+     - Use synonyms and variations of key terms
+     - Ensure 95%+ coverage of critical job description keywords
+     - Include industry buzzwords and trending terminology
+  
+  2. **RECRUITER PSYCHOLOGY TRIGGERS**:
+     - Create urgency: "This candidate will be snatched up quickly"
+     - Show ROI potential: Quantify value in dollars, percentages, time saved
+     - Demonstrate thought leadership and innovation
+     - Use power words that trigger emotional responses
+     - Create a narrative of inevitable success
+  
+  3. **ATS DOMINATION STRATEGY**:
+     - Perfect keyword density (not too sparse, not stuffed)
+     - Strategic placement in high-impact sections
+     - Use exact phrases from job description where natural
+     - Include relevant acronyms and their full forms
+     - Optimize for search algorithm ranking
+  
+  4. **COMPELLING VALUE PROPOSITIONS**:
+     - Lead with candidate's unique differentiators
+     - Address the company's pain points directly
+     - Show competitive advantages over other candidates
+     - Demonstrate cultural fit and shared values
+     - Create emotional connection through storytelling
+  
+  5. **IMPACT AMPLIFICATION TECHNIQUES**:
+     - Transform passive descriptions into active achievements
+     - Add specific numbers, metrics, and timeframes
+     - Use powerful action verbs that convey leadership
+     - Show progression and growth trajectory
+     - Include forward-looking statements about potential contribution
+  
+  6. **RECRUITER SCANNING OPTIMIZATION**:
+     - Front-load the most impressive information
+     - Use impactful opening statements
+     - Create visual hierarchy with strategic keyword placement
+     - Ensure easy skimmability for busy recruiters
+     - Make key qualifications jump off the page
+  
+  🎪 PSYCHOLOGICAL IMPACT STRATEGIES:
+  
+  **CONFIDENCE BUILDERS**:
+  - Use assertive, confident language
+  - Show mastery and expertise
+  - Demonstrate thought leadership
+  - Include recognition and achievements
+  
+  **CREDIBILITY INDICATORS**:
+  - Quantify everything possible
+  - Show consistent career progression
+  - Include relevant certifications/affiliations
+  - Demonstrate industry knowledge
+  
+  **URGENCY CREATORS**:
+  - Show high performance and results
+  - Indicate sought-after skills
+  - Demonstrate market value
+  - Create FOMO (fear of missing out)
+  
+  🏆 FINAL RESUME OUTPUT - RECRUITER MAGNET VERSION:
+  
+  {
+    "profile": {
+      "name": "Full Name (unchanged)",
+      "title": "POWER-PACKED title with maximum keyword relevance",
+      "location": "Candidate's actual location (DO NOT CHANGE)",
+      "clearance": "Security clearance or null (unchanged from original)",
+      "description": "HOOK THEM IMMEDIATELY: 150-200 words that scream 'HIRE ME NOW!' - packed with keywords, value propositions, and irresistible selling points",
+      "description2": "SEAL THE DEAL: 150-200 words that create urgency, show ROI potential, and make them fear losing this candidate to competitors"
+    },
+    "contact": {
+      "email": "Unchanged",
+      "phone": "Unchanged", 
+      "linkedin": "Unchanged"
+    },
+    "qualifications": ["Keyword-optimized qualifications that mirror job requirements exactly"],
+    "affiliations": ["Strategic professional memberships that signal industry authority"],
+    "skills": ["MAXIMUM IMPACT: Top 8 skills with perfect keyword matching and power combinations"],
+    "keyAchievements": ["3 SHOW-STOPPING achievements that prove they're the perfect hire - heavily quantified and keyword-rich"],
+    "experience": [
+      {
+        "title": "Unchanged",
+        "period": "Unchanged",
+        "responsibilities": ["4 KILLER bullets that make recruiters think 'this is exactly what we need' - maximum keyword density"]
+      }
+    ],
+    "fullExperience": [
+      {
+        "title": "Unchanged",
+        "period": "Unchanged", 
+        "responsibilities": ["6-8 RECRUITER-MAGNET bullets per role - each one a mini-sales pitch proving perfect job fit"]
+      }
+    ],
+    "referees": ["Unchanged array structure"]
+  }
+  
+  🚨 CRITICAL SUCCESS FACTORS:
+  
+  **KEYWORD OPTIMIZATION**:
+  - Use EVERY relevant keyword from the original job description
+  - Include variations and synonyms naturally
+  - Balance density without stuffing
+  - Strategic placement for maximum ATS impact
+  
+  **RECRUITER APPEAL**:
+  - Create immediate emotional impact
+  - Show clear ROI and value proposition
+  - Use power language and confident tone
+  - Make them excited to meet this candidate
+  
+  **AUTHENTICITY PRESERVATION**:
+  - Never fabricate experience or skills
+  - Enhance presentation, don't invent content
+  - Maintain professional credibility
+  - Stay true to candidate's actual background
+  
+  **TECHNICAL COMPLIANCE**:
+  - Location must remain candidate's actual location
+  - For experience section, provide 2 most relevant positions to the requirements with 3-4 main bullet points each
+  - Include ALL work experiences in fullExperience
+  - 6-8 responsibilities maximum per position
+  - Security clearance only if mentioned in original resume
+  - Professional formatting consistency
+  - Top 8 skills combining related technologies
+  - 3 most impressive achievements
+  - Empty arrays for missing referee information
+  - For affiliations, must return professional message ("No information given") if not available, otherwise list concisely
+  - APPLY ALL THE JOB ANALYSIS INSIGHTS AND TAILORING STRATEGIES AND CRITICAL TAILORING RULES
+
+  🎯 MAKE THIS RESUME IMPOSSIBLE TO IGNORE!
+  
+  Return ONLY the final optimized JSON object, no additional text.`;
+
+  try {
+    const response = await makeGeminiRequest(
+      prompt,
+      effectiveApiKey,
+      0.4,
+      8192
+    );
+    return response;
+  } catch (error) {
+    console.error("Error in Step 4 - Final Optimization:", error);
+    throw new Error(`Final optimization failed: ${error.message}`);
+  }
+}
+
+/**
+ * Complete four-step pipeline function
+ * @param {string} resumeText - Original resume text
+ * @param {string} jobDescription - Job description to tailor to
+ * @param {string} [apiKey] - Optional API key
+ * @returns {Promise<Object>} - Final optimized resume JSON
+ */
+export async function generateTailoredResumeThreeStep(
+  resumeText,
+  jobDescription,
+  apiKey = null
+) {
+  try {
+    console.log("🔍 Step 1: Analyzing job description...");
+    const jobAnalysis = await analyzeJobDescription(jobDescription, apiKey);
+
+    console.log("✏️ Step 2: Tailoring resume...");
+    const tailoredResume = await tailorResumeToJob(
+      resumeText,
+      jobAnalysis,
+      apiKey
+    );
+
+    console.log("🔧 Step 3: Refining tailored resume...");
+    const refinedResume = await refineeTailoredResume(
+      tailoredResume,
+      jobAnalysis,
+      apiKey
+    );
+
+    console.log("✅ Three-step tailoring complete!");
+
+    const finalResume = await maximizeRecruiterImpact(
+      refinedResume,
+      jobAnalysis,
+      jobDescription,
+      apiKey
+    );
+
+    return finalResume;
+  } catch (error) {
+    console.error("Three-step pipeline error:", error);
+    throw error;
+  }
+}
+
+/**
+ * Helper function to make Gemini API requests
+ * @param {string} prompt - The prompt to send
+ * @param {string} apiKey - API key
+ * @param {number} temperature - Temperature setting
+ * @param {number} maxTokens - Maximum output tokens
+ * @returns {Promise<Object>} - Parsed JSON response
+ */
+async function makeGeminiRequest(prompt, apiKey, temperature, maxTokens) {
+  try {
+    const response = await fetch(
+      "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-goog-api-key": apiKey,
+        },
+        body: JSON.stringify({
+          contents: [
+            {
+              parts: [
+                {
+                  text: prompt,
+                },
+              ],
+            },
+          ],
+          generationConfig: {
+            temperature: temperature,
+            topK: 20,
+            topP: 0.8,
+            maxOutputTokens: maxTokens,
+          },
+        }),
+      }
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      const errorMessage =
+        errorData.error?.message || `API Error: ${response.status}`;
+      throw new Error(errorMessage);
+    }
+
+    const data = await response.json();
+
+    if (data.candidates && data.candidates[0]?.content?.parts) {
+      const responseText = data.candidates[0].content.parts[0].text;
+
+      try {
+        // Clean the response text
+        const cleanedText = responseText
+          .replace(/```json\n?/g, "")
+          .replace(/```\n?/g, "")
+          .trim();
+
+        const parsedJSON = JSON.parse(cleanedText);
+        return parsedJSON;
+      } catch (parseError) {
+        console.error("Failed to parse JSON response:", parseError);
+        console.error("Raw response:", responseText);
+        throw new Error(
+          "Failed to parse AI response as JSON. Please try again."
+        );
+      }
+    } else {
+      throw new Error("Unexpected API response format");
+    }
+  } catch (error) {
+    console.error("Error calling Gemini API:", error);
+    throw error;
+  }
+}
+
+/**
+ * Standard resume generation (non-tailored)
+ * @param {string} resumeText - The resume text content to analyze
+ * @param {string} [apiKey] - Optional Google API key for Gemini (overrides config)
+ * @returns {Promise<Object>} - A promise that resolves to the structured resume data
+ */
+export async function generateResumeJSON(resumeText, apiKey = null) {
   const effectiveApiKey = apiKey || config.geminiApiKey;
 
   if (!effectiveApiKey) {
@@ -18,205 +663,11 @@ export async function generateResumeJSON(text, apiKey = null) {
 
   // Trim text if it's too long (Gemini has input limits)
   const trimmedText =
-    text.length > 30000 ? text.substring(0, 30000) + "..." : text;
-
-  return await callGeminiAPI(trimmedText, null, effectiveApiKey);
-}
-
-/**
- * Calls the Gemini API to generate a tailored resume based on job requirements
- * @param {string} resumeText - The original resume text content
- * @param {string} jobDescription - The job description or tender requirements
- * @param {string} [apiKey] - Optional Google API key for Gemini (overrides config)
- * @returns {Promise<Object>} - A promise that resolves to the tailored structured resume data
- */
-export async function generateTailoredResumeJSON(
-  resumeText,
-  jobDescription,
-  apiKey = null
-) {
-  // Use provided API key or fall back to environment variable
-  const effectiveApiKey = apiKey || config.geminiApiKey;
-
-  if (!effectiveApiKey) {
-    throw new Error(
-      "Gemini API key is required. Please provide an API key or set it in your environment variables."
-    );
-  }
-
-  if (!jobDescription || jobDescription.trim() === "") {
-    throw new Error(
-      "Job description is required for tailored resume generation."
-    );
-  }
-
-  // Trim texts if they're too long
-  const trimmedResumeText =
-    resumeText.length > 35000
-      ? resumeText.substring(0, 35000) + "..."
+    resumeText.length > 30000
+      ? resumeText.substring(0, 30000) + "..."
       : resumeText;
-  const trimmedJobDescription =
-    jobDescription.length > 25000
-      ? jobDescription.substring(0, 25000) + "..."
-      : jobDescription;
 
-  return await callGeminiAPI(
-    trimmedResumeText,
-    trimmedJobDescription,
-    effectiveApiKey
-  );
-}
-
-/**
- * Core function to call Gemini API with resume and optional job description
- * @param {string} resumeText - The resume text content
- * @param {string|null} jobDescription - Optional job description for tailoring
- * @param {string} apiKey - The API key to use
- * @returns {Promise<Object>} - The structured resume data
- */
-async function callGeminiAPI(resumeText, jobDescription, apiKey) {
-  const isTailored = jobDescription !== null;
-
-  if (isTailored) {
-    // Tailored resume prompt - focused on job matching
-    const tailoredPrompt = `You are an elite resume strategist with 20+ years of experience helping candidates land dream jobs. Your mission: Transform this resume into an irresistible candidate profile that makes recruiters think "This is EXACTLY who we need!"
-
-    🎯 TARGET JOB ANALYSIS:
-    ${jobDescription}
-    
-    🧠 RECRUITER PSYCHOLOGY MASTERY:
-    Understand what recruiters are REALLY looking for:
-    - Immediate evidence the candidate can solve their specific problems
-    - Proof of relevant achievements with quantifiable impact
-    - Keywords that match their ATS and mental checklist
-    - A narrative that flows logically from their needs to this candidate's value
-    - Confidence that this person will hit the ground running
-    
-    🔥 EXTREME TAILORING PROTOCOL:
-    
-    1. **PROFESSIONAL SUMMARY WEAPONIZATION**:
-       - Open with a power statement that directly addresses their biggest need
-       - Use the EXACT terminology from the job posting (mirror their language)
-       - Include specific metrics/achievements that prove capability
-       - Address 3-4 key requirements in the first paragraph
-       - Second paragraph should create urgency - make them fear losing this candidate
-       - Use industry buzzwords and trends mentioned in the posting
-    
-    2. **STRATEGIC KEYWORD INFILTRATION**:
-       - Extract every important keyword, skill, and phrase from the job description
-       - Weave them naturally throughout ALL sections
-       - Professional title should echo the job title if appropriate
-       - Skills section must start with their top 3-4 requirements
-       - Experience bullets should use their exact terminology
-       - Create keyword density without stuffing
-    
-    3. **EXPERIENCE METAMORPHOSIS**:
-       - Rewrite every responsibility to demonstrate job-relevant value
-       - Use the STAR method: Situation, Task, Action, Result
-       - Lead with action verbs that match the job description's energy
-       - Quantify everything possible (percentages, dollar amounts, time saved, team sizes)
-       - Focus on OUTCOMES and IMPACT, not just duties
-       - Make every bullet point answer: "How does this prove I can do THEIR job?"
-    
-    4. **ACHIEVEMENT AMPLIFICATION**:
-       - Select achievements that directly parallel their challenges
-       - Use metrics that matter to their industry/role
-       - Show progression and growth trajectory
-       - Demonstrate both hard and soft skills they've mentioned
-       - Include any achievements that show innovation, leadership, or problem-solving
-    
-    5. **SKILLS PRECISION TARGETING**:
-       - Lead with skills that appear in their "must-have" list
-       - Group complementary skills (e.g., "Python/Django/REST APIs")
-       - Include both technical and soft skills they've mentioned
-       - Use their exact skill terminology, not synonyms
-       - Show depth through combined skill sets
-    
-    6. **PSYCHOLOGICAL TRIGGERS**:
-       - Create a narrative of inevitable success
-       - Use confident, assertive language
-       - Show cultural fit through values alignment
-       - Demonstrate thought leadership in relevant areas
-       - Include any certifications/education that match their preferences
-    
-    JSON SCHEMA - Every field must serve the tailoring mission:
-    
-    {
-      "profile": {
-        "name": "Full Name",
-        "title": "EXACT MATCH TO THEIR IDEAL CANDIDATE TITLE",
-        "location": "city",
-        "clearance": "Security clearance or null",
-        "description": "Hook them in 150-200 words - address their top 3-4 needs with specific proof points and relevant keywords",
-        "description2": "Seal the deal in 150-200 words - additional value propositions, cultural fit indicators, and forward-looking vision"
-      },
-      "contact": {
-    "email": "email@example.com or null if not provided",
-    "phone": "+61 XXX XXX XXX or null if not provided", 
-    "linkedin": "LinkedIn profile URL or null if not provided"
-  },
-      "qualifications": ["Education/certs prioritized by job relevance, using their preferred terminology"],
-      "affiliations": ["Professional memberships that signal industry credibility"],
-      "skills": ["8 skills in order of job importance - lead with their must-haves, combine related skills"],
-      "keyAchievements": ["3 achievements that prove capability for their specific challenges - quantified and relevant"],
-      "experience": [
-        {
-          "title": "Job Title - Company",
-          "period": "Date Range",
-          "responsibilities": ["4 power bullets showing direct relevance to target role using their language"]
-        }
-      ],
-      "fullExperience": [
-        {
-          "title": "Job Title - Company",
-          "period": "Date Range", 
-          "responsibilities": ["8 strategic bullets per role - each proving value for target position using STAR method and their terminology"]
-        }
-      ],
-      "referees": [
-            {
-            "title": "Job title (Company)" or return empty array if not provided,
-            "name": "Referee Name" or return empty array if not provided, 
-            "email": "email@example.com" or return empty array if not provided,
-            "phone": "+61 XXX XXX XXX" or return empty array if not provided
-            }
-        ]
-    }
-    
-    🚨 CRITICAL SUCCESS FACTORS:
-    - Make every word count toward getting this specific job
-    - Use their language, their priorities, their problems as your framework
-    - Create undeniable proof this candidate is the solution they're seeking
-    - Build a compelling narrative of perfect fit and inevitable success
-    - Balance confidence with authenticity - never fabricate, only optimize presentation
-    
-    
-    IMPORTANT RULES must be followed:
-- Extract actual information from the resume text
-- Location should not be change to match the job description, it should be the candidate's actual location.
-- For fullExperience section, include ALL work experiences. For each position, include 6-8 responsibilities and achievements maximum
-- For profile descriptions, write comprehensive paragraphs (150-200 words each) highlighting background, experience, and suitability
-- Include quantifiable achievements where mentioned
-- Format job titles as "Position - Company (Department/Organization)" if applicable
-- For security clearance: ONLY include if explicitly mentioned. Return null if not mentioned
-- List qualifications in order of relevance/importance
-- Include both technical and soft skills (top 8 skills, combining related skills like "Python/Django")
-- If referees are not provided, return an empty array[] for the fields like "title", "name", "email", "phone". Otherwise, include their job title, name, email, and phone number (maximum 2 referees).
-- For affiliations, return professional message if not available, otherwise list concisely
-- Keep formatting professional and consistent
-- For experience section, provide 2 most impressive positions with 3-4 main bullet points each
-- For keyAchievements, include 3 most impressive achievements
-    
-
-CANDIDATE'S RESUME:
-${resumeText}
-
-MAKE SURE to Return ONLY the JSON object, no additional text.`;
-
-    return await makeGeminiRequest(tailoredPrompt, apiKey, 0.3, 8192);
-  } else {
-    // Standard resume prompt - general processing
-    const standardPrompt = `Please analyze the following resume text and return a JSON object with the structured information that matches this exact schema for a professional resume template:
+  const standardPrompt = `Please analyze the following resume text and return a JSON object with the structured information that matches this exact schema for a professional resume template:
 
 {
   "profile": {
@@ -274,259 +725,104 @@ Instructions:
 - List qualifications in order of relevance/importance
 - Include both technical and soft skills (top 8 skills, combining related skills like "Python/Django")
 - If referees are not provided, return an empty array[] for the fields like "title", "name", "email", "phone". Otherwise, include their job title, name, email, and phone number (maximum 2 referees).
-- For affiliations, return professional message if not available, otherwise list concisely
+- For affiliations, must return professional message ("No information given") if not available, otherwise list concisely
 - Keep formatting professional and consistent
 - For experience section, provide 2 most impressive positions with 3-4 main bullet points each
 - For keyAchievements, include 3 most impressive achievements
 
 Resume text to analyze:
-${resumeText}
+${trimmedText}
 
 Return ONLY the JSON object, no additional text or formatting.`;
 
-    return await makeGeminiRequest(standardPrompt, apiKey, 0.1, 6048);
-  }
-}
-
-/**
- * Helper function to make the actual Gemini API request
- * @param {string} prompt - The complete prompt to send
- * @param {string} apiKey - The API key
- * @param {number} temperature - Temperature setting
- * @param {number} maxTokens - Maximum output tokens
- * @returns {Promise<Object>} - The structured resume data
- */
-async function makeGeminiRequest(prompt, apiKey, temperature, maxTokens) {
   try {
-    const response = await fetch(
-      "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-goog-api-key": apiKey,
-        },
-        body: JSON.stringify({
-          contents: [
-            {
-              parts: [
-                {
-                  text: prompt,
-                },
-              ],
-            },
-          ],
-          generationConfig: {
-            temperature: temperature,
-            topK: 20,
-            topP: 0.8,
-            maxOutputTokens: 8196,
-          },
-        }),
-      }
+    const response = await makeGeminiRequest(
+      standardPrompt,
+      effectiveApiKey,
+      0.1,
+      6048
     );
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      const errorMessage =
-        errorData.error?.message || `API Error: ${response.status}`;
-      throw new Error(errorMessage);
-    }
-
-    const data = await response.json();
-
-    // Extract text from the response
-    if (data.candidates && data.candidates[0]?.content?.parts) {
-      const responseText = data.candidates[0].content.parts[0].text;
-      console.log("Response text:", responseText);
-
-      // Try to parse the JSON response
-      try {
-        // Clean the response text (remove markdown formatting if present)
-        const cleanedText = responseText
-          .replace(/```json\n?/g, "")
-          .replace(/```\n?/g, "")
-          .trim();
-
-        const parsedJSON = JSON.parse(cleanedText);
-
-        // Validate and set defaults for required fields to match resume-test.jsx structure
-        return {
-          profile: {
-            name: parsedJSON.profile?.name || "Unknown Candidate",
-            title: parsedJSON.profile?.title || "PROFESSIONAL",
-            location: parsedJSON.profile?.location || "",
-            clearance: parsedJSON.profile?.clearance || null,
-            photo: "/api/placeholder/400/600",
-            description:
-              parsedJSON.profile?.description ||
-              "Professional with extensive experience in their field.",
-            description2:
-              parsedJSON.profile?.description2 ||
-              "Skilled professional with a strong background in project management and technical expertise.",
-          },
-          contact: {
-            email: parsedJSON.contact?.email || null,
-            phone: parsedJSON.contact?.phone || null,
-            linkedin: parsedJSON.contact?.linkedin || null,
-          },
-          qualifications: Array.isArray(parsedJSON.qualifications)
-            ? parsedJSON.qualifications
-            : [],
-          affiliations: Array.isArray(parsedJSON.affiliations)
-            ? parsedJSON.affiliations
-            : [],
-          skills: Array.isArray(parsedJSON.skills) ? parsedJSON.skills : [],
-          keyAchievements: Array.isArray(parsedJSON.keyAchievements)
-            ? parsedJSON.keyAchievements
-            : [],
-          experience: Array.isArray(parsedJSON.experience)
-            ? parsedJSON.experience.map((exp) => ({
-                title: exp.title || "Position",
-                period: exp.period || "Date not specified",
-                responsibilities: Array.isArray(exp.responsibilities)
-                  ? exp.responsibilities
-                  : [],
-              }))
-            : [],
-          fullExperience: Array.isArray(parsedJSON.fullExperience)
-            ? parsedJSON.fullExperience.map((exp) => ({
-                title: exp.title || "Position",
-                period: exp.period || "Date not specified",
-                responsibilities: Array.isArray(exp.responsibilities)
-                  ? exp.responsibilities
-                  : [],
-              }))
-            : [],
-          referees:
-            Array.isArray(parsedJSON.referees) && parsedJSON.referees.length > 0
-              ? parsedJSON.referees.map((ref) => ({
-                  name: ref?.name,
-                  title: ref?.title,
-                  email: ref?.email,
-                  phone: ref?.phone,
-                }))
-              : null,
-        };
-      } catch (parseError) {
-        console.error("Failed to parse JSON response:", parseError);
-        throw new Error(
-          "Failed to parse AI response as JSON. Please try again."
-        );
-      }
-    } else {
-      throw new Error("Unexpected API response format");
-    }
+    // Validate and set defaults for required fields
+    return {
+      profile: {
+        name: response.profile?.name || "Unknown Candidate",
+        title: response.profile?.title || "PROFESSIONAL",
+        location: response.profile?.location || "",
+        clearance: response.profile?.clearance || null,
+        photo: "/api/placeholder/400/600",
+        description:
+          response.profile?.description ||
+          "Professional with extensive experience in their field.",
+        description2:
+          response.profile?.description2 ||
+          "Skilled professional with a strong background in project management and technical expertise.",
+      },
+      contact: {
+        email: response.contact?.email || null,
+        phone: response.contact?.phone || null,
+        linkedin: response.contact?.linkedin || null,
+      },
+      qualifications: Array.isArray(response.qualifications)
+        ? response.qualifications
+        : [],
+      affiliations: Array.isArray(response.affiliations)
+        ? response.affiliations
+        : [],
+      skills: Array.isArray(response.skills) ? response.skills : [],
+      keyAchievements: Array.isArray(response.keyAchievements)
+        ? response.keyAchievements
+        : [],
+      experience: Array.isArray(response.experience)
+        ? response.experience.map((exp) => ({
+            title: exp.title || "Position",
+            period: exp.period || "Date not specified",
+            responsibilities: Array.isArray(exp.responsibilities)
+              ? exp.responsibilities
+              : [],
+          }))
+        : [],
+      fullExperience: Array.isArray(response.fullExperience)
+        ? response.fullExperience.map((exp) => ({
+            title: exp.title || "Position",
+            period: exp.period || "Date not specified",
+            responsibilities: Array.isArray(exp.responsibilities)
+              ? exp.responsibilities
+              : [],
+          }))
+        : [],
+      referees:
+        Array.isArray(response.referees) && response.referees.length > 0
+          ? response.referees.map((ref) => ({
+              name: ref?.name,
+              title: ref?.title,
+              email: ref?.email,
+              phone: ref?.phone,
+            }))
+          : null,
+    };
   } catch (error) {
-    console.error("Error calling Gemini API:", error);
+    console.error("Error generating standard resume:", error);
     throw error;
   }
 }
 
-// Keep backward compatibility functions
-export async function generateSummary(text, apiKey = null) {
-  const resumeData = await generateResumeJSON(text, apiKey);
-  return formatResumeDataToText(resumeData);
-}
-
-/**
- * Generate a tailored summary based on job requirements
- * @param {string} resumeText - The original resume text
- * @param {string} jobDescription - The job description or requirements
- * @param {string} [apiKey] - Optional API key
- * @returns {Promise<string>} - Formatted tailored resume summary
- */
-export async function generateTailoredSummary(
+// Update your existing generateTailoredResumeJSON function to use the new pipeline
+export async function generateTailoredResumeJSON(
   resumeText,
   jobDescription,
   apiKey = null
 ) {
-  const resumeData = await generateTailoredResumeJSON(
+  if (!jobDescription || jobDescription.trim() === "") {
+    throw new Error(
+      "Job description is required for tailored resume generation."
+    );
+  }
+
+  // Use the new three-step pipeline
+  return await generateTailoredResumeThreeStep(
     resumeText,
     jobDescription,
     apiKey
   );
-  return formatResumeDataToText(resumeData);
-}
-
-function formatResumeDataToText(resumeData) {
-  let summary = `**${resumeData.profile.name}**\n\n`;
-
-  if (resumeData.profile.description) {
-    summary += `${resumeData.profile.description}\n\n`;
-  }
-
-  if (resumeData.profile.description2) {
-    summary += `${resumeData.profile.description2}\n\n`;
-  }
-
-  if (resumeData.profile.title) {
-    summary += `**Current Role:** ${resumeData.profile.title}\n`;
-  }
-
-  if (resumeData.profile.location) {
-    summary += `**Location:** ${resumeData.profile.location}\n`;
-  }
-
-  if (resumeData.profile.clearance) {
-    summary += `**Security Clearance:** ${resumeData.profile.clearance}\n`;
-  }
-
-  // Add contact information
-  if (
-    resumeData.contact?.email ||
-    resumeData.contact?.phone ||
-    resumeData.contact?.linkedin
-  ) {
-    summary += `**Contact:**\n`;
-    if (resumeData.contact?.email) {
-      summary += `* Email: ${resumeData.contact.email}\n`;
-    }
-    if (resumeData.contact?.phone) {
-      summary += `* Phone: ${resumeData.contact.phone}\n`;
-    }
-    if (resumeData.contact?.linkedin) {
-      summary += `* LinkedIn: ${resumeData.contact.linkedin}\n`;
-    }
-  }
-
-  summary += "\n";
-
-  if (resumeData.skills && resumeData.skills.length > 0) {
-    summary += `**Key Skills:**\n`;
-    resumeData.skills.forEach((skill) => {
-      summary += `* ${skill}\n`;
-    });
-    summary += "\n";
-  }
-
-  if (resumeData.experience && resumeData.experience.length > 0) {
-    summary += `**Work Experience:**\n`;
-    resumeData.experience.forEach((job) => {
-      summary += `* **${job.title}** (${job.period})\n`;
-      if (job.responsibilities && job.responsibilities.length > 0) {
-        job.responsibilities.forEach((resp) => {
-          summary += `  - ${resp}\n`;
-        });
-      }
-    });
-    summary += "\n";
-  }
-
-  if (resumeData.qualifications && resumeData.qualifications.length > 0) {
-    summary += `**Qualifications:**\n`;
-    resumeData.qualifications.forEach((qual) => {
-      summary += `* ${qual}\n`;
-    });
-    summary += "\n";
-  }
-
-  if (resumeData.keyAchievements && resumeData.keyAchievements.length > 0) {
-    summary += `**Key Achievements:**\n`;
-    resumeData.keyAchievements.forEach((achievement) => {
-      summary += `* ${achievement}\n`;
-    });
-  }
-
-  return summary;
 }

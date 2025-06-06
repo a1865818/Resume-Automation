@@ -1,0 +1,303 @@
+{
+  "profile": {
+    "name": "Vineet Joshi",
+    "title": "Senior Software Engineer | Data Architect | Cloud Migration Specialist",
+    "location": "Melbourne, Australia",
+    "clearance": "",
+    "photo": "/api/placeholder/400/600",
+    "description": "Highly accomplished and results-oriented Senior Software Engineer with 20+ years of experience delivering cutting-edge software solutions and leading digital transformations for Tier-1 clients across Australia, the UK, and APAC. Proven ability to collaborate effectively with clients and stakeholders, build high-performing teams, and deliver innovative solutions within demanding timelines. Expertise encompasses the entire software development lifecycle (SDLC), from requirements gathering and design to development, testing, and deployment, leveraging leading technologies including React, React Native, JavaScript, CSS, HTML, and cloud platforms like AWS and Azure. Adept at troubleshooting and debugging applications, ensuring seamless integration and optimal performance.  Passionate about leveraging technology to solve complex business problems and drive exceptional customer value. Proven success in building new technology capabilities, establishing vendor partnerships, and scaling delivery teams for mid-to-large-size projects.  Adept at Agile methodologies and technical documentation.  A collaborative and supportive team player committed to continuous learning and staying updated with the latest industry trends.  Seeking a challenging Software Engineer role where I can leverage my extensive experience and expertise to contribute to the immediate success of a dynamic and innovative organization.",
+    "description2": "A strategic thinker and problem-solver with a proven track record of delivering significant ROI for clients.  My expertise in data architecture, cloud migration, and digital transformation initiatives has resulted in substantial business improvements and cost savings.  I am proficient in facilitating workshops, providing technical leadership to onshore and offshore teams, and delivering projects within regulatory timeframes and budget constraints.  My experience includes successful cloud migrations, data architecture design, and digital transformation initiatives resulting in significant business improvements and cost savings for clients.  Ready to immediately contribute to a challenging and rewarding role, leveraging my deep technical skills and leadership experience to drive innovation and achieve ambitious business goals.  This is an opportunity to acquire a highly sought-after talent with a proven track record of success – don't miss out!"
+  },
+  "qualifications": [
+    "Master of Computer Applications (1994-1997) – Birla Institute of Technology, India",
+    "Bachelor of Science (Electronics) (1991-1994) – Hislop College, University of Nagpur, India",
+    "AWS Certified Solutions Architect – Associate",
+    "AWS Certified Developer – Associate"
+  ],
+  "affiliations": [
+    "No information given"
+  ],
+  "skills": [
+    "JavaScript",
+    "React",
+    "React Native",
+    "HTML",
+    "CSS",
+    "AWS",
+    "Azure",
+    "Agile"
+  ],
+  "keyAchievements": [
+    "Delivered a fully cloud-native digital business for Angle Auto Finance within 6 months, achieving $1B in wholesale and retail business within 3 months of go-live.  This involved designing and implementing a robust data architecture, migrating legacy systems to the cloud, and scaling the delivery team to meet aggressive deadlines.",
+    "Successfully migrated a $1B loan book from Westpac, achieving 99.99% reconciliation with a $23 variance, integrating data from 23,000 auto dealers. This project required meticulous data management, robust testing procedures, and seamless integration with multiple systems.",
+    "Built a Data Warehouse (DWH) with 261 tables, 165 million rows, and 325 GB of data in 3 months, producing 70 critical compliance and accounting reports, ingesting ~$300 million AUD in invoices from 40 OEMs in the first month. This involved designing and implementing a scalable and efficient data warehouse solution, ensuring data quality and accuracy."
+  ],
+  "experience": [
+    {
+      "title": "Data Management Lead - Accenture (Suncorp)",
+      "period": "August 2023 – Current",
+      "responsibilities": [
+        "Executed data architecture and data migration for the Digital Insurer Transformation Program, replacing a legacy system with a cloud-native solution on Azure.",
+        "Established data stream governance and defined key delivery artifacts for the program.",
+        "Upskilled and scaled the delivery team in Duck Creek, Snowflake, and Power BI technologies.",
+        "Defined the roadmap for policy migration to the Duck Creek Insurance Platform, ensuring a smooth transition."
+      ]
+    }
+  ],
+  "fullExperience": [
+    {
+      "title": "Data Management Lead - Accenture (Suncorp)",
+      "period": "August 2023 – Current",
+      "responsibilities": [
+        "Executed data architecture and data migration for the Digital Insurer Transformation Program replacing legacy policy administration system with Duck Creek cloud-native system on Azure.",
+        "Established governance for the data stream and defined key delivery artifacts, ensuring compliance and efficiency.",
+        "Upskilled and scaled the delivery team with Duck Creek (Policy, Billing, Clarity), Snowflake, and Power BI, improving team capabilities and project velocity.",
+        "Contributed to Enterprise Data Modeling and defined the roadmap for policy migration, providing strategic direction and planning.",
+        "Facilitated workshops on data integration impact, ensuring stakeholder alignment and buy-in.",
+        "Provided delivery leadership to onshore and offshore staff, fostering collaboration and effective communication."
+      ]
+    },
+    {
+      "title": "Lead Consultant – AWS Migration Assessment - Accenture (Westpac BT)",
+      "period": "April 2023 – July 2023",
+      "responsibilities": [
+        "Led the feasibility assessment to migrate and scale the on-prem wealth management platform (BT Panorama) to AWS IaaS for Westpac BT.",
+        "Led a team of consultants to assess the existing application and infrastructure stack, identifying potential challenges and opportunities.",
+        "Created a proof of concept to size appropriate cloud infrastructure, demonstrating the feasibility and cost-effectiveness of the migration.",
+        "Managed benchmark tests and authored the feasibility report presented to executive leadership, securing buy-in for the project.",
+        "Successfully identified and mitigated potential risks associated with the cloud migration, ensuring a smooth transition."
+      ]
+    },
+    {
+      "title": "Program Manager – Platform Build and Scale - Accenture (Cerberus Capital)",
+      "period": "July 2021 – December 2022",
+      "responsibilities": [
+        "Led the build and enablement of a Loan Origination System using FIS Ambit on Azure in 9 months, delivering a critical business capability on time and within budget.",
+        "Delivered the program within regulatory timeframes, managing ~50 resources and fostering a collaborative and high-performing team environment.",
+        "Managed stakeholder communication and reporting to the CXO level, ensuring transparency and alignment.",
+        "Provided technical leadership for data integration with third parties (Credit Bureaus, OEMs, etc.), ensuring seamless data flow and accuracy.",
+        "Built and integrated ~60+ documents for business operations, streamlining processes and improving efficiency.",
+        "Built a DWH with 261 tables, 165 million rows, and 325 GB of data, producing 70 reports to support critical business decisions."
+      ]
+    },
+    {
+      "title": "Program Manager – Analytics and Data Management, Data Integration - Accenture (BHP)",
+      "period": "March 2019 – June 2021",
+      "responsibilities": [
+        "Led sales activities, including contract negotiation, delivering ~$8 million AUD in pipeline, expanding business opportunities and revenue streams.",
+        "Established the Program Acceleration Office and led program planning and execution, improving project efficiency and delivery.",
+        "Led multiple streams for Data Integration, Infrastructure Uplift, Application Migration, and Platform Stabilization, demonstrating versatility and leadership.",
+        "Managed a multi-vendor environment and ramped up the offshore delivery team, fostering collaboration and knowledge sharing.",
+        "Conducted technology selection, prioritization, team staffing, and infrastructure uplift, optimizing resource allocation and project success.",
+        "Optimized resources and performed data sensitivity analysis with cybersecurity sign-off, ensuring data security and compliance."
+      ]
+    },
+    {
+      "title": "Senior Manager - Sales - Accenture (Financial Services)",
+      "period": "March 2017 – December 2018",
+      "responsibilities": [
+        "Led and closed deals ranging from $2M - $15M, consistently exceeding sales targets and contributing significantly to revenue growth.",
+        "Drove Accenture's value proposition in Cloud, Analytics, and DevOps, showcasing expertise and market knowledge.",
+        "Developed and grew long-term key client relationships, building trust and fostering strong partnerships.",
+        "Supported technology solutioning and estimating in proposals and pricing, ensuring accurate and competitive bids.",
+        "Managed successful opportunity transitions to delivery teams, ensuring a smooth handover and project success.",
+        "Complied with Accenture sales methodology and maintained sales pipeline accuracy, demonstrating professionalism and adherence to standards."
+      ]
+    },
+    {
+      "title": "Senior Project Manager (EIM) - Oakton (NTT) (University of Melbourne)",
+      "period": "May 2016 – February 2017",
+      "responsibilities": [
+        "Developed a strategic roadmap for Oracle SOA integration platform rollout, providing long-term vision and planning.",
+        "Oversaw publication of reference architecture and Canonical Data Model, ensuring consistency and standardization.",
+        "Managed the technical team responsible for designing, building, testing, and deploying the platform, fostering collaboration and effective execution.",
+        "Managed project budget and timeline, maintaining stakeholder relationships and ensuring project success.",
+        "Led the project steering group, providing strategic guidance and decision-making."
+      ]
+    },
+    {
+      "title": "Strategy Consultant - Oakton (NTT)",
+      "period": "October 2015 – February 2016",
+      "responsibilities": [
+        "Consolidated MSS requirements for two years through workshops and research, gathering comprehensive information and stakeholder input.",
+        "Estimated endpoint devices, customer growth, and data volume growth, providing accurate forecasting and planning.",
+        "Defined business requirements (Operational and Analytical), ensuring alignment with business objectives.",
+        "Designed a logical architecture mapping analytical requirements to big data components, creating a robust and scalable solution.",
+        "Evaluated and shortlisted big data vendors, ensuring the selection of the best technology for the project.",
+        "Estimated total cost of ownership for two years, assuming an offshore build model, providing a comprehensive financial analysis."
+      ]
+    },
+    {
+      "title": "Strategy Consultant - Oakton (NTT) (ANZ Bank)",
+      "period": "July 2014 – September 2015",
+      "responsibilities": [
+        "Led an audit analyzing branch activity for Easy Way to Bank (EW2B), developing a data asset roadmap to improve efficiency and effectiveness.",
+        "Delivered a detailed report with visualizations, delivery options, timelines, and prioritizations, providing clear recommendations and actionable insights.",
+        "Managed the transition of MIS reporting, improving efficiency and implementing new BI tools, enhancing reporting capabilities and data analysis.",
+        "Assessed infrastructure, user access, and system integrations, identifying potential risks and opportunities.",
+        "Recommended a phased approach with an operating model and transition milestones, ensuring a smooth and successful transition."
+      ]
+    },
+    {
+      "title": "Technical Project Manager - Oakton (NTT) (ANZ Bank)",
+      "period": "January 2013 – June 2014",
+      "responsibilities": [
+        "Managed data migration from core banking and CRM systems for the Australia Single Customer Master (ASCV) platform, ensuring data accuracy and integrity.",
+        "Developed and executed a data migration strategy, minimizing disruption and maximizing efficiency.",
+        "Established batch and real-time data migration environments and executed full-volume dress rehearsals, ensuring a smooth transition to the new system.",
+        "Defined reconciliation parameters and managed defect remediation, ensuring data quality and accuracy.",
+        "Created and implemented a production plan for data migration and system integration, ensuring a successful project completion."
+      ]
+    },
+    {
+      "title": "Data Migration Lead - Oakton (NTT) (ANZ Bank)",
+      "period": "October 2011 – January 2013",
+      "responsibilities": [
+        "Led customer data migration from legacy platforms to a new KYC tool, ensuring data accuracy and compliance.",
+        "Developed a data migration strategy ensuring alignment across all platforms, minimizing disruption and maximizing efficiency.",
+        "Established batch and customer matching environments and executed full-volume dress rehearsals, ensuring a smooth transition to the new system.",
+        "Managed defect triage meetings, ensuring timely defect fixes and minimizing project delays.",
+        "Facilitated implementation of the new KYC tool through accurate data migration, ensuring successful project completion."
+      ]
+    },
+    {
+      "title": "Reporting Architect - Oakton (NTT) (Telstra)",
+      "period": "April 2011 – September 2011",
+      "responsibilities": [
+        "Developed a business case for Telstra’s Bundles Reporting Initiative, justifying the investment and demonstrating ROI.",
+        "Gathered and formalized reporting/analytic requirements, ensuring alignment with business objectives.",
+        "Established an end-to-end architecture and reporting framework, creating a robust and scalable solution.",
+        "Conducted data analysis across multiple platforms, identifying key insights and opportunities.",
+        "Managed infrastructure readiness and provided technical leadership, ensuring project success.",
+        "Developed a data reconciliation strategy and managed business stakeholders, fostering collaboration and communication."
+      ]
+    },
+    {
+      "title": "Technical Project Manager - Accenture (Telstra)",
+      "period": "July 2009 – January 2011",
+      "responsibilities": [
+        "Gathered and formalized reporting and analytic requirements for Telstra’s Enterprise Data Warehouse, ensuring alignment with business needs.",
+        "Conducted data analysis across multiple platforms, identifying key insights and opportunities.",
+        "Customized an industry-standard telecom model in 3NF to support data analytics and reporting, ensuring data accuracy and consistency.",
+        "Utilized ERWIN data modeler to design and implement data models, creating a robust and scalable data model.",
+        "Developed a schematic layer using views to facilitate data reporting, improving reporting efficiency and accuracy.",
+        "Established best practices and standards for data modeling and design teams, ensuring consistency and quality."
+      ]
+    },
+    {
+      "title": "Technical Project Manager - Accenture (MLC - NAB)",
+      "period": "July 2010 – September 2010",
+      "responsibilities": [
+        "Assessed the impact of data migration on the target platform for MLC’s Resurgence project, identifying potential risks and opportunities.",
+        "Defined reconciliation methods and parameters, ensuring data accuracy and integrity.",
+        "Designed the data architecture and created a data load strategy, creating a robust and scalable solution.",
+        "Developed a data load and production cutover strategy, ensuring a smooth transition to the new system.",
+        "Estimated design, build, and implementation costs and efforts, providing accurate budgeting and forecasting."
+      ]
+    },
+    {
+      "title": "Technical Project Manager - Accenture (NSW Health)",
+      "period": "February 2008 – December 2008",
+      "responsibilities": [
+        "Managed application delivery for the NSW Health BI Program, ensuring timely and successful project completion.",
+        "Established a detailed project plan covering design, build, test, and deployment, providing clear direction and execution.",
+        "Developed and deployed execution and operational architecture on the Windows platform, ensuring a robust and scalable solution.",
+        "Defined and published the end-to-end solution architecture, providing clear documentation and communication.",
+        "Designed ETL processes to load real-time messages from source systems, ensuring data accuracy and timeliness.",
+        "Managed both offshore and onshore delivery teams, fostering collaboration and effective communication."
+      ]
+    },
+    {
+      "title": "Strategy Consultant - Accenture (BHP Billiton)",
+      "period": "October 2007 – November 2007",
+      "responsibilities": [
+        "Analyzed differences in master data capture and maintenance processes across BHP IT organizations, identifying areas for improvement and standardization.",
+        "Rationalized and consolidated multiple processes into a unified process and workflow, improving efficiency and reducing redundancy.",
+        "Produced a blueprint for material master data, including the RICFW inventory, providing a clear and concise roadmap for data management.",
+        "Participated in ETL tool selection for the 1SAP project, ensuring the selection of the best technology for the project.",
+        "Assessed and recommended the most appropriate tool based on project requirements, providing data-driven recommendations."
+      ]
+    },
+    {
+      "title": "BI Consultant - Wipro Australia (Optus)",
+      "period": "August 2005 – July 2007",
+      "responsibilities": [
+        "Negotiated and closed Statements of Work (SOW), demonstrating strong business acumen and negotiation skills.",
+        "Analyzed source systems for data mapping and transactions, ensuring data accuracy and consistency.",
+        "Performed 3NF data modeling and mapped data for integration, creating a robust and scalable data model.",
+        "Designed end-to-end solutions for sourcing, transforming, and loading data, ensuring data quality and accuracy.",
+        "Implemented data aggregation strategies to optimize reporting, improving reporting efficiency and accuracy.",
+        "Managed solution implementation into the production environment, ensuring a smooth transition and successful project completion."
+      ]
+    },
+    {
+      "title": "Project Manager - NCR Teradata (OCBC Bank)",
+      "period": "June 2005 – July 2005",
+      "responsibilities": [
+        "Established project structure, including team organization and roles for Basel II implementation, ensuring effective project management.",
+        "Developed project plan and processes for design, development, and system testing, providing clear direction and execution."
+      ]
+    },
+    {
+      "title": "Project Manager - NCR Teradata (Bharati Telecom)",
+      "period": "January 2005 – May 2005",
+      "responsibilities": [
+        "Led a team of 12 resources to execute the data warehouse project, fostering collaboration and effective teamwork.",
+        "Managed stakeholder relations, project planning, and execution, ensuring project success.",
+        "Conducted data reconciliation and quality audits, ensuring data accuracy and integrity.",
+        "Oversaw capacity planning for future growth, ensuring scalability and long-term sustainability.",
+        "Led the data warehouse management team, providing strategic direction and leadership."
+      ]
+    },
+    {
+      "title": "Project Manager - Tech Mahindra (Barclays Bank, UK)",
+      "period": "May 2004 – December 2004",
+      "responsibilities": [
+        "Negotiated and secured approval for proposals and work orders, demonstrating strong business acumen and negotiation skills.",
+        "Established on-site and offshore operations, fostering collaboration and effective communication.",
+        "Led effort estimation, cost analysis, and resource forecasting, providing accurate budgeting and forecasting.",
+        "Managed work stream planning, execution, and delivery, ensuring project success.",
+        "Recruited and trained teams to enhance offshore capability, building a high-performing team.",
+        "Designed and implemented non-materialized views, optimizing database performance and efficiency."
+      ]
+    },
+    {
+      "title": "Project Manager - Tech Mahindra (Barclays Bank, UK)",
+      "period": "March 2003 – March 2004",
+      "responsibilities": [
+        "Developed a data migration strategy for EDW migration from DB2 on MVS to Teradata, ensuring a smooth and efficient transition.",
+        "Managed the sequencing of data loads from source systems, minimizing disruption and maximizing efficiency.",
+        "Defined ETL processes and developed a batch architecture, creating a robust and scalable solution.",
+        "Led a team of 12 offshore resources, fostering collaboration and effective communication.",
+        "Coordinated with Barclays' IT teams for successful data and system transition, ensuring a smooth and successful project completion."
+      ]
+    },
+    {
+      "title": "Pre-sales Consultant - Tech Mahindra (Reuters)",
+      "period": "October 2002 – February 2003",
+      "responsibilities": [
+        "Conducted a system study and prepared a project proposal, providing a comprehensive and detailed analysis.",
+        "Provided cost and effort estimates, ensuring accurate budgeting and forecasting.",
+        "Led negotiations on the Service Level Agreement (SLA), ensuring a mutually beneficial agreement.",
+        "Managed recruitment and training of the project team, building a high-performing team."
+      ]
+    },
+    {
+      "title": "Software Engineer - NCR Teradata",
+      "period": "August 1998 – September 2002",
+      "responsibilities": [
+        "Led development and implementation of multiple CLI features, demonstrating technical expertise and leadership.",
+        "Managed bug tracking and resolution, ensuring timely and effective bug fixes.",
+        "Delivered timely code fixes and updates, ensuring high-quality software delivery."
+      ]
+    }
+  ],
+  "referees": [],
+  "templateId": "Vineet_Joshi_template_2025-06-06T08-52-37-650Z_cf582ef4.json",
+  "candidateName": "Vineet Joshi",
+  "originalFileName": "Demo_2.pdf",
+  "createdAt": "2025-06-06T08:52:37.651Z",
+  "updatedAt": "2025-06-06T08:52:37.651Z",
+  "isTemplate": true,
+  "type": "resume-template"
+}
