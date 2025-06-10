@@ -74,15 +74,33 @@ const FirstPage = ({ resumeData, mainExperience }) => {
                 }}>
                   RECENT EXPERIENCE
                 </h2>
-                <img 
-                  src="/PappspmLogo.jpeg" 
-                  alt="PappsPM" 
-                  style={{ 
-                    height: '70px', 
-                    width: 'auto',
-                    objectFit: 'contain'
-                  }}
-                />
+               
+                  
+    {/* Logo container to group the logos together */}
+    <div style={{ 
+      display: 'flex', 
+      alignItems: 'center',
+      gap: '8px' // Small gap between logos instead of pushing them to opposite ends
+    }}>
+      <img 
+        src="/SMELogo.jpeg" 
+        alt="SMEGATEway Logo" 
+        style={{ 
+          height: '70px', 
+          width: 'auto',
+          objectFit: 'contain'
+        }}
+      />
+      <img 
+        src="/PappspmLogo.jpeg" 
+        alt="PappsPM" 
+        style={{ 
+          height: '70px', 
+          width: 'auto',
+          objectFit: 'contain'
+        }}
+      />
+    </div>
               </div>
               
               <div style={{ display: 'flex', flexDirection: 'column', marginTop: '0.75rem' }}>
