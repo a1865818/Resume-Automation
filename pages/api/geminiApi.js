@@ -532,7 +532,7 @@ export async function maximizeRecruiterImpact(
  * @param {string} [apiKey] - Optional API key
  * @returns {Promise<Object>} - Final optimized resume JSON
  */
-export async function generateTailoredResumeThreeStep(
+export async function generateTailoredResumeFourStep(
   resumeText,
   jobDescription,
   apiKey = null
@@ -820,9 +820,179 @@ export async function generateTailoredResumeJSON(
   }
 
   // Use the new three-step pipeline
-  return await generateTailoredResumeThreeStep(
+  return await generateTailoredResumeFourStep(
     resumeText,
     jobDescription,
     apiKey
   );
+}
+
+/**
+ * Generate tender response based on tailored resume and job requirements
+ * @param {Object} tailoredResume - The tailored resume data
+ * @param {string} jobDescription - Original job description/tender request
+ * @param {Object} jobAnalysis - Job analysis from Step 1
+ * @param {string} [apiKey] - Optional API key
+ * @returns {Promise<Object>} - Tender response JSON
+ */
+export async function generateTenderResponse(
+  tailoredResume,
+  jobDescription,
+  jobAnalysis,
+  apiKey = null
+) {
+  const effectiveApiKey = apiKey || config.geminiApiKey;
+
+  if (!effectiveApiKey) {
+    throw new Error("Gemini API key is required.");
+  }
+
+  const prompt = `You are an expert tender response writer specializing in government and corporate procurement. Using the provided tailored resume and job requirements, create a comprehensive tender response that demonstrates how the candidate meets each requirement.
+  
+  🎯 ORIGINAL JOB DESCRIPTION/TENDER REQUEST:
+  ${jobDescription}
+  
+  📊 JOB ANALYSIS:
+  ${JSON.stringify(jobAnalysis, null, 2)}
+  
+  👤 TAILORED RESUME DATA:
+  ${JSON.stringify(tailoredResume, null, 2)}
+  
+  🏆 TENDER RESPONSE STRUCTURE:
+  
+  Create a JSON object with this exact structure:
+  
+  {
+    "candidateDetails": {
+      "name": "Candidate's full name from resume",
+      "proposedRole": "Job title from job description",
+      "clearance": "Security clearance level from resume or 'To be obtained' if required but not held",
+      "availability": "Available immediately" or specific availability from resume context"
+    },
+    "essentialCriteria": [
+      {
+        "requirement": "Essential requirement 1 from job description",
+        "response": "Detailed response explaining how candidate meets this requirement using specific examples from their experience, achievements, and skills. Include quantifiable results and relevant projects."
+      },
+      {
+        "requirement": "Essential requirement 2 from job description", 
+        "response": "Detailed response with concrete examples..."
+      }
+      // Continue for all essential requirements
+    ],
+    "desirableCriteria": [
+      {
+        "requirement": "Desirable requirement 1 from job description",
+        "response": "Response explaining relevant experience or skills, or honest statement about learning capability if not fully met"
+      },
+      {
+        "requirement": "Desirable requirement 2 from job description",
+        "response": "Response with examples..."
+      }
+      // Continue for all desirable requirements
+    ],
+    "additionalInformation": [
+      {
+        "requirement": "Does the candidate have the required Clearance, or the ability to obtain and maintain?",
+        "response": "Clear statement about current clearance status and ability to obtain/maintain required level"
+      },
+      {
+        "requirement": "Is the candidate a director/owner/account manager/partner of a Seller registered on BuyICT?",
+        "response": "Yes/No with relevant details if applicable, or 'No conflicts of interest'"
+      },
+      {
+        "requirement": "Previous work history with the Buyer (e.g., DHS, Defence)?",
+        "response": "Details of previous work history including duration, role, and contact information, or 'No previous work history with this organization'"
+      }
+    ]
+  }
+  
+  🔥 CRITICAL RESPONSE WRITING RULES:
+  
+  **CONTENT REQUIREMENTS:**
+  - Extract ALL essential and desirable criteria from the job description
+  - Use specific examples from the candidate's resume
+  - Include quantifiable achievements where possible
+  - Reference specific projects, technologies, and outcomes
+  - Write strictly in third-person perspective. Do NOT use "I", "my", or "I'm confident". Instead, use the candidate’s full name or third-person pronouns like "he/she/they" (e.g., "Tuan Minh has extensive experience in...", "He demonstrated strong analytical skills by...")
+  - Maintain a professional, confident tone
+  - Be truthful — do not fabricate experience
+  
+  **RESPONSE QUALITY STANDARDS:**
+  - Each essential criteria response: 100-150 words with concrete examples
+  - Each desirable criteria response: 80-120 words 
+  - Use action verbs and specific technical terminology
+  - Include metrics, timeframes, and business impact
+  - Reference relevant experience from different roles if applicable
+  - Show progression and growth in capabilities
+  
+  **ESSENTIAL CRITERIA FOCUS:**
+  - Must demonstrate clear competency for each requirement
+  - Use STAR method (Situation, Task, Action, Result) where appropriate
+  - Include specific technologies, methodologies, and frameworks mentioned
+  - Reference relevant certifications, training, or qualifications
+  - Show depth of experience with concrete examples
+  
+  **DESIRABLE CRITERIA APPROACH:**
+  - Highlight relevant experience that aligns with requirements
+  - If partially met, show learning capability and relevant transferable skills
+  - Be honest about gaps while emphasizing adaptability
+  - Reference related experience that demonstrates capability to learn
+  
+  **ADDITIONAL INFORMATION PRECISION:**
+  - Clearance: State exact current level and eligibility for required level
+  - Conflicts of interest: Clear yes/no with specifics if applicable
+  - Work history: Include specific roles, dates, managers, and contact details if available
+  
+  **FORMATTING REQUIREMENTS:**
+  - Professional, clear language suitable for government/corporate evaluation
+  - No bullet points in responses - use flowing paragraphs
+  - Include specific company names, project names, and technologies
+  - Reference timeframes and durations
+  - Use industry-standard terminology
+  
+  🎯 EXTRACTION STRATEGY:
+  
+  **From Job Description:**
+  1. Identify all numbered essential criteria
+  2. Identify all numbered desirable criteria  
+  3. Extract specific technical requirements
+  4. Note compliance and governance requirements
+  5. Identify key competencies and skill areas
+  
+  **From Resume:**
+  1. Match experience to each requirement
+  2. Find quantifiable achievements that demonstrate competency
+  3. Identify relevant projects and technologies
+  4. Extract leadership and collaboration examples
+  5. Note certifications and qualifications that support requirements
+  
+  **Response Construction:**
+  1. Lead with strongest, most relevant experience
+  2. Include specific examples with measurable outcomes
+  3. Reference multiple roles if they provide supporting evidence
+  4. Use technical terminology from the job description
+  5. Demonstrate understanding of the role and organization
+  
+  🚨 QUALITY ASSURANCE:
+  - Every requirement must have a substantive response
+  - Responses must be grounded in actual resume content
+  - Technical details must be accurate and specific
+  - Professional tone throughout
+  - No generic or template responses
+  
+  Return ONLY the JSON object, no additional text.`;
+
+  try {
+    const response = await makeGeminiRequest(
+      prompt,
+      effectiveApiKey,
+      0.3,
+      8192
+    );
+    return response;
+  } catch (error) {
+    console.error("Error generating tender response:", error);
+    throw new Error(`Tender response generation failed: ${error.message}`);
+  }
 }

@@ -1,4 +1,291 @@
-// hooks/useExperiencePagination.js
+// // // hooks/useExperiencePagination.js
+// // import { useEffect, useMemo, useState } from "react";
+
+// // export const useExperiencePagination = (
+// //   fullExperience,
+// //   experienceLayout,
+// //   pageHeight
+// // ) => {
+// //   const [experienceHeights, setExperienceHeights] = useState({});
+
+// //   useEffect(() => {
+// //     if (experienceLayout !== "paginated" || fullExperience.length === 0) {
+// //       return;
+// //     }
+
+// //     const measureExperienceHeights = () => {
+// //       const heights = {};
+// //       fullExperience.forEach((exp, index) => {
+// //         const element = document.getElementById(`exp-measure-${index}`);
+// //         if (element) {
+// //           heights[index] = element.offsetHeight;
+// //         }
+// //       });
+// //       setExperienceHeights(heights);
+// //     };
+
+// //     const timer = setTimeout(measureExperienceHeights, 100);
+// //     return () => clearTimeout(timer);
+// //   }, [fullExperience.length, experienceLayout]); // Only depend on length, not the full array
+
+// //   const getExperiencePages = useMemo(() => {
+// //     if (experienceLayout === "summary") {
+// //       return [];
+// //     }
+
+// //     if (experienceLayout === "paginated") {
+// //       const pages = [];
+// //       let currentPage = [];
+
+// //       const headerHeight = 80;
+// //       const paddingHeight = 96;
+// //       const availableHeight = pageHeight
+// //         ? pageHeight - headerHeight - paddingHeight
+// //         : 800;
+
+// //       let leftColumnHeight = 0;
+// //       let rightColumnHeight = 0;
+
+// //       fullExperience.forEach((exp, index) => {
+// //         const itemHeight = experienceHeights[index] || 150;
+// //         const itemWithGap = itemHeight + 16;
+
+// //         const wouldGoToLeft = leftColumnHeight <= rightColumnHeight;
+
+// //         const fitsInDesignatedColumn = wouldGoToLeft
+// //           ? leftColumnHeight + itemWithGap <= availableHeight
+// //           : rightColumnHeight + itemWithGap <= availableHeight;
+
+// //         if (!fitsInDesignatedColumn && currentPage.length > 0) {
+// //           pages.push(currentPage);
+// //           currentPage = [exp];
+// //           leftColumnHeight = itemWithGap;
+// //           rightColumnHeight = 0;
+// //         } else {
+// //           currentPage.push(exp);
+// //           if (wouldGoToLeft) {
+// //             leftColumnHeight += itemWithGap;
+// //           } else {
+// //             rightColumnHeight += itemWithGap;
+// //           }
+// //         }
+// //       });
+
+// //       if (currentPage.length > 0) {
+// //         pages.push(currentPage);
+// //       }
+
+// //       return pages;
+// //     }
+
+// //     return [];
+// //   }, [experienceLayout, pageHeight, fullExperience, experienceHeights]);
+
+// //   return {
+// //     experienceHeights,
+// //     getExperiencePages,
+// //   };
+// // };
+
+// import { useEffect, useMemo, useState } from "react";
+
+// export const useExperiencePagination = (
+//   fullExperience,
+//   experienceLayout,
+//   pageHeight
+// ) => {
+//   const [experienceHeights, setExperienceHeights] = useState({});
+
+//   useEffect(() => {
+//     if (experienceLayout !== "paginated" || fullExperience.length === 0) {
+//       return;
+//     }
+
+//     const measureExperienceHeights = () => {
+//       const heights = {};
+//       fullExperience.forEach((exp, index) => {
+//         const element = document.getElementById(`exp-measure-${index}`);
+//         if (element) {
+//           heights[index] = element.offsetHeight;
+//         }
+//       });
+//       setExperienceHeights(heights);
+//     };
+
+//     const timer = setTimeout(measureExperienceHeights, 100);
+//     return () => clearTimeout(timer);
+//   }, [fullExperience.length, experienceLayout]);
+
+//   // Helper function to split content by lines
+//   const splitExperienceContent = (exp, availableHeight, totalHeight) => {
+//     if (!exp.responsibilities || !exp.responsibilities.length) {
+//       return { first: { ...exp, responsibilities: [] }, second: null };
+//     }
+
+//     // Calculate approximate height per responsibility line
+//     const avgLineHeight = 24; // Average height of a line in pixels
+//     const baseTitleHeight = 50; // Height of title and date section
+
+//     // Calculate how many lines can fit in the available height
+//     const availableLines = Math.floor(
+//       (availableHeight - baseTitleHeight) / avgLineHeight
+//     );
+
+//     if (availableLines <= 0) {
+//       // Not even enough space for the title, move the entire exp to next column
+//       return { first: null, second: exp };
+//     }
+
+//     // Split responsibilities between columns
+//     const firstPartResponsibilities = exp.responsibilities.slice(
+//       0,
+//       availableLines
+//     );
+//     const secondPartResponsibilities =
+//       exp.responsibilities.slice(availableLines);
+
+//     if (secondPartResponsibilities.length === 0) {
+//       // Everything fits in the first part
+//       return { first: exp, second: null };
+//     }
+
+//     // Create the two parts
+//     const firstPart = {
+//       ...exp,
+//       responsibilities: firstPartResponsibilities,
+//       isSplit: true,
+//       isFirstPart: true,
+//     };
+
+//     const secondPart = {
+//       ...exp,
+//       responsibilities: secondPartResponsibilities,
+//       isSplit: true,
+//       isSecondPart: true,
+//       title: `${exp.title} (continued)`,
+//     };
+
+//     return { first: firstPart, second: secondPart };
+//   };
+
+//   const getExperiencePages = useMemo(() => {
+//     if (experienceLayout === "summary") {
+//       return [];
+//     }
+
+//     if (experienceLayout === "paginated") {
+//       const pages = [];
+//       let currentPage = [];
+
+//       const headerHeight = 80;
+//       const paddingHeight = 96;
+//       const availableHeight = pageHeight
+//         ? pageHeight - headerHeight - paddingHeight
+//         : 800;
+
+//       // Track the height used in the current page
+//       let leftColumnHeight = 0;
+//       let rightColumnHeight = 0;
+//       let currentIndex = 0;
+
+//       while (currentIndex < fullExperience.length) {
+//         const exp = fullExperience[currentIndex];
+//         const itemHeight = experienceHeights[currentIndex] || 150;
+//         const itemWithGap = itemHeight + 16;
+
+//         // Check where to place this experience
+//         if (leftColumnHeight <= rightColumnHeight) {
+//           // Try to place in left column
+//           if (leftColumnHeight + itemWithGap <= availableHeight) {
+//             // Fits completely in left column
+//             currentPage.push({ exp, column: "left", index: currentIndex });
+//             leftColumnHeight += itemWithGap;
+//             currentIndex++;
+//           } else {
+//             // Doesn't fit completely - split it if possible
+//             const remainingHeight = availableHeight - leftColumnHeight;
+//             const splitResult = splitExperienceContent(
+//               exp,
+//               remainingHeight,
+//               itemWithGap
+//             );
+
+//             if (splitResult.first) {
+//               // Add first part to left column
+//               currentPage.push({
+//                 exp: splitResult.first,
+//                 column: "left",
+//                 index: currentIndex,
+//                 isSplit: true,
+//               });
+//               leftColumnHeight = availableHeight; // Left column is now full
+//             }
+
+//             if (splitResult.second) {
+//               // Now place second part in right column
+//               if (rightColumnHeight + itemWithGap / 2 <= availableHeight) {
+//                 // Second part fits in right column
+//                 currentPage.push({
+//                   exp: splitResult.second,
+//                   column: "right",
+//                   index: currentIndex,
+//                   isSplit: true,
+//                 });
+//                 rightColumnHeight += itemWithGap / 2; // Estimate for continued part
+//                 currentIndex++;
+//               } else {
+//                 // Second part doesn't fit - need new page
+//                 pages.push(currentPage);
+//                 currentPage = [
+//                   {
+//                     exp: splitResult.second,
+//                     column: "left",
+//                     index: currentIndex,
+//                     isSplit: true,
+//                   },
+//                 ];
+//                 leftColumnHeight = itemWithGap / 2; // Estimate for continued part
+//                 rightColumnHeight = 0;
+//                 currentIndex++;
+//               }
+//             } else {
+//               currentIndex++; // Move to next item if nothing to split
+//             }
+//           }
+//         } else {
+//           // Try to place in right column
+//           if (rightColumnHeight + itemWithGap <= availableHeight) {
+//             // Fits completely in right column
+//             currentPage.push({ exp, column: "right", index: currentIndex });
+//             rightColumnHeight += itemWithGap;
+//             currentIndex++;
+//           } else {
+//             // Doesn't fit in right column - start new page
+//             pages.push(currentPage);
+//             currentPage = [{ exp, column: "left", index: currentIndex }];
+//             leftColumnHeight = itemWithGap;
+//             rightColumnHeight = 0;
+//             currentIndex++;
+//           }
+//         }
+//       }
+
+//       // Add any remaining items on the last page
+//       if (currentPage.length > 0) {
+//         pages.push(currentPage);
+//       }
+
+//       return pages;
+//     }
+
+//     return [];
+//   }, [experienceLayout, pageHeight, fullExperience, experienceHeights]);
+
+//   return {
+//     experienceHeights,
+//     getExperiencePages,
+//   };
+// };
 import { useEffect, useMemo, useState } from "react";
 
 export const useExperiencePagination = (
@@ -26,7 +313,60 @@ export const useExperiencePagination = (
 
     const timer = setTimeout(measureExperienceHeights, 100);
     return () => clearTimeout(timer);
-  }, [fullExperience.length, experienceLayout]); // Only depend on length, not the full array
+  }, [fullExperience.length, experienceLayout]);
+
+  // Helper function to split experience content
+  const splitExperienceContent = (exp, availableHeight, totalHeight) => {
+    if (!exp.responsibilities || !exp.responsibilities.length) {
+      return { first: { ...exp, responsibilities: [] }, second: null };
+    }
+
+    // Calculate approximate height per responsibility line
+    const avgLineHeight = 24; // Average height of a line in pixels
+    const baseTitleHeight = 50; // Height of title and date section
+
+    // Calculate how many responsibilities can fit
+    const availableLines = Math.floor(
+      (availableHeight - baseTitleHeight) / avgLineHeight
+    );
+
+    if (availableLines <= 0) {
+      // Not even enough space for the title, move the entire exp to next space
+      return { first: null, second: exp };
+    }
+
+    // Split responsibilities
+    const firstPartResponsibilities = exp.responsibilities.slice(
+      0,
+      availableLines
+    );
+    const secondPartResponsibilities =
+      exp.responsibilities.slice(availableLines);
+
+    if (secondPartResponsibilities.length === 0) {
+      // Everything fits in the first part
+      return { first: exp, second: null };
+    }
+
+    // Create the two parts
+    const firstPart = {
+      ...exp,
+      responsibilities: firstPartResponsibilities,
+      isSplit: true,
+      isFirstPart: true,
+    };
+
+    const secondPart = {
+      ...exp,
+      responsibilities: secondPartResponsibilities,
+      isSplit: true,
+      isSecondPart: true,
+      title: `${exp.title} (continued)`,
+      originalIndex: fullExperience.indexOf(exp), // Keep track of original experience
+    };
+
+    return { first: firstPart, second: secondPart };
+  };
 
   const getExperiencePages = useMemo(() => {
     if (experienceLayout === "summary") {
@@ -45,32 +385,219 @@ export const useExperiencePagination = (
 
       let leftColumnHeight = 0;
       let rightColumnHeight = 0;
+      let currentIndex = 0;
 
-      fullExperience.forEach((exp, index) => {
-        const itemHeight = experienceHeights[index] || 150;
+      while (currentIndex < fullExperience.length) {
+        const exp = fullExperience[currentIndex];
+        const itemHeight = experienceHeights[currentIndex] || 150;
         const itemWithGap = itemHeight + 16;
 
-        const wouldGoToLeft = leftColumnHeight <= rightColumnHeight;
+        // Initialize splitResult variable at the top of the loop
+        let splitResult = null;
 
-        const fitsInDesignatedColumn = wouldGoToLeft
-          ? leftColumnHeight + itemWithGap <= availableHeight
-          : rightColumnHeight + itemWithGap <= availableHeight;
+        // Try left column first
+        if (leftColumnHeight + itemWithGap <= availableHeight) {
+          // Item fits entirely in the left column
+          currentPage.push({
+            exp,
+            column: "left",
+            index: currentIndex,
+          });
+          leftColumnHeight += itemWithGap;
+          currentIndex++;
+        }
+        // Left column full or item doesn't fit completely - try to split
+        else {
+          const remainingHeight = availableHeight - leftColumnHeight;
+          splitResult = splitExperienceContent(
+            exp,
+            remainingHeight,
+            itemWithGap
+          );
 
-        if (!fitsInDesignatedColumn && currentPage.length > 0) {
-          pages.push(currentPage);
-          currentPage = [exp];
-          leftColumnHeight = itemWithGap;
-          rightColumnHeight = 0;
-        } else {
-          currentPage.push(exp);
-          if (wouldGoToLeft) {
-            leftColumnHeight += itemWithGap;
+          if (splitResult.first) {
+            // Add first part to the left column
+            currentPage.push({
+              exp: splitResult.first,
+              column: "left",
+              index: currentIndex,
+              isSplit: true,
+            });
+            leftColumnHeight = availableHeight; // Left column is now full
+          }
+
+          if (splitResult.second) {
+            // Try to place the second part in the right column of the SAME page
+            if (rightColumnHeight + itemWithGap * 0.7 <= availableHeight) {
+              // Second part fits in right column of current page
+              currentPage.push({
+                exp: splitResult.second,
+                column: "right",
+                index: currentIndex,
+                isSplit: true,
+                continuesFrom: "left",
+              });
+              rightColumnHeight += itemWithGap * 0.7; // Estimated height for second part
+              currentIndex++;
+            }
+            // If right column is also full, move to a new page
+            else {
+              // Finish current page
+              pages.push(currentPage);
+
+              // Start new page with second part in left column
+              currentPage = [
+                {
+                  exp: splitResult.second,
+                  column: "left",
+                  index: currentIndex,
+                  isSplit: true,
+                },
+              ];
+              leftColumnHeight = itemWithGap * 0.7;
+              rightColumnHeight = 0;
+              currentIndex++;
+            }
           } else {
-            rightColumnHeight += itemWithGap;
+            // Nothing to split, move to next item
+            currentIndex++;
           }
         }
-      });
 
+        // If left column is full but right has space, start filling right column
+        // with next experiences (only if we haven't just split an experience)
+        if (
+          splitResult &&
+          !splitResult.second &&
+          leftColumnHeight >= availableHeight &&
+          currentIndex < fullExperience.length
+        ) {
+          const nextExp = fullExperience[currentIndex];
+          const nextItemHeight = experienceHeights[currentIndex] || 150;
+          const nextItemWithGap = nextItemHeight + 16;
+
+          if (rightColumnHeight + nextItemWithGap <= availableHeight) {
+            // Next item fits entirely in the right column
+            currentPage.push({
+              exp: nextExp,
+              column: "right",
+              index: currentIndex,
+            });
+            rightColumnHeight += nextItemWithGap;
+            currentIndex++;
+          } else {
+            // If next item doesn't fit in right column, try to split it
+            const remainingHeightRight = availableHeight - rightColumnHeight;
+            const splitResultRight = splitExperienceContent(
+              nextExp,
+              remainingHeightRight,
+              nextItemWithGap
+            );
+
+            if (splitResultRight.first) {
+              // Add first part to the right column
+              currentPage.push({
+                exp: splitResultRight.first,
+                column: "right",
+                index: currentIndex,
+                isSplit: true,
+              });
+              rightColumnHeight = availableHeight; // Right column is now full
+            }
+
+            if (splitResultRight.second) {
+              // Finish current page since both columns are full
+              pages.push(currentPage);
+
+              // Start new page with second part in left column
+              currentPage = [
+                {
+                  exp: splitResultRight.second,
+                  column: "left",
+                  index: currentIndex,
+                  isSplit: true,
+                },
+              ];
+              leftColumnHeight = nextItemWithGap * 0.7;
+              rightColumnHeight = 0;
+            }
+
+            currentIndex++; // Move to next item
+          }
+        }
+        // Alternative approach - if left column is full but no split occurred
+        else if (
+          !splitResult &&
+          leftColumnHeight >= availableHeight &&
+          currentIndex < fullExperience.length
+        ) {
+          const nextExp = fullExperience[currentIndex];
+          const nextItemHeight = experienceHeights[currentIndex] || 150;
+          const nextItemWithGap = nextItemHeight + 16;
+
+          if (rightColumnHeight + nextItemWithGap <= availableHeight) {
+            // Next item fits entirely in the right column
+            currentPage.push({
+              exp: nextExp,
+              column: "right",
+              index: currentIndex,
+            });
+            rightColumnHeight += nextItemWithGap;
+            currentIndex++;
+          } else {
+            // If next item doesn't fit in right column, try to split it
+            const remainingHeightRight = availableHeight - rightColumnHeight;
+            const splitResultRight = splitExperienceContent(
+              nextExp,
+              remainingHeightRight,
+              nextItemWithGap
+            );
+
+            if (splitResultRight.first) {
+              // Add first part to the right column
+              currentPage.push({
+                exp: splitResultRight.first,
+                column: "right",
+                index: currentIndex,
+                isSplit: true,
+              });
+              rightColumnHeight = availableHeight; // Right column is now full
+            }
+
+            if (splitResultRight.second) {
+              // Finish current page since both columns are full
+              pages.push(currentPage);
+
+              // Start new page with second part in left column
+              currentPage = [
+                {
+                  exp: splitResultRight.second,
+                  column: "left",
+                  index: currentIndex,
+                  isSplit: true,
+                },
+              ];
+              leftColumnHeight = nextItemWithGap * 0.7;
+              rightColumnHeight = 0;
+            }
+
+            currentIndex++; // Move to next item
+          }
+        }
+
+        // If both columns are full, start a new page
+        if (
+          leftColumnHeight >= availableHeight &&
+          rightColumnHeight >= availableHeight
+        ) {
+          pages.push(currentPage);
+          currentPage = [];
+          leftColumnHeight = 0;
+          rightColumnHeight = 0;
+        }
+      }
+
+      // Add any remaining items on the last page
       if (currentPage.length > 0) {
         pages.push(currentPage);
       }

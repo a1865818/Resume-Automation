@@ -78,7 +78,7 @@ const FirstPage = ({ resumeData, mainExperience }) => {
                   src="/PappspmLogo.jpeg" 
                   alt="PappsPM" 
                   style={{ 
-                    height: '70px', // Increased logo height
+                    height: '70px', 
                     width: 'auto',
                     objectFit: 'contain'
                   }}

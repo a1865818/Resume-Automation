@@ -1,5 +1,3 @@
-// components/ControlButtons.jsx
-
 const ControlButtons = ({
   handleDownloadPDF,
   isPdfLoading,
