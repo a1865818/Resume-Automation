@@ -6,14 +6,14 @@ const ExperienceItem = ({ exp }) => {
     }
   
     return (
-      <div style={{ marginBottom: '1.5rem' }}>
+      <div style={{ marginBottom: '1rem' }}>
         <div style={{ display: 'flex', alignItems: 'flex-start', marginBottom: '0.75rem' }}>
           <div>
             <h3 style={{ 
               fontWeight: 'bold', 
               color: '#1e293b', 
               fontSize: '0.875rem', 
-              lineHeight: '1.25', 
+              lineHeight: '1', 
               marginBottom: '0.25rem',
               margin: '0 0 0.25rem 0'
             }}>
@@ -44,7 +44,7 @@ const ExperienceItem = ({ exp }) => {
               <p style={{ 
                 fontSize: '0.875rem', 
                 color: '#374151', 
-                lineHeight: '1.625', 
+                lineHeight: '1.425', 
                 margin: 0 
               }}>
                 {resp}

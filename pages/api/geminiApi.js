@@ -1,100 +1,560 @@
+// import config from "@/configs";
+
+// /**
+//  * Three-step pipeline for tailored resume generation
+//  * Step 1: Analyze job description
+//  * Step 2: Tailor resume based on analysis
+//  * Step 3: Refine and optimize the tailored resume
+//  */
+
+// /**
+//  * Step 1: Analyze the job description or tender request
+//  * @param {string} jobDescription - The job description to analyze
+//  * @param {string} [apiKey] - Optional API key
+//  * @returns {Promise<Object>} - Structured job analysis
+//  */
+// export async function analyzeJobDescription(jobDescription, apiKey = null) {
+//   const effectiveApiKey = apiKey || config.geminiApiKey;
+
+//   if (!effectiveApiKey) {
+//     throw new Error("Gemini API key is required.");
+//   }
+
+//   if (!jobDescription || jobDescription.trim() === "") {
+//     throw new Error("Job description is required for analysis.");
+//   }
+
+//   const prompt = `You are an expert HR analyst and recruitment specialist. Analyze the following job description or tender request and provide a comprehensive breakdown that will be used to tailor a candidate's resume.
+
+// Return a JSON object with this exact structure:
+
+// {
+//   "jobTitle": "The main job title or position",
+//   "industry": "The industry or sector",
+//   "companyType": "Type of organization (government, corporate, startup, etc.)",
+//   "keyResponsibilities": [
+//     "Primary responsibility 1",
+//     "Primary responsibility 2",
+//     "List 5-8 main responsibilities"
+//   ],
+//   "requiredTechnicalSkills": [
+//     "Technical skill 1",
+//     "Technical skill 2",
+//     "List all technical skills mentioned"
+//   ],
+//   "requiredSoftSkills": [
+//     "Soft skill 1",
+//     "Soft skill 2",
+//     "List all soft skills mentioned"
+//   ],
+//   "preferredQualifications": [
+//     "Qualification 1",
+//     "Qualification 2",
+//     "List degrees, certifications, experience levels"
+//   ],
+//   "mandatoryRequirements": [
+//     "Must-have requirement 1",
+//     "Must-have requirement 2",
+//     "List non-negotiable requirements"
+//   ],
+//   "desiredExperience": {
+//     "yearsRequired": "Number of years or range",
+//     "specificExperience": ["Type of experience 1", "Type of experience 2"],
+//     "industryExperience": "Specific industry experience if mentioned"
+//   },
+//   "keywordsAndPhrases": [
+//     "Important keyword 1",
+//     "Important phrase 2",
+//     "List 15-20 keywords/phrases that should appear in resume"
+//   ],
+//   "toneAndStyle": {
+//     "communicationStyle": "Professional tone expected (formal, collaborative, innovative, etc.)",
+//     "culturalFit": "Company culture indicators",
+//     "valueAlignment": "Values or principles mentioned"
+//   },
+//   "assessmentCriteria": [
+//     "How candidates will be evaluated - criterion 1",
+//     "How candidates will be evaluated - criterion 2"
+//   ],
+//   "priorityRanking": {
+//     "criticalSkills": ["Top 3-5 most important skills"],
+//     "niceToHaveSkills": ["Secondary skills that would be beneficial"],
+//     "dealBreakers": ["Things that would disqualify a candidate"]
+//   }
+// }
+
+// Instructions:
+// - Extract information ONLY from the provided job description
+// - Be comprehensive but accurate - don't invent requirements
+// - Focus on actionable insights for resume tailoring
+// - Identify both explicit and implicit requirements
+// - Consider ATS (Applicant Tracking System) keywords
+// - Note any specific formatting or presentation preferences mentioned
+
+// Job Description/Tender Request:
+// ${jobDescription}
+
+// Return ONLY the JSON object, no additional text.`;
+
+//   try {
+//     const response = await makeGeminiRequest(
+//       prompt,
+//       effectiveApiKey,
+//       0.15,
+//       4096
+//     );
+//     return response;
+//   } catch (error) {
+//     console.error("Error in Step 1 - Job Analysis:", error);
+//     throw new Error(`Job analysis failed: ${error.message}`);
+//   }
+// }
+
+// /**
+//  * Step 2: Tailor resume based on job analysis
+//  * @param {string} resumeText - Original resume text
+//  * @param {Object} jobAnalysis - Output from Step 1
+//  * @param {string} [apiKey] - Optional API key
+//  * @returns {Promise<Object>} - Tailored resume JSON
+//  */
+// export async function tailorResumeToJob(
+//   resumeText,
+//   jobAnalysis,
+//   apiKey = null
+// ) {
+//   const effectiveApiKey = apiKey || config.geminiApiKey;
+
+//   if (!effectiveApiKey) {
+//     throw new Error("Gemini API key is required.");
+//   }
+
+//   const prompt = `You are an elite resume strategist specializing in ATS optimization and recruiter psychology. Using the detailed job analysis provided, transform this candidate's resume into a perfectly tailored match for the target position.
+
+// 🎯 JOB ANALYSIS:
+// ${JSON.stringify(jobAnalysis, null, 2)}
+
+// 🚀 STRATEGIC TAILORING APPROACH:
+
+// 1. **KEYWORD OPTIMIZATION**: Integrate the identified keywords naturally throughout all sections
+// 2. **PRIORITY ALIGNMENT**: Emphasize skills and experiences that match critical requirements
+// 3. **NARRATIVE RESTRUCTURING**: Reframe experiences to highlight job-relevant value
+// 4. **ATS COMPATIBILITY**: Ensure optimal keyword density and formatting
+// 5. **RECRUITER APPEAL**: Create compelling, results-focused content
+
+// JSON SCHEMA - Every field strategically tailored:
+
+// {
+//   "profile": {
+//     "name": "Full Name",
+//     "title": "Professional title that aligns with target role terminology",
+//     "location": "Candidate's actual location (DO NOT change to match job location)",
+//     "clearance": "Security clearance level or null if not mentioned",
+//     "description": "150-200 words addressing top 3-4 job requirements with relevant keywords and proof points",
+//     "description2": "150-200 words showcasing additional value propositions and cultural fit indicators"
+//   },
+//   "contact": {
+//     "email": "email@example.com or null if not provided",
+//     "phone": "+61 XXX XXX XXX or null if not provided",
+//     "linkedin": "LinkedIn profile URL or null if not provided"
+//   },
+//   "qualifications": ["Education/certifications prioritized by job relevance, using job terminology"],
+//   "affiliations": ["Professional memberships that signal industry credibility and alignment"],
+//   "skills": ["Top 8 skills in order of job importance - lead with critical requirements, combine related skills"],
+//   "keyAchievements": ["3 achievements that prove capability for specific job challenges - quantified and relevant"],
+//   "experience": [
+//     {
+//       "title": "Job Title - Company",
+//       "period": "Date Range",
+//       "responsibilities": ["4 power bullets showing direct relevance using job keywords and demonstrating required competencies"]
+//     },
+
+//   ],
+//   "fullExperience": [
+//     {
+//       "title": "Job Title - Company",
+//       "period": "Date Range",
+//       "responsibilities": ["6-8 strategic bullets per role proving value for target position using job terminology and STAR method"]
+//     }
+//   ],
+//   "referees": [
+//     {
+//       "title": "Job title (Company)" or return empty array if not provided,
+//       "name": "Referee Name" or return empty array if not provided,
+//       "email": "email@example.com" or return empty array if not provided,
+//       "phone": "+61 XXX XXX XXX" or return empty array if not provided
+//     }
+//   ]
+// }
+
+// 🔥 CRITICAL TAILORING RULES:
+// - Use EXACT keywords and phrases from the job analysis
+// - For experience section, provide 2 most relevant positions to the requirements with 3-4 main bullet points each
+// - Prioritize experiences that match key responsibilities
+// - Quantify achievements relevant to the role
+// - Mirror the communication style and tone identified
+// - Address mandatory requirements prominently
+// - Emphasize critical skills in multiple sections
+// - Maintain authenticity - enhance, don't fabricate
+// - Location should remain candidate's actual location
+// - Include ALL work experiences in fullExperience
+// - For each position, include 6-8 responsibilities maximum
+// - Format job titles as "Position - Company (Department)" if applicable
+// - Security clearance: ONLY include if explicitly mentioned in original resume
+// - List qualifications in order of job relevance
+// - Include both technical and soft skills (top 8 skills)
+// - If referees not provided, return empty arrays for fields
+// - Keep formatting professional and consistent
+// - For experience section, provide 2 most impressive positions with 3-4 bullets each
+// - Include 3 most impressive and relevant achievements.
+// - For affiliations, must return professional message ("No information given") if not available, otherwise list concisely
+
+// CANDIDATE'S RESUME:
+// ${resumeText}
+
+// Return ONLY the JSON object, no additional text.`;
+
+//   try {
+//     const response = await makeGeminiRequest(
+//       prompt,
+//       effectiveApiKey,
+//       0.15,
+//       8192
+//     );
+//     return response;
+//   } catch (error) {
+//     console.error("Error in Step 2 - Resume Tailoring:", error);
+//     throw new Error(`Resume tailoring failed: ${error.message}`);
+//   }
+// }
+
+// /**
+//  * Step 3: Refine and optimize the tailored resume
+//  * @param {Object} tailoredResume - Output from Step 2
+//  * @param {Object} jobAnalysis - Output from Step 1
+//  * @param {string} [apiKey] - Optional API key
+//  * @returns {Promise<Object>} - Refined resume JSON
+//  */
+// export async function refineeTailoredResume(
+//   tailoredResume,
+//   jobAnalysis,
+//   apiKey = null
+// ) {
+//   const effectiveApiKey = apiKey || config.geminiApiKey;
+
+//   if (!effectiveApiKey) {
+//     throw new Error("Gemini API key is required.");
+//   }
+
+//   const prompt = `You are a senior resume optimization specialist conducting a final quality review. Analyze the tailored resume against the job requirements and make strategic refinements for maximum impact.
+
+// 🎯 ORIGINAL JOB ANALYSIS:
+// ${JSON.stringify(jobAnalysis, null, 2)}
+
+// 📄 CURRENT TAILORED RESUME:
+// ${JSON.stringify(tailoredResume, null, 2)}
+
+// 🔍 OPTIMIZATION REVIEW CRITERIA:
+
+// 1. **KEYWORD COVERAGE**: Ensure all critical keywords are naturally integrated
+// 2. **PRIORITY ALIGNMENT**: Verify critical skills are prominently featured
+// 3. **QUANTIFICATION**: Add specific metrics where possible
+// 4. **FLOW & READABILITY**: Optimize for recruiter scanning patterns
+// 5. **ATS OPTIMIZATION**: Perfect keyword density and formatting
+// 6. **IMPACT AMPLIFICATION**: Strengthen weak bullets with action verbs and results
+// 7. **GAP ANALYSIS**: Address any missing mandatory requirements
+// 8. **CONSISTENCY**: Ensure terminology matches job description throughout
+
+// REFINEMENT FOCUS AREAS:
+// - Strengthen profile descriptions with more compelling value propositions
+// - Enhance bullet points with stronger action verbs and quantified results
+// - Optimize keyword placement and density
+// - Improve readability and recruiter appeal
+// - Address any gaps in addressing key requirements
+// - Ensure perfect alignment with assessment criteria
+
+// Return the refined resume using the SAME JSON structure as provided, with improvements made throughout:
+
+// {
+//   "profile": {
+//     "name": "Full Name (unchanged)",
+//     "title": "Optimized professional title",
+//     "location": "Candidate's actual location (DO NOT CHANGE)",
+//     "clearance": "Security clearance or null (unchanged from original)",
+//     "description": "Enhanced 150-200 word description with stronger value propositions and keyword optimization",
+//     "description2": "Refined 150-200 word second paragraph with improved flow and impact"
+//   },
+//   "contact": {
+//     "email": "Unchanged",
+//     "phone": "Unchanged",
+//     "linkedin": "Unchanged"
+//   },
+//   "qualifications": ["Refined list optimized for job relevance"],
+//   "affiliations": ["Enhanced professional memberships list"] ,
+//   "skills": ["Optimized top 8 skills with perfect job alignment"],
+//   "keyAchievements": ["Strengthened 3 achievements with better quantification and relevance"],
+//   "experience": [
+//     {
+//       "title": "Unchanged",
+//       "period": "Unchanged",
+//       "responsibilities": ["Enhanced 4 bullets with stronger action verbs and results"]
+//     }
+//   ],
+//   "fullExperience": [
+//     {
+//       "title": "Unchanged",
+//       "period": "Unchanged",
+//       "responsibilities": ["Refined 6-8 bullets with improved impact and keyword optimization"]
+//     }
+//   ],
+//   "referees": ["Unchanged array structure"]
+// }
+
+// 🚨 MAINTAIN ALL ORIGINAL RULES:
+// - Location must remain candidate's actual location
+// - For experience section, provide 2 most relevant positions to the requirements with 3-4 main bullet points each
+// - Include ALL work experiences in fullExperience
+// - 6-8 responsibilities maximum per position
+// - Security clearance only if mentioned in original resume
+// - Professional formatting consistency
+// - Top 8 skills combining related technologies
+// - 3 most impressive achievements
+// - Empty arrays for missing referee information
+// - APPLY ALL THE JOB ANALYSIS INSIGHTS AND TAILORING STRATEGIES AND CRITICAL TAILORING RULES:
+
+// Return ONLY the refined JSON object, no additional text.`;
+
+//   try {
+//     const response = await makeGeminiRequest(
+//       prompt,
+//       effectiveApiKey,
+//       0.15,
+//       8192
+//     );
+//     return response;
+//   } catch (error) {
+//     console.error("Error in Step 3 - Resume Refinement:", error);
+//     throw new Error(`Resume refinement failed: ${error.message}`);
+//   }
+// }
+
+// /**
+//  * Complete 3-step pipeline function
+//  * @param {string} resumeText - Original resume text
+//  * @param {string} jobDescription - Job description to tailor to
+//  * @param {string} [apiKey] - Optional API key
+//  * @returns {Promise<Object>} - Final optimized resume JSON
+//  */
+// export async function generateCompetitiveTenderResume(
+//   resumeText,
+//   jobDescription,
+//   apiKey = null
+// ) {
+//   try {
+//     console.log("🔍 Step 1: Analyzing job description...");
+//     const jobAnalysis = await analyzeJobDescription(jobDescription, apiKey);
+
+//     console.log("✏️ Step 2: Tailoring resume...");
+//     const tailoredResume = await tailorResumeToJob(
+//       resumeText,
+//       jobAnalysis,
+//       apiKey
+//     );
+
+//     console.log("🔧 Step 3: Refining tailored resume...");
+//     const refinedResume = await refineeTailoredResume(
+//       tailoredResume,
+//       jobAnalysis,
+//       apiKey
+//     );
+
+//     console.log("✅ Three-step tailoring complete!");
+//     return refinedResume;
+//   } catch (error) {
+//     console.error("Three-step pipeline error:", error);
+//     throw error;
+//   }
+// }
+
+// /**
+//  * Helper function to make Gemini API requests
+//  * @param {string} prompt - The prompt to send
+//  * @param {string} apiKey - API key
+//  * @param {number} temperature - Temperature setting
+//  * @param {number} maxTokens - Maximum output tokens
+//  * @returns {Promise<Object>} - Parsed JSON response
+//  */
+// async function makeGeminiRequest(prompt, apiKey, temperature, maxTokens) {
+//   try {
+//     const response = await fetch(
+//       "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent",
+//       {
+//         method: "POST",
+//         headers: {
+//           "Content-Type": "application/json",
+//           "x-goog-api-key": apiKey,
+//         },
+//         body: JSON.stringify({
+//           contents: [
+//             {
+//               parts: [
+//                 {
+//                   text: prompt,
+//                 },
+//               ],
+//             },
+//           ],
+//           generationConfig: {
+//             temperature: temperature,
+//             topK: 20,
+//             topP: 0.8,
+//             maxOutputTokens: maxTokens,
+//           },
+//         }),
+//       }
+//     );
+
+//     if (!response.ok) {
+//       const errorData = await response.json();
+//       const errorMessage =
+//         errorData.error?.message || `API Error: ${response.status}`;
+//       throw new Error(errorMessage);
+//     }
+
+//     const data = await response.json();
+
+//     if (data.candidates && data.candidates[0]?.content?.parts) {
+//       const responseText = data.candidates[0].content.parts[0].text;
+
+//       try {
+//         // Clean the response text
+//         const cleanedText = responseText
+//           .replace(/```json\n?/g, "")
+//           .replace(/```\n?/g, "")
+//           .trim();
+
+//         const parsedJSON = JSON.parse(cleanedText);
+//         return parsedJSON;
+//       } catch (parseError) {
+//         console.error("Failed to parse JSON response:", parseError);
+//         console.error("Raw response:", responseText);
+//         throw new Error(
+//           "Failed to parse AI response as JSON. Please try again."
+//         );
+//       }
+//     } else {
+//       throw new Error("Unexpected API response format");
+//     }
+//   } catch (error) {
+//     console.error("Error calling Gemini API:", error);
+//     throw error;
+//   }
+// }
+
 import config from "@/configs";
 
 /**
- * Three-step pipeline for tailored resume generation
- * Step 1: Analyze job description
- * Step 2: Tailor resume based on analysis
- * Step 3: Refine and optimize the tailored resume
- * Step 4: Final keyword optimization and recruiter impact maximization
+ * Three-step pipeline for RFQ/Tender-optimized resume generation
+ * Step 1: Analyze RFQ/tender requirements and evaluation criteria
+ * Step 2: Strategically tailor resume to maximize tender scoring
+ * Step 3: Optimize for procurement evaluation and compliance
  */
 
 /**
- * Step 1: Analyze the job description or tender request
- * @param {string} jobDescription - The job description to analyze
+ * Step 1: Analyze the RFQ/tender document for procurement-specific requirements
+ * @param {string} rfqDocument - The complete RFQ/tender document
  * @param {string} [apiKey] - Optional API key
- * @returns {Promise<Object>} - Structured job analysis
+ * @returns {Promise<Object>} - Structured RFQ analysis optimized for tender responses
  */
-export async function analyzeJobDescription(jobDescription, apiKey = null) {
+export async function analyzeRFQRequirements(rfqDocument, apiKey = null) {
   const effectiveApiKey = apiKey || config.geminiApiKey;
 
   if (!effectiveApiKey) {
     throw new Error("Gemini API key is required.");
   }
 
-  if (!jobDescription || jobDescription.trim() === "") {
-    throw new Error("Job description is required for analysis.");
+  if (!rfqDocument || rfqDocument.trim() === "") {
+    throw new Error("RFQ document is required for analysis.");
   }
 
-  const prompt = `You are an expert HR analyst and recruitment specialist. Analyze the following job description or tender request and provide a comprehensive breakdown that will be used to tailor a candidate's resume.
+  const prompt = `You are an expert government procurement specialist and tender response strategist. Analyze this RFQ/tender document to extract critical information for creating a winning candidate submission.
+
+Focus on procurement-specific elements that government evaluators will score against. Extract information that will help position the candidate competitively.
 
 Return a JSON object with this exact structure:
 
 {
-  "jobTitle": "The main job title or position",
-  "industry": "The industry or sector",
-  "companyType": "Type of organization (government, corporate, startup, etc.)",
-  "keyResponsibilities": [
-    "Primary responsibility 1",
-    "Primary responsibility 2",
-    "List 5-8 main responsibilities"
+  "procurementDetails": {
+    "buyerOrganization": "Name of the requesting organization",
+    "rfqNumber": "RFQ/tender reference number",
+    "positionTitle": "Exact job title as stated",
+    "contractDuration": "Initial term and extension options",
+    "locationRequirements": "Work location and arrangement details",
+    "securityClearance": "Required clearance level if specified",
+    "startDate": "Expected commencement date"
+  },
+  "essentialCriteria": [
+    {
+      "criterion": "Exact wording of essential requirement",
+      "weight": "Estimated importance (Critical/High/Medium)",
+      "keywords": ["key", "terms", "to", "include"],
+      "evidenceRequired": "Type of evidence needed to demonstrate this"
+    }
   ],
-  "requiredTechnicalSkills": [
-    "Technical skill 1",
-    "Technical skill 2",
-    "List all technical skills mentioned"
-  ],
-  "requiredSoftSkills": [
-    "Soft skill 1",
-    "Soft skill 2",
-    "List all soft skills mentioned"
-  ],
-  "preferredQualifications": [
-    "Qualification 1",
-    "Qualification 2",
-    "List degrees, certifications, experience levels"
+  "desirableCriteria": [
+    {
+      "criterion": "Exact wording of desirable requirement", 
+      "competitiveAdvantage": "How this could differentiate the candidate",
+      "keywords": ["relevant", "keywords"]
+    }
   ],
   "mandatoryRequirements": [
-    "Must-have requirement 1",
-    "Must-have requirement 2",
-    "List non-negotiable requirements"
+    "Non-negotiable requirements that must be met",
+    "Citizenship/residency requirements",
+    "Specific certifications or qualifications"
   ],
-  "desiredExperience": {
-    "yearsRequired": "Number of years or range",
-    "specificExperience": ["Type of experience 1", "Type of experience 2"],
-    "industryExperience": "Specific industry experience if mentioned"
+  "evaluationCriteria": {
+    "responseFormat": "Required format (e.g., one-page pitch, character limits)",
+    "submissionRequirements": ["CV format", "additional documents needed"],
+    "evaluationMethod": "How candidates will be assessed",
+    "selectionProcess": "Merit list, interviews, etc."
   },
-  "keywordsAndPhrases": [
-    "Important keyword 1",
-    "Important phrase 2",
-    "List 15-20 keywords/phrases that should appear in resume"
-  ],
-  "toneAndStyle": {
-    "communicationStyle": "Professional tone expected (formal, collaborative, innovative, etc.)",
-    "culturalFit": "Company culture indicators",
-    "valueAlignment": "Values or principles mentioned"
+  "competitiveIntelligence": {
+    "experienceLevel": "Required years and seniority level",
+    "industrySpecifics": "Government/regulatory experience requirements",
+    "technicalSkillPriority": ["most", "important", "technical", "skills"],
+    "differentiators": ["factors", "that", "could", "set", "candidate", "apart"]
   },
-  "assessmentCriteria": [
-    "How candidates will be evaluated - criterion 1",
-    "How candidates will be evaluated - criterion 2"
+  "complianceRequirements": {
+    "documentationNeeded": ["required", "forms", "and", "attachments"],
+    "deadlines": "Submission deadlines and validity periods",
+    "pricingRequirements": "How rates should be presented",
+    "exclusionCriteria": ["factors", "that", "would", "disqualify"]
+  },
+  "strategicKeywords": [
+    "government-specific terms",
+    "regulatory language", 
+    "industry terminology",
+    "procurement buzzwords",
+    "technical terms that must appear"
   ],
-  "priorityRanking": {
-    "criticalSkills": ["Top 3-5 most important skills"],
-    "niceToHaveSkills": ["Secondary skills that would be beneficial"],
-    "dealBreakers": ["Things that would disqualify a candidate"]
+  "scoringOptimization": {
+    "highImpactAreas": ["areas", "likely", "to", "score", "highest"],
+    "commonWeaknesses": ["typical", "gaps", "in", "submissions"],
+    "winningFactors": ["elements", "that", "typically", "win", "tenders"]
   }
 }
 
 Instructions:
-- Extract information ONLY from the provided job description
-- Be comprehensive but accurate - don't invent requirements
-- Focus on actionable insights for resume tailoring
-- Identify both explicit and implicit requirements
-- Consider ATS (Applicant Tracking System) keywords
-- Note any specific formatting or presentation preferences mentioned
+- Extract ONLY information from the provided RFQ document
+- Focus on elements government evaluators will score
+- Identify both explicit and implicit evaluation criteria
+- Note any procurement-specific language or requirements
+- Consider compliance and mandatory submission requirements
+- Identify competitive positioning opportunities
+- Pay attention to character limits, format requirements, and deadlines
 
-
-Job Description/Tender Request:
-${jobDescription}
+RFQ/Tender Document:
+${rfqDocument}
 
 Return ONLY the JSON object, no additional text.`;
 
@@ -102,26 +562,26 @@ Return ONLY the JSON object, no additional text.`;
     const response = await makeGeminiRequest(
       prompt,
       effectiveApiKey,
-      0.2,
+      0.15,
       4096
     );
     return response;
   } catch (error) {
-    console.error("Error in Step 1 - Job Analysis:", error);
-    throw new Error(`Job analysis failed: ${error.message}`);
+    console.error("Error in Step 1 - RFQ Analysis:", error);
+    throw new Error(`RFQ analysis failed: ${error.message}`);
   }
 }
 
 /**
- * Step 2: Tailor resume based on job analysis
+ * Step 2: Strategically tailor resume to maximize tender evaluation scores
  * @param {string} resumeText - Original resume text
- * @param {Object} jobAnalysis - Output from Step 1
+ * @param {Object} rfqAnalysis - Output from Step 1
  * @param {string} [apiKey] - Optional API key
- * @returns {Promise<Object>} - Tailored resume JSON
+ * @returns {Promise<Object>} - Strategically optimized resume for tender submission
  */
-export async function tailorResumeToJob(
+export async function optimizeResumeForTender(
   resumeText,
-  jobAnalysis,
+  rfqAnalysis,
   apiKey = null
 ) {
   const effectiveApiKey = apiKey || config.geminiApiKey;
@@ -130,86 +590,83 @@ export async function tailorResumeToJob(
     throw new Error("Gemini API key is required.");
   }
 
-  const prompt = `You are an elite resume strategist specializing in ATS optimization and recruiter psychology. Using the detailed job analysis provided, transform this candidate's resume into a perfectly tailored match for the target position.
+  const prompt = `You are an elite government tender response specialist with expertise in procurement evaluation. Transform this candidate's resume into a winning tender submission that maximizes evaluation scores.
 
-🎯 JOB ANALYSIS:
-${JSON.stringify(jobAnalysis, null, 2)}
+🎯 RFQ ANALYSIS:
+${JSON.stringify(rfqAnalysis, null, 2)}
 
-🚀 STRATEGIC TAILORING APPROACH:
+🏆 TENDER OPTIMIZATION STRATEGY:
 
-1. **KEYWORD OPTIMIZATION**: Integrate the identified keywords naturally throughout all sections
-2. **PRIORITY ALIGNMENT**: Emphasize skills and experiences that match critical requirements
-3. **NARRATIVE RESTRUCTURING**: Reframe experiences to highlight job-relevant value
-4. **ATS COMPATIBILITY**: Ensure optimal keyword density and formatting
-5. **RECRUITER APPEAL**: Create compelling, results-focused content
+1. **ESSENTIAL CRITERIA DOMINANCE**: Address every essential criterion with strong evidence
+2. **GOVERNMENT LANGUAGE ALIGNMENT**: Use procurement and regulatory terminology
+3. **QUANTIFIED IMPACT**: Provide metrics that demonstrate value to government
+4. **COMPLIANCE POSITIONING**: Ensure perfect alignment with mandatory requirements
+5. **COMPETITIVE DIFFERENTIATION**: Highlight unique value propositions
+6. **EVALUATION SCORING**: Structure content to maximize evaluator scoring
 
-JSON SCHEMA - Every field strategically tailored:
+JSON SCHEMA - Optimized for government tender evaluation:
 
 {
   "profile": {
     "name": "Full Name",
-    "title": "Professional title that aligns with target role terminology",
-    "location": "Candidate's actual location (DO NOT change to match job location)",
-    "clearance": "Security clearance level or null if not mentioned",
-    "description": "150-200 words addressing top 3-4 job requirements with relevant keywords and proof points",
-    "description2": "150-200 words showcasing additional value propositions and cultural fit indicators"
+    "title": "Professional title using government/RFQ terminology",
+    "location": "Candidate's actual location (maintain authenticity)",
+    "clearance": "Security clearance level or eligibility status",
+    "description": "180-220 words directly addressing top 3-4 essential criteria with government-focused language and quantified achievements",
+    "description2": "180-220 words showcasing additional essential criteria compliance and competitive advantages for government work"
   },
   "contact": {
     "email": "email@example.com or null if not provided",
     "phone": "+61 XXX XXX XXX or null if not provided", 
     "linkedin": "LinkedIn profile URL or null if not provided"
   },
-  "qualifications": ["Education/certifications prioritized by job relevance, using job terminology"],
-  "affiliations": ["Professional memberships that signal industry credibility and alignment"],
-  "skills": ["Top 8 skills in order of job importance - lead with critical requirements, combine related skills"],
-  "keyAchievements": ["3 achievements that prove capability for specific job challenges - quantified and relevant"],
+  "qualifications": ["Qualifications prioritized by RFQ requirements, using exact terminology from tender"],
+  "affiliations": ["Professional memberships that demonstrate government/regulatory sector credibility"],
+  "skills": ["Top 8 skills ranked by RFQ importance - lead with essential criteria, use government terminology"],
+  "keyAchievements": ["3 achievements with quantified outcomes that directly relate to government value delivery"],
   "experience": [
     {
-      "title": "Job Title - Company",
+      "title": "Job Title - Organization",
       "period": "Date Range",
-      "responsibilities": ["4 power bullets showing direct relevance using job keywords and demonstrating required competencies"]
-    },
-      
+      "responsibilities": ["4 strategic bullets demonstrating essential criteria using RFQ language and government impact metrics"]
+    }
   ],
   "fullExperience": [
     {
-      "title": "Job Title - Company",
-      "period": "Date Range", 
-      "responsibilities": ["6-8 strategic bullets per role proving value for target position using job terminology and STAR method"]
+      "title": "Job Title - Organization", 
+      "period": "Date Range",
+      "responsibilities": ["6-8 bullets per role proving capability against essential and desirable criteria using government terminology"]
     }
   ],
   "referees": [
     {
-      "title": "Job title (Company)" or return empty array if not provided,
-      "name": "Referee Name" or return empty array if not provided, 
-      "email": "email@example.com" or return empty array if not provided,
+      "title": "Job title (Organization)" or return empty array if not provided,
+      "name": "Referee Name" or return empty array if not provided,
+      "email": "email@example.com" or return empty array if not provided, 
       "phone": "+61 XXX XXX XXX" or return empty array if not provided
     }
   ]
 }
 
-🔥 CRITICAL TAILORING RULES:
-- Use EXACT keywords and phrases from the job analysis
-- For experience section, provide 2 most relevant positions to the requirements with 3-4 main bullet points each
-- Prioritize experiences that match key responsibilities
-- Quantify achievements relevant to the role
-- Mirror the communication style and tone identified
-- Address mandatory requirements prominently
-- Emphasize critical skills in multiple sections
-- Maintain authenticity - enhance, don't fabricate
-- Location should remain candidate's actual location
-- Include ALL work experiences in fullExperience
-- For each position, include 6-8 responsibilities maximum
-- Format job titles as "Position - Company (Department)" if applicable
-- Security clearance: ONLY include if explicitly mentioned in original resume
-- List qualifications in order of job relevance
-- Include both technical and soft skills (top 8 skills)
-- If referees not provided, return empty arrays for fields
-- Keep formatting professional and consistent
-- For experience section, provide 2 most impressive positions with 3-4 bullets each
-- Include 3 most impressive and relevant achievements.
-- For affiliations, must return professional message ("No information given") if not available, otherwise list concisely
-
+🚨 CRITICAL TENDER OPTIMIZATION RULES:
+- Use EXACT terminology from the RFQ essential and desirable criteria
+- Address every essential criterion with concrete evidence
+- Incorporate government/regulatory sector language naturally
+- Quantify achievements with metrics relevant to government value
+- Prioritize government, regulatory, or public sector experience
+- Use procurement terminology where applicable
+- Structure content for evaluator scanning and scoring
+- Maintain candidate authenticity while maximizing competitive positioning
+- Include compliance-related experience prominently
+- Demonstrate understanding of what RFTQ's required in processes and requirements
+- Location must be based on the RFTQ's requirements, not the candidate's actual location.
+- Security clearance: Include current status and eligibility for required level. If not applicable, return null.
+- Experience section: Focus on most relevant positions to the RFTQ's requirements. The bullet points should directly relate to the Essential Criteria of the RFTQs using key words that would be pciked up on a search function or ATS system. Moreover, provide 3 most relevant positions with 3-4 main bullet points each with insightful details that directly related to the Essenti. For example if the RFTQ's requires are for a Business Analyst, you would provide the 3 most relevant positions to the requirements.
+- Full experience: Include ALL positions but weight relevant work to the RFTQ's requirement more heavily.
+- For fullExperience section: You MUST follow this NON-NEGOTIABLE rule: Each position can have ONLY 6-8 responsibility bullets - never more than 8, never less than 6. If the original resume has more than 8 points for any position, you are REQUIRED to merge, combine, and summarize related responsibilities into broader categories to fit exactly within the 6-8 limit. Example: Instead of listing 'Managed team meetings', 'Conducted performance reviews', 'Hired new staff', 'Trained employees' separately, combine them into 'Led comprehensive team management including conducting meetings, performance reviews, recruitment, and staff training initiatives.' This consolidation is MANDATORY - there are no exceptions. COUNT your bullets for each position and ensure you never exceed 8.
+- If the experience has no responsibilities, do not add that position to the fullExperience section.
+- Skills: Combine technical and regulatory/compliance skills strategically
+- Format consistently for professional government submission standards
 
 CANDIDATE'S RESUME:
 ${resumeText}
@@ -220,355 +677,189 @@ Return ONLY the JSON object, no additional text.`;
     const response = await makeGeminiRequest(
       prompt,
       effectiveApiKey,
-      0.3,
+      0.1,
       8192
     );
     return response;
   } catch (error) {
-    console.error("Error in Step 2 - Resume Tailoring:", error);
-    throw new Error(`Resume tailoring failed: ${error.message}`);
+    console.error("Error in Step 2 - Resume Optimization:", error);
+    throw new Error(`Resume optimization failed: ${error.message}`);
   }
 }
+
+// /**
+//  * Step 3: Final compliance check and competitive positioning refinement
+//  * @param {Object} optimizedResume - Output from Step 2
+//  * @param {Object} rfqAnalysis - Output from Step 1
+//  * @param {string} [apiKey] - Optional API key
+//  * @returns {Promise<Object>} - Final submission-ready resume
+//  */
+// export async function finalizeCompetitiveTenderResume(
+//   optimizedResume,
+//   rfqAnalysis,
+//   apiKey = null
+// ) {
+//   const effectiveApiKey = apiKey || config.geminiApiKey;
+
+//   if (!effectiveApiKey) {
+//     throw new Error("Gemini API key is required.");
+//   }
+
+//   const prompt = `You are a senior government procurement advisor conducting a final competitive review. Analyze this tender-optimized resume against the RFQ requirements and make strategic refinements to maximize evaluation scores and competitive positioning.
+
+// 🎯 ORIGINAL RFQ ANALYSIS:
+// ${JSON.stringify(rfqAnalysis, null, 2)}
+
+// 📄 CURRENT OPTIMIZED RESUME:
+// ${JSON.stringify(optimizedResume, null, 2)}
+
+// 🔍 FINAL COMPETITIVE OPTIMIZATION:
+
+// 1. **ESSENTIAL CRITERIA COMPLIANCE**: Verify every essential criterion is clearly addressed
+// 2. **COMPETITIVE DIFFERENTIATION**: Strengthen unique value propositions
+// 3. **GOVERNMENT VALUE DEMONSTRATION**: Enhance public sector impact evidence
+// 4. **EVALUATION SCORING OPTIMIZATION**: Perfect content for evaluator assessment
+// 5. **COMPLIANCE VERIFICATION**: Ensure all mandatory requirements are met
+// 6. **LANGUAGE PRECISION**: Perfect government and regulatory terminology
+// 7. **QUANTIFICATION ENHANCEMENT**: Strengthen metrics and outcomes
+// 8. **SUBMISSION READINESS**: Final formatting and presentation optimization
+
+// REFINEMENT FOCUS AREAS:
+// - Strengthen evidence against essential criteria with specific examples
+// - Enhance competitive positioning through unique differentiators
+// - Optimize language for government evaluator preferences
+// - Improve quantification of government-relevant achievements
+// - Perfect compliance with RFQ submission requirements
+// - Maximize readability for rapid evaluator assessment
+// - Ensure professional government submission standards
+
+// Return the refined resume using the SAME JSON structure, with strategic improvements:
+
+// {
+//   "profile": {
+//     "name": "Full Name (unchanged)",
+//     "title": "Optimized title using exact RFQ terminology",
+//     "location": "Candidate's actual location (DO NOT CHANGE)",
+//     "clearance": "Enhanced clearance status description",
+//     "description": "Refined 180-220 words with stronger essential criteria evidence and government impact focus",
+//     "description2": "Enhanced 180-220 words with improved competitive positioning and regulatory experience emphasis"
+//   },
+//   "contact": {
+//     "email": "Unchanged",
+//     "phone": "Unchanged",
+//     "linkedin": "Unchanged"
+//   },
+//   "qualifications": ["Refined list with perfect RFQ alignment and government terminology"],
+//   "affiliations": ["Enhanced government/regulatory sector memberships"],
+//   "skills": ["Optimized top 8 skills with precise RFQ terminology and strategic ordering"],
+//   "keyAchievements": ["Strengthened 3 achievements with enhanced government-relevant quantification"],
+//   "experience": [
+//     {
+//       "title": "Unchanged",
+//       "period": "Unchanged",
+//       "responsibilities": ["Enhanced 4 bullets with stronger government value demonstration and essential criteria evidence"]
+//     }
+//   ],
+//   "fullExperience": [
+//     {
+//       "title": "Unchanged",
+//       "period": "Unchanged",
+//       "responsibilities": ["Refined 6-8 bullets with optimized government terminology and compliance focus"]
+//     }
+//   ],
+//   "referees": ["Unchanged array structure"]
+// }
+
+// 🚨 MAINTAIN AUTHENTICITY WHILE MAXIMIZING COMPETITIVENESS:
+// - Location must remain candidate's actual location
+// - All experience must be truthful and verifiable
+// - Enhance presentation without fabricating credentials
+// - Optimize language while maintaining accuracy
+// - Focus on legitimate competitive advantages
+// - Ensure submission compliance with all RFQ requirements
+// - Perfect professional government standards
+// - Maximize evaluation scoring potential through strategic presentation
+
+// Return ONLY the refined JSON object, no additional text.`;
+
+//   try {
+//     const response = await makeGeminiRequest(
+//       prompt,
+//       effectiveApiKey,
+//       0.15,
+//       8192
+//     );
+//     return response;
+//   } catch (error) {
+//     console.error("Error in Step 3 - Final Optimization:", error);
+//     throw new Error(`Final optimization failed: ${error.message}`);
+//   }
+// }
 
 /**
- * Step 3: Refine and optimize the tailored resume
- * @param {Object} tailoredResume - Output from Step 2
- * @param {Object} jobAnalysis - Output from Step 1
- * @param {string} [apiKey] - Optional API key
- * @returns {Promise<Object>} - Refined resume JSON
- */
-export async function refineeTailoredResume(
-  tailoredResume,
-  jobAnalysis,
-  apiKey = null
-) {
-  const effectiveApiKey = apiKey || config.geminiApiKey;
-
-  if (!effectiveApiKey) {
-    throw new Error("Gemini API key is required.");
-  }
-
-  const prompt = `You are a senior resume optimization specialist conducting a final quality review. Analyze the tailored resume against the job requirements and make strategic refinements for maximum impact.
-
-🎯 ORIGINAL JOB ANALYSIS:
-${JSON.stringify(jobAnalysis, null, 2)}
-
-📄 CURRENT TAILORED RESUME:
-${JSON.stringify(tailoredResume, null, 2)}
-
-🔍 OPTIMIZATION REVIEW CRITERIA:
-
-1. **KEYWORD COVERAGE**: Ensure all critical keywords are naturally integrated
-2. **PRIORITY ALIGNMENT**: Verify critical skills are prominently featured
-3. **QUANTIFICATION**: Add specific metrics where possible
-4. **FLOW & READABILITY**: Optimize for recruiter scanning patterns
-5. **ATS OPTIMIZATION**: Perfect keyword density and formatting
-6. **IMPACT AMPLIFICATION**: Strengthen weak bullets with action verbs and results
-7. **GAP ANALYSIS**: Address any missing mandatory requirements
-8. **CONSISTENCY**: Ensure terminology matches job description throughout
-
-REFINEMENT FOCUS AREAS:
-- Strengthen profile descriptions with more compelling value propositions
-- Enhance bullet points with stronger action verbs and quantified results
-- Optimize keyword placement and density
-- Improve readability and recruiter appeal
-- Address any gaps in addressing key requirements
-- Ensure perfect alignment with assessment criteria
-
-Return the refined resume using the SAME JSON structure as provided, with improvements made throughout:
-
-{
-  "profile": {
-    "name": "Full Name (unchanged)",
-    "title": "Optimized professional title",
-    "location": "Candidate's actual location (DO NOT CHANGE)",
-    "clearance": "Security clearance or null (unchanged from original)",
-    "description": "Enhanced 150-200 word description with stronger value propositions and keyword optimization",
-    "description2": "Refined 150-200 word second paragraph with improved flow and impact"
-  },
-  "contact": {
-    "email": "Unchanged",
-    "phone": "Unchanged", 
-    "linkedin": "Unchanged"
-  },
-  "qualifications": ["Refined list optimized for job relevance"],
-  "affiliations": ["Enhanced professional memberships list"] ,
-  "skills": ["Optimized top 8 skills with perfect job alignment"],
-  "keyAchievements": ["Strengthened 3 achievements with better quantification and relevance"],
-  "experience": [
-    {
-      "title": "Unchanged",
-      "period": "Unchanged",
-      "responsibilities": ["Enhanced 4 bullets with stronger action verbs and results"]
-    }
-  ],
-  "fullExperience": [
-    {
-      "title": "Unchanged",
-      "period": "Unchanged", 
-      "responsibilities": ["Refined 6-8 bullets with improved impact and keyword optimization"]
-    }
-  ],
-  "referees": ["Unchanged array structure"]
-}
-
-🚨 MAINTAIN ALL ORIGINAL RULES:
-- Location must remain candidate's actual location
-- For experience section, provide 2 most relevant positions to the requirements with 3-4 main bullet points each
-- Include ALL work experiences in fullExperience
-- 6-8 responsibilities maximum per position
-- Security clearance only if mentioned in original resume
-- Professional formatting consistency
-- Top 8 skills combining related technologies
-- 3 most impressive achievements
-- Empty arrays for missing referee information
-- APPLY ALL THE JOB ANALYSIS INSIGHTS AND TAILORING STRATEGIES AND CRITICAL TAILORING RULES:
-
-Return ONLY the refined JSON object, no additional text.`;
-
-  try {
-    const response = await makeGeminiRequest(
-      prompt,
-      effectiveApiKey,
-      0.2,
-      8192
-    );
-    return response;
-  } catch (error) {
-    console.error("Error in Step 3 - Resume Refinement:", error);
-    throw new Error(`Resume refinement failed: ${error.message}`);
-  }
-}
-
-/**
- * Step 4: Final keyword optimization and recruiter impact maximization
- * @param {Object} refinedResume - Output from Step 3
- * @param {Object} jobAnalysis - Output from Step 1
- * @param {string} originalJobDescription - Original job description text
- * @param {string} [apiKey] - Optional API key
- * @returns {Promise<Object>} - Final optimized resume JSON
- */
-export async function maximizeRecruiterImpact(
-  refinedResume,
-  jobAnalysis,
-  originalJobDescription,
-  apiKey = null
-) {
-  const effectiveApiKey = apiKey || config.geminiApiKey;
-
-  if (!effectiveApiKey) {
-    throw new Error("Gemini API key is required.");
-  }
-
-  const prompt = `🚀 FINAL STAGE: RECRUITER IMPACT MAXIMIZATION & KEYWORD SATURATION
-  
-  You are the world's most elite resume strategist conducting the FINAL optimization round. Your mission: Transform this resume into an absolute show-stopper that makes recruiters think "I MUST interview this candidate immediately!"
-  
-  🎯 ORIGINAL JOB DESCRIPTION (for maximum keyword extraction):
-  ${originalJobDescription}
-  
-  📊 JOB ANALYSIS INSIGHTS:
-  ${JSON.stringify(jobAnalysis, null, 2)}
-  
-  📄 CURRENT REFINED RESUME:
-  ${JSON.stringify(refinedResume, null, 2)}
-  
-  🔥 FINAL OPTIMIZATION PROTOCOL - MAKE THIS RESUME IRRESISTIBLE:
-  
-  1. **KEYWORD SATURATION ANALYSIS**:
-     - Extract EVERY possible relevant keyword from the original job description
-     - Integrate them naturally without keyword stuffing
-     - Use synonyms and variations of key terms
-     - Ensure 95%+ coverage of critical job description keywords
-     - Include industry buzzwords and trending terminology
-  
-  2. **RECRUITER PSYCHOLOGY TRIGGERS**:
-     - Create urgency: "This candidate will be snatched up quickly"
-     - Show ROI potential: Quantify value in dollars, percentages, time saved
-     - Demonstrate thought leadership and innovation
-     - Use power words that trigger emotional responses
-     - Create a narrative of inevitable success
-  
-  3. **ATS DOMINATION STRATEGY**:
-     - Perfect keyword density (not too sparse, not stuffed)
-     - Strategic placement in high-impact sections
-     - Use exact phrases from job description where natural
-     - Include relevant acronyms and their full forms
-     - Optimize for search algorithm ranking
-  
-  4. **COMPELLING VALUE PROPOSITIONS**:
-     - Lead with candidate's unique differentiators
-     - Address the company's pain points directly
-     - Show competitive advantages over other candidates
-     - Demonstrate cultural fit and shared values
-     - Create emotional connection through storytelling
-  
-  5. **IMPACT AMPLIFICATION TECHNIQUES**:
-     - Transform passive descriptions into active achievements
-     - Add specific numbers, metrics, and timeframes
-     - Use powerful action verbs that convey leadership
-     - Show progression and growth trajectory
-     - Include forward-looking statements about potential contribution
-  
-  6. **RECRUITER SCANNING OPTIMIZATION**:
-     - Front-load the most impressive information
-     - Use impactful opening statements
-     - Create visual hierarchy with strategic keyword placement
-     - Ensure easy skimmability for busy recruiters
-     - Make key qualifications jump off the page
-  
-  🎪 PSYCHOLOGICAL IMPACT STRATEGIES:
-  
-  **CONFIDENCE BUILDERS**:
-  - Use assertive, confident language
-  - Show mastery and expertise
-  - Demonstrate thought leadership
-  - Include recognition and achievements
-  
-  **CREDIBILITY INDICATORS**:
-  - Quantify everything possible
-  - Show consistent career progression
-  - Include relevant certifications/affiliations
-  - Demonstrate industry knowledge
-  
-  **URGENCY CREATORS**:
-  - Show high performance and results
-  - Indicate sought-after skills
-  - Demonstrate market value
-  - Create FOMO (fear of missing out)
-  
-  🏆 FINAL RESUME OUTPUT - RECRUITER MAGNET VERSION:
-  
-  {
-    "profile": {
-      "name": "Full Name (unchanged)",
-      "title": "POWER-PACKED title with maximum keyword relevance",
-      "location": "Candidate's actual location (DO NOT CHANGE)",
-      "clearance": "Security clearance or null (unchanged from original)",
-      "description": "HOOK THEM IMMEDIATELY: 150-200 words that scream 'HIRE ME NOW!' - packed with keywords, value propositions, and irresistible selling points",
-      "description2": "SEAL THE DEAL: 150-200 words that create urgency, show ROI potential, and make them fear losing this candidate to competitors"
-    },
-    "contact": {
-      "email": "Unchanged",
-      "phone": "Unchanged", 
-      "linkedin": "Unchanged"
-    },
-    "qualifications": ["Keyword-optimized qualifications that mirror job requirements exactly"],
-    "affiliations": ["Strategic professional memberships that signal industry authority"],
-    "skills": ["MAXIMUM IMPACT: Top 8 skills with perfect keyword matching and power combinations"],
-    "keyAchievements": ["3 SHOW-STOPPING achievements that prove they're the perfect hire - heavily quantified and keyword-rich"],
-    "experience": [
-      {
-        "title": "Unchanged",
-        "period": "Unchanged",
-        "responsibilities": ["4 KILLER bullets that make recruiters think 'this is exactly what we need' - maximum keyword density"]
-      }
-    ],
-    "fullExperience": [
-      {
-        "title": "Unchanged",
-        "period": "Unchanged", 
-        "responsibilities": ["6-8 RECRUITER-MAGNET bullets per role - each one a mini-sales pitch proving perfect job fit"]
-      }
-    ],
-    "referees": ["Unchanged array structure"]
-  }
-  
-  🚨 CRITICAL SUCCESS FACTORS:
-  
-  **KEYWORD OPTIMIZATION**:
-  - Use EVERY relevant keyword from the original job description
-  - Include variations and synonyms naturally
-  - Balance density without stuffing
-  - Strategic placement for maximum ATS impact
-  
-  **RECRUITER APPEAL**:
-  - Create immediate emotional impact
-  - Show clear ROI and value proposition
-  - Use power language and confident tone
-  - Make them excited to meet this candidate
-  
-  **AUTHENTICITY PRESERVATION**:
-  - Never fabricate experience or skills
-  - Enhance presentation, don't invent content
-  - Maintain professional credibility
-  - Stay true to candidate's actual background
-  
-  **TECHNICAL COMPLIANCE**:
-  - Location must remain candidate's actual location
-  - For experience section, provide 2 most relevant positions to the requirements with 3-4 main bullet points each
-  - Include ALL work experiences in fullExperience
-  - 6-8 responsibilities maximum per position
-  - Security clearance only if mentioned in original resume
-  - Professional formatting consistency
-  - Top 8 skills combining related technologies
-  - 3 most impressive achievements
-  - Empty arrays for missing referee information
-  - For affiliations, must return professional message ("No information given") if not available, otherwise list concisely
-  - APPLY ALL THE JOB ANALYSIS INSIGHTS AND TAILORING STRATEGIES AND CRITICAL TAILORING RULES
-
-  🎯 MAKE THIS RESUME IMPOSSIBLE TO IGNORE!
-  
-  Return ONLY the final optimized JSON object, no additional text.`;
-
-  try {
-    const response = await makeGeminiRequest(
-      prompt,
-      effectiveApiKey,
-      0.4,
-      8192
-    );
-    return response;
-  } catch (error) {
-    console.error("Error in Step 4 - Final Optimization:", error);
-    throw new Error(`Final optimization failed: ${error.message}`);
-  }
-}
-
-/**
- * Complete four-step pipeline function
+ * Complete 3-step RFQ-optimized pipeline function
  * @param {string} resumeText - Original resume text
- * @param {string} jobDescription - Job description to tailor to
+ * @param {string} rfqDocument - Complete RFQ/tender document
  * @param {string} [apiKey] - Optional API key
- * @returns {Promise<Object>} - Final optimized resume JSON
+ * @returns {Promise<Object>} - Final tender-optimized resume JSON
  */
-export async function generateTailoredResumeFourStep(
+export async function generateCompetitiveTenderResume(
   resumeText,
-  jobDescription,
+  rfqDocument,
   apiKey = null
 ) {
   try {
-    console.log("🔍 Step 1: Analyzing job description...");
-    const jobAnalysis = await analyzeJobDescription(jobDescription, apiKey);
+    console.log(
+      "🔍 Step 1: Analyzing RFQ requirements and evaluation criteria..."
+    );
+    const rfqAnalysis = await analyzeRFQRequirements(rfqDocument, apiKey);
 
-    console.log("✏️ Step 2: Tailoring resume...");
-    const tailoredResume = await tailorResumeToJob(
+    console.log(
+      "🎯 Step 2: Optimizing resume for competitive tender positioning..."
+    );
+    const finalResume = await optimizeResumeForTender(
       resumeText,
-      jobAnalysis,
+      rfqAnalysis,
       apiKey
     );
 
-    console.log("🔧 Step 3: Refining tailored resume...");
-    const refinedResume = await refineeTailoredResume(
-      tailoredResume,
-      jobAnalysis,
-      apiKey
-    );
+    // console.log("🏆 Step 3: Finalizing competitive tender submission...");
+    // const finalResume = await finalizeCompetitiveTenderResume(
+    //   optimizedResume,
+    //   rfqAnalysis,
+    //   apiKey
+    // );
 
-    console.log("✅ Three-step tailoring complete!");
-
-    const finalResume = await maximizeRecruiterImpact(
-      refinedResume,
-      jobAnalysis,
-      jobDescription,
-      apiKey
-    );
-
-    return finalResume;
+    console.log("✅ Competitive tender resume optimization complete!");
+    return {
+      rfqAnalysis,
+      finalResume,
+      competitiveAdvantages: extractCompetitiveAdvantages(
+        rfqAnalysis,
+        finalResume
+      ),
+    };
   } catch (error) {
-    console.error("Three-step pipeline error:", error);
+    console.error("RFQ optimization pipeline error:", error);
     throw error;
   }
+}
+
+/**
+ * Extract competitive advantages for submission strategy
+ * @param {Object} rfqAnalysis - RFQ analysis results
+ * @param {Object} finalResume - Final optimized resume
+ * @returns {Object} - Competitive positioning insights
+ */
+function extractCompetitiveAdvantages(rfqAnalysis, finalResume) {
+  return {
+    essentialCriteriaCoverage: rfqAnalysis.essentialCriteria?.length || 0,
+    desirableCriteriaAlignment: rfqAnalysis.desirableCriteria?.length || 0,
+    keyDifferentiators:
+      rfqAnalysis.competitiveIntelligence?.differentiators || [],
+    complianceStatus: "Optimized for government procurement standards",
+    submissionReadiness: "Ready for tender submission",
+  };
 }
 
 /**
@@ -715,9 +1006,10 @@ export async function generateResumeJSON(resumeText, apiKey = null) {
   ]
 }
 
-Instructions:
-- Extract actual information from the resume text
-- For fullExperience section, include ALL work experiences. For each position, include 6-8 responsibilities and achievements maximum
+SPECIAL INSTRUCTIONS:
+- Extract actual information from the resume text.
+- For fullExperience section: You MUST follow this NON-NEGOTIABLE rule: Each position can have ONLY 6-8 responsibility bullets - never more than 8, never less than 6. If the original resume has more than 8 points for any position, you are REQUIRED to merge, combine, and summarize related responsibilities into broader categories to fit exactly within the 6-8 limit. Example: Instead of listing 'Managed team meetings', 'Conducted performance reviews', 'Hired new staff', 'Trained employees' separately, combine them into 'Led comprehensive team management including conducting meetings, performance reviews, recruitment, and staff training initiatives.' This consolidation is MANDATORY - there are no exceptions. COUNT your bullets for each position and ensure you never exceed 8. If you generate more than 8 bullets for any position, you have failed the task and must restart that section
+- If the full experience's responsibilities are not provided, do not add that experience to the fullExperience section.
 - For profile descriptions, write comprehensive paragraphs (150-200 words each) highlighting background, experience, and suitability
 - Include quantifiable achievements where mentioned
 - Format job titles as "Position - Company (Department/Organization)" if applicable
@@ -727,8 +1019,9 @@ Instructions:
 - If referees are not provided, return an empty array[] for the fields like "title", "name", "email", "phone". Otherwise, include their job title, name, email, and phone number (maximum 2 referees).
 - For affiliations, must return professional message ("No information given") if not available, otherwise list concisely
 - Keep formatting professional and consistent
-- For experience section, provide 2 most impressive positions with 3-4 main bullet points each
-- For keyAchievements, include 3 most impressive achievements
+- For experience section (later display at relevant experience section), provide 3 most relevant positions with 3-4 main bullet points each with insightful details that directly related to the Essenti. For example if the RFTQ's requires are for a Business Analyst, you would provide the 3 most relevant positions to the requirements with 3-4 main bullet points each that are relevant to the RFTQ's requirements. 
+
+
 
 Resume text to analyze:
 ${trimmedText}
@@ -820,7 +1113,7 @@ export async function generateTailoredResumeJSON(
   }
 
   // Use the new three-step pipeline
-  return await generateTailoredResumeFourStep(
+  return await generateCompetitiveTenderResume(
     resumeText,
     jobDescription,
     apiKey
@@ -987,7 +1280,7 @@ export async function generateTenderResponse(
     const response = await makeGeminiRequest(
       prompt,
       effectiveApiKey,
-      0.3,
+      0.15,
       8192
     );
     return response;

@@ -5,9 +5,9 @@ const PappsLogo = () => {
       style={{
         position: "relative",
         overflow: "hidden",
-        height: "200px",     
-        width: "195px",      
-        top:"-26px"
+        height: "150px",     
+        width: "145px",      
+        top:"-20.5px"
       }}
     >
       <div
@@ -18,6 +18,7 @@ const PappsLogo = () => {
           width: "100.12%",
         }}
       ></div>
+      
     </div>
     )
   }

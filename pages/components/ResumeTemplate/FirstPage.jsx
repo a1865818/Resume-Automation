@@ -21,7 +21,7 @@ const FirstPage = ({ resumeData, mainExperience }) => {
       
         {/* Right Section */}
         <div style={{ display: 'flex', flexDirection: 'column' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 650px', height: '100%' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 610px', height: '100%' }}>
              {/* Middle Column - Profile and Skills */}
              <div style={{ display: 'flex', flexDirection: 'column', backgroundColor: '#ededed' }}>
               {/* Profile Section */}

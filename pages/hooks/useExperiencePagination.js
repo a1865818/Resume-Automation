@@ -37,8 +37,8 @@ export const useExperiencePagination = (
       let currentPageItems = [];
 
       // Page layout constants
-      const headerHeight = 70;
-      const paddingHeight = 86;
+      const headerHeight = 80;
+      const paddingHeight = 96;
       const availableHeight = pageHeight
         ? pageHeight - headerHeight - paddingHeight
         : 800;

@@ -1,43 +1,42 @@
-import PappsLogo from "./PappsLogo";
-const PageHeader = ({ resumeData}) => (
+const PageHeader = ({ resumeData }) => (
     <div style={{ 
-        backgroundColor: 'black', 
-        color: 'white', 
-        padding: '1rem 1.5rem',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        position: 'relative',
-        height: '155px',
+      backgroundColor: 'black', 
+      color: 'white', 
+      padding: '1rem 1.5rem',
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      position: 'relative',
+      height: '155px',
     }}>
-      {/* Left side - Logos container */}
-      <div style={{ 
-        display: 'flex', 
-        alignItems: 'center',
-        gap: '12px' // Small gap between logos
-      }}>
-        {/* Left side - PappsPM logo */}
-        <div style={{
+      {/* Left side - PappsPM logo */}
+      <div style={{
         position: 'absolute',
         top: 0,
         left: 0,
         zIndex: 10
       }}>
-        <PappsLogo />
-      </div>  
-        {/* <img 
-          src="/SMELogo.jpeg" 
-          alt="SMEGATEway Logo" 
-          style={{ 
-            height: '70px', 
-            width: 'auto',
-            objectFit: 'contain'
-          }}
-        /> */}
+        <div style={{
+          position: "relative",
+          overflow: "hidden",
+          height: "200px",     
+          width: "195px",      
+          top: "-24.5px"
+        }}>
+          <div style={{
+            background: "url(assets/images/rectangle.png) 100% / contain no-repeat",
+            height: "100.98%",
+            width: "100.12%",
+          }}></div>
+        </div>
       </div>
-      
+  
       {/* Center - Name and Title */}
-      <div style={{ textAlign: 'center', flex: 1 }}>
+      <div style={{ 
+        textAlign: 'center', 
+        flex: 1,
+        zIndex: 5
+      }}>
         <h1 style={{ 
           fontSize: '2rem', 
           fontWeight: 'bold',
@@ -58,7 +57,29 @@ const PageHeader = ({ resumeData}) => (
           {resumeData.profile.title}
         </div>
       </div>
-     
+  
+      {/* Right side - SME logo */}
+      <div style={{
+        position: 'absolute',
+        top: 3,
+        right: 0,
+        height: '155px',
+        display: 'flex',
+        alignItems: 'center',
+        paddingTop: '0.55rem'
+
+        // paddingRight: '1.5rem'
+      }}>
+        <img 
+          src="/assets/images/SMELogo.jpeg" 
+          alt="SME Logo" 
+          style={{ 
+            height: '137px',
+            maxWidth: '300px',
+            objectFit: 'contain'
+          }} 
+        />
+      </div>
     </div>
   );
   
