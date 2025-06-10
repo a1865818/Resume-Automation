@@ -1,5 +1,10 @@
+import Head from 'next/head';
 import { useEffect, useState } from 'react';
 import { usePDF } from 'react-to-pdf';
+import DecorationLeft from './components/ResumeTemplate/DecorationLeft';
+import DecorationRight from './components/ResumeTemplate/DecorationRight';
+import PappsLogo from './components/ResumeTemplate/PappsLogo';
+import PersonalPicture from './components/ResumeTemplate/PersonalPicture';
 
 const ResumeTemplate = () => {
   const [isPdfLoading, setIsPdfLoading] = useState(false);
@@ -200,22 +205,35 @@ const ResumeTemplate = () => {
     setShowSecondPage(resumeData.fullExperience.length > 0);
   }, [resumeData.fullExperience.length]);
 
-  const FirstPage = () => (
+
+const FirstPage = () => (
     <div style={{ 
       width: '100%', 
       backgroundColor: 'white', 
       boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
       marginBottom: showSecondPage ? '2rem' : '0',
-      pageBreakAfter: showSecondPage ? 'always' : 'auto'
+      pageBreakAfter: showSecondPage ? 'always' : 'auto',
+      maxWidth: '1512.8000488px',
+      position: 'relative',
+      fontFamily: 'Montserrat'
     }}>
+      {/* PappsPM Logo - Positioned at top right corner */}
+      <div style={{
+        position: 'absolute',
+        top: 0,
+        right: 0,
+        zIndex: 10
+      }}>
+        <PappsLogo />
+      </div>   
       <div style={{ display: 'grid', gridTemplateColumns: '350px 1fr' }}>
-        <div style={{ backgroundColor: '#1e293b', color: 'white' }}>
+        <div style={{ backgroundColor: '#2b2b2b', color: 'white' }}>
           {/* Profile Photo */}
           <div>
             <div
               style={{ 
                 width: '100%', 
-                height: '15rem', 
+                height: '25rem', 
                 backgroundColor: '#374151',
                 display: 'flex',
                 alignItems: 'center',
@@ -224,30 +242,23 @@ const ResumeTemplate = () => {
                 color: '#9CA3AF'
               }}
             >
-              Photo Placeholder
+              <PersonalPicture />
             </div>
           </div>
           <div style={{ paddingLeft: '1.5rem', paddingRight: '1.5rem' }}>
             {/* Name and Title */}
             <div style={{ marginBottom: '0.75rem' }}>
               <h1 style={{ 
-                fontSize: '2.25rem', 
+                fontSize: '2.5rem', 
                 fontWeight: 'bold', 
                 margin: 0
               }}>
-                {resumeData.profile.name.split(' ')[0]}
+                {resumeData.profile.name}
               </h1>
-              <h1 style={{ 
-                fontSize: '2.25rem', 
-                fontWeight: 'bold', 
-                marginBottom: '0.75rem',
-                margin: '0 0 0.75rem 0'
-              }}>
-                {resumeData.profile.name.split(' ')[1]}
-              </h1>
+             
               <div style={{ 
                 color: '#fbbf24', 
-                fontSize: '0.75rem', 
+                fontSize: '1rem', 
                 fontWeight: 'bold', 
                 marginBottom: '0.25rem', 
                 textTransform: 'uppercase', 
@@ -256,7 +267,7 @@ const ResumeTemplate = () => {
                 {resumeData.profile.title}
               </div>
               <div style={{ 
-                fontSize: '0.75rem', 
+                fontSize: '0.9rem', 
                 color: '#d1d5db', 
                 letterSpacing: '0.1em', 
                 textTransform: 'uppercase' 
@@ -264,11 +275,11 @@ const ResumeTemplate = () => {
                 {resumeData.profile.location} | {resumeData.profile.clearance}
               </div>
             </div>
-
+  
             {/* Qualifications */}
             <div style={{ marginBottom: '1rem' }}>
               <h2 style={{ 
-                fontSize: '1rem', 
+                fontSize: '1.25rem', 
                 fontWeight: 'bold', 
                 color: '#fbbf24', 
                 letterSpacing: '0.05em',
@@ -280,16 +291,16 @@ const ResumeTemplate = () => {
                 {resumeData.qualifications.map((qual, index) => (
                   <li key={index} style={{ display: 'flex', alignItems: 'flex-start', marginBottom: '0.25rem' }}>
                     <span style={{ color: '#fbbf24', marginRight: '0.5rem', fontSize: '12px' }}>•</span>
-                    <span style={{ lineHeight: '1.625' }}>{qual}</span>
+                    <span style={{ lineHeight: '1.25', fontSize:'13px' }}>{qual}</span>
                   </li>
                 ))}
               </ul>
             </div>
-
+  
             {/* Affiliations */}
             <div style={{ marginBottom: '1rem' }}>
               <h2 style={{ 
-                fontSize: '1rem', 
+                fontSize: '1.25rem', 
                 fontWeight: 'bold', 
                 color: '#fbbf24', 
                 letterSpacing: '0.05em',
@@ -300,49 +311,36 @@ const ResumeTemplate = () => {
               <ul style={{ fontSize: '0.75rem', margin: 0, padding: 0, listStyle: 'none' }}>
                 {resumeData.affiliations.map((affiliation, index) => (
                   <li key={index} style={{ display: 'flex', alignItems: 'flex-start', marginBottom: '0.25rem' }}>
-                    <span style={{ color: '#fbbf24', marginRight: '0.5rem', fontSize: '12px' }}>•</span>
-                    <span style={{ lineHeight: '1.625' }}>{affiliation}</span>
+                    <span style={{ color: '#fbbf24', marginRight: '0.5rem', fontSize: '10px' }}>•</span>
+                    <span style={{ lineHeight: '1.25', fontSize:'13px' }}>{affiliation}</span>
                   </li>
                 ))}
               </ul>
             </div>
-
-            {/* Skills */}
-            <div>
-              <h2 style={{ 
-                fontSize: '1rem', 
-                fontWeight: 'bold', 
-                color: '#fbbf24', 
-                letterSpacing: '0.05em',
-                margin: '0 0 0.5rem 0'
-              }}>
-                SKILLS
-              </h2>
-              <ul style={{ fontSize: '0.75rem', margin: 0, padding: 0, listStyle: 'none' }}>
-                {resumeData.skills.map((skill, index) => (
-                  <li key={index} style={{ display: 'flex', alignItems: 'flex-start', marginBottom: '0.25rem' }}>
-                    <span style={{ color: '#fbbf24', marginRight: '0.5rem', fontSize: '12px' }}>•</span>
-                    <span style={{ lineHeight: '1.625' }}>{skill}</span>
-                  </li>
-                ))}
-              </ul>
+  
+            <div style={{ 
+              position: 'absolute', 
+              left: 0, 
+              bottom: 0 
+            }}>
+              <DecorationLeft/>
             </div>
           </div>
         </div>
-
-        {/* Right Section - Two Columns */}
+  
+        {/* Right Section */}
         <div style={{ display: 'flex', flexDirection: 'column' }}>
-          {/* Top content area - split into two columns */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr auto' }}>
-            {/* Middle Column - Profile */}
-            <div style={{ padding: '1.5rem', backgroundColor: '#f9fafb' }}>
+          {/* Content area - split into two columns */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 650px', height: '100%' }}>
+            {/* Middle Column - Profile and Skills */}
+            <div style={{ display: 'flex', flexDirection: 'column', backgroundColor: '#ededed' }}>
               {/* Profile Section */}
-              <div style={{ marginBottom: '1.5rem' }}>
+              <div style={{ padding: '1.5rem', flex: '0 0 auto' }}>
                 <h2 style={{ 
                   fontSize: '1.25rem', 
                   fontWeight: 'bold', 
                   marginBottom: '0.75rem', 
-                  color: '#1e293b', 
+                  color: 'black', 
                   letterSpacing: '0.05em',
                   margin: '0 0 0.75rem 0'
                 }}>
@@ -368,36 +366,42 @@ const ResumeTemplate = () => {
                   {resumeData.profile.description2}
                 </p>
               </div>
+              
+              {/* Skills Section */}
+                  
+            <div style={{color: 'white',  padding: '0.75rem 1.5rem 0 1.5rem', flex: '1 1 auto', backgroundColor: '#9e9e9e'  }}>
+                <h2 style={{ 
+                  fontSize: '1.25rem', 
+                  fontWeight: 'bold', 
+                  letterSpacing: '0.05em',
+                  margin: '0 0 0.75rem 0'
+                }}>
+                  SKILLS
+                </h2>
+                <ul style={{ fontSize: '14px', margin: 0, padding: 0, listStyle: 'none' }}>
+                  {resumeData.skills.map((skill, index) => (
+                    <li key={index} style={{ display: 'flex', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
+                      <span style={{  marginRight: '0.5rem', fontSize: '12px' }}>•</span>
+                      <span style={{ lineHeight: '1'}}>{skill}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
-
+  
             {/* Right Column - References and Experience */}
-            <div style={{ width: '650px', padding: '1.5rem', backgroundColor: 'white' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
+            <div style={{ padding: '1.5rem', backgroundColor: '#f3f4f6', position: 'relative', display: 'flex', flexDirection: 'column' }}>
+              {/* REFEREES Section */}
+              <div style={{ marginBottom: '1.5rem', flex: '0 0 auto' }}>
                 <h2 style={{ 
                   fontSize: '1.25rem', 
                   fontWeight: 'bold', 
                   color: '#1e293b', 
                   letterSpacing: '0.05em',
-                  margin: 0
+                  margin: '0 0 0.75rem 0'
                 }}>
                   REFEREES
                 </h2>
-                <div style={{ 
-                  backgroundColor: '#1e293b', 
-                  color: 'white', 
-                  paddingLeft: '0.75rem', 
-                  paddingRight: '0.75rem', 
-                  paddingTop: '0.5rem', 
-                  paddingBottom: '0.5rem', 
-                  fontSize: '0.875rem', 
-                  fontWeight: 'bold' 
-                }}>
-                  PappsPM
-                </div>
-              </div>
-
-              {/* Referees List Content */}
-              <div style={{ marginBottom: '1.5rem' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                   {resumeData.referees.map((referee, index) => (
                     <div key={index} style={{ fontSize: '14px' }}>
@@ -417,119 +421,137 @@ const ResumeTemplate = () => {
                   ))}
                 </div>
               </div>
-
-              {/* Relevant Experience - First Page */}
-              <div>
-                <h2 style={{ 
-                  fontSize: '1.25rem', 
-                  fontWeight: 'bold', 
-                  marginBottom: '0.5rem', 
-                  color: '#1e293b', 
-                  letterSpacing: '0.05em',
-                  margin: '0 0 0.5rem 0'
-                }}>
-                  RELEVANT EXPERIENCE
-                </h2>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                  {resumeData.experience.map((exp, index) => (
-                    <div key={index}>
-                      <div style={{ display: 'flex', alignItems: 'flex-start', marginBottom: '0.75rem' }}>
-                        <div>
-                          <h3 style={{ 
-                            fontWeight: 'bold', 
-                            color: '#1e293b', 
-                            fontSize: '0.875rem', 
-                            lineHeight: '1.25', 
-                            marginBottom: '0.25rem',
-                            margin: '0 0 0.25rem 0'
-                          }}>
-                            {exp.title}
-                          </h3>
-                          <p style={{ fontSize: '0.875rem', color: '#4b5563', margin: 0 }}>
-                            {exp.period}
-                          </p>
-                        </div>
-                      </div>
-                      <div style={{ marginLeft: '0.25rem', display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-                        {exp.responsibilities.map((resp, respIndex) => (
-                          <div key={respIndex} style={{ display: 'flex', alignItems: 'flex-start' }}>
-                            <span style={{ color: '#1e293b', marginRight: '0.5rem', marginTop: '0.125rem', fontSize: '0.875rem' }}>•</span>
-                            <p style={{ fontSize: '0.875rem', color: '#374151', lineHeight: '1.625', margin: 0 }}>
-                              {resp}
-                            </p>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </div>
+  
+<div style={{ flex: '1 1 auto' }}>
+  <h2 style={{ 
+    fontSize: '1.25rem', 
+    fontWeight: 'bold', 
+    marginBottom: '0.5rem', 
+    color: '#1e293b', 
+    letterSpacing: '0.05em',
+    margin: '0 0 0.5rem 0'
+  }}>
+    RELEVANT EXPERIENCE
+  </h2>
+  <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+    {resumeData.experience.map((exp, index) => (
+      <div key={index}>
+        <div style={{ display: 'flex', alignItems: 'flex-start', marginBottom: '0.75rem' }}>
+          <div>
+            <h3 style={{ 
+              fontWeight: 'bold', 
+              color: '#1e293b', 
+              fontSize: '0.875rem', 
+              lineHeight: '1.25', 
+              marginBottom: '0.25rem',
+              margin: '0 0 0.25rem 0'
+            }}>
+              {exp.title}
+            </h3>
+            <p style={{ fontSize: '0.875rem', color: '#4b5563', margin: 0 }}>
+              {exp.period}
+            </p>
+          </div>
+        </div>
+        
+        {/* Custom timeline with inline styling only */}
+        <div style={{ marginLeft: '0.25rem', position: 'relative' }}>
+          {exp.responsibilities.map((resp, respIndex) => (
+            <div key={respIndex} style={{ 
+              display: 'flex', 
+              alignItems: 'flex-start',
+              marginBottom: respIndex === exp.responsibilities.length - 1 ? 0 : '1rem',
+              position: 'relative'
+            }}>
+              {/* Black dot */}
+              <div style={{
+                width: '8px',
+                height: '8px',
+                backgroundColor: '#000000',
+                borderRadius: '50%',
+                marginRight: '12px',
+                marginTop: '6px',
+                flexShrink: 0,
+                zIndex: 2,
+                position: 'relative'
+              }} />
+              
+              {/* Connecting line (except for last item) */}
+              {respIndex < exp.responsibilities.length - 1 && (
+                <div style={{
+                  position: 'absolute',
+                  left: '3px',
+                  top: '14px',
+                  width: '2px',
+                  height: 'calc(100% + 1rem)',
+                  backgroundColor: '#000000',
+                  zIndex: 1
+                }} />
+              )}
+              
+              {/* Content */}
+              <p style={{ 
+                fontSize: '0.875rem', 
+                color: 'black', 
+                lineHeight: '1.25', 
+                margin: 0,
+                flex: 1,
+                
+              }}>
+                {resp}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+    ))}
+  </div>
+</div>
+              <div style={{ 
+                position: 'absolute',
+                right: 0,
+                bottom: 0
+              }}>
+                <DecorationRight/>
               </div>
             </div>
-          </div>
-
-          {/* Key Career Achievements - Full width of right section */}
-          <div style={{ 
-            backgroundColor: '#f3f4f6', 
-            padding: '1.5rem', 
-            borderTop: '1px solid #d1d5db', 
-            color: 'black' 
-          }}>
-            <h2 style={{ 
-              fontSize: '1.25rem', 
-              fontWeight: 'bold', 
-              marginBottom: '1rem', 
-              letterSpacing: '0.05em',
-              margin: '0 0 1rem 0'
-            }}>
-              KEY CAREER ACHIEVEMENTS
-            </h2>
-            <ul style={{ display: 'flex', flexDirection: 'column', gap: '1rem', listStyle: 'none', padding: 0, margin: 0 }}>
-              {resumeData.keyAchievements.map((achievement, index) => (
-                <li key={index} style={{ display: 'flex', alignItems: 'flex-start' }}>
-                  <span style={{ marginRight: '0.75rem', marginTop: '0.125rem' }}>•</span>
-                  <p style={{ fontSize: '0.875rem', lineHeight: '1.625', margin: 0 }}>
-                    {achievement}
-                  </p>
-                </li>
-              ))}
-            </ul>
           </div>
         </div>
       </div>
     </div>
   );
 
-  const SecondPage = () => (
+
+const SecondPage = () => (
     <div style={{ 
       width: '100%', 
       backgroundColor: 'white', 
       boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
-      pageBreakBefore: 'always'
+      pageBreakBefore: 'always',
+      maxWidth: '1512.8000488px',
+      fontFamily: 'Montserrat'
+
     }}>
       {/* Header with PappsPM branding - matching the image */}
       <div style={{ 
-        backgroundColor: '#1e293b', 
+        backgroundColor: 'black', 
         color: 'white', 
         padding: '1rem 1.5rem',
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-        position: 'relative'
+        position: 'relative',
+        height: '155px',
       }}>
         {/* Left side - PappsPM logo */}
-        <div style={{ 
-          backgroundColor: 'transparent', 
-          color: 'white', 
-          border: '2px solid white',
-          paddingLeft: '0.75rem', 
-          paddingRight: '0.75rem', 
-          paddingTop: '0.5rem', 
-          paddingBottom: '0.5rem', 
-          fontSize: '0.875rem', 
-          fontWeight: 'bold'
-        }}>
-          PappsPM
-        </div>
+        <div style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        zIndex: 10
+      }}>
+        <PappsLogo />
+      </div>   
         
         {/* Center - Name and Title */}
         <div style={{ textAlign: 'center', flex: 1 }}>
@@ -555,7 +577,9 @@ const ResumeTemplate = () => {
         </div>
         
         {/* Right side - empty for balance */}
-        <div style={{ width: '120px' }}></div>
+        {/* <div style={{ width: '120px'}}>
+
+        </div> */}
       </div>
 
       {/* Content in two columns */}
@@ -598,17 +622,18 @@ const ResumeTemplate = () => {
               </div>
             ))}
           </div>
+          
         </div>
 
-        {/* Vertical separator line */}
-        <div style={{ 
-          backgroundColor: '#d1d5db', 
-          width: '1px',
-          height: '100%',
-          minHeight: '500px'
-        }}></div>
+       { /* Vertical separator line */}
+            <div style={{ 
+              backgroundColor: 'black', 
+              width: '2.5px',  /* Increased from 1px to 3px to make it bolder */
+              height: '100%',
+              minHeight: '500px'
+            }}></div>
 
-        {/* Right Column */}
+            {/* Right Column */}
         <div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             {rightColumnExperience.map((exp, index) => (
@@ -642,16 +667,28 @@ const ResumeTemplate = () => {
                   ))}
                 </div>
               </div>
+              
             ))}
+            
           </div>
+        
         </div>
       </div>
+    
     </div>
   );
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#f3f4f6', paddingTop: '2rem', paddingBottom: '2rem' }}>
       {/* Button to download as PDF */}
+
+      <Head>
+      <link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet"/>
+   
+</Head>
+  
       <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.5rem', gap: '1rem' }}>
         <button 
           onClick={() => toPDF()}

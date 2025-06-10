@@ -2,6 +2,7 @@
   "name": "my-app",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -11,6 +12,7 @@
   "dependencies": {
     "@react-pdf/renderer": "^4.3.0",
     "@sparticuz/chromium": "^133.0.0",
+    "antd": "^5.25.4",
     "autoprefixer": "^10.4.21",
     "dotenv": "^16.5.0",
     "file-saver": "^2.0.5",

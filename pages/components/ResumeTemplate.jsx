@@ -1,6 +1,6 @@
 
+import Head from 'next/head';
 import { useEffect, useRef, useState } from 'react';
-
 import generatePDF from 'react-to-pdf';
 
 // Import custom hooks
@@ -130,7 +130,15 @@ const ResumeTemplate = ({ resumeData, onBackToSummary, viewMode = 'generate' }) 
     };
   
     return (
+        
       <div style={containerStyle}>
+        <Head>
+        <link rel="preconnect" href="https://fonts.googleapis.com"/>
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet"/>
+        
+        </Head>
+
         {/* Control Buttons */}
         {!isHistoryView && (
           <>

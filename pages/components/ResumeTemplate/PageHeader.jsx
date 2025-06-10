@@ -1,11 +1,14 @@
+import PappsLogo from "./PappsLogo";
 const PageHeader = ({ resumeData}) => (
     <div style={{ 
-      backgroundColor: '#1e293b', 
-      color: 'white', 
-      padding: '1rem 1.5rem',
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center'
+        backgroundColor: 'black', 
+        color: 'white', 
+        padding: '1rem 1.5rem',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        position: 'relative',
+        height: '155px',
     }}>
       {/* Left side - Logos container */}
       <div style={{ 
@@ -13,16 +16,16 @@ const PageHeader = ({ resumeData}) => (
         alignItems: 'center',
         gap: '12px' // Small gap between logos
       }}>
-        <img 
-          src="/PappspmLogo.jpeg" 
-          alt="PappsPM" 
-          style={{ 
-            height: '70px', 
-            width: 'auto',
-            objectFit: 'contain'
-          }}
-        />
-        <img 
+        {/* Left side - PappsPM logo */}
+        <div style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        zIndex: 10
+      }}>
+        <PappsLogo />
+      </div>  
+        {/* <img 
           src="/SMELogo.jpeg" 
           alt="SMEGATEway Logo" 
           style={{ 
@@ -30,7 +33,7 @@ const PageHeader = ({ resumeData}) => (
             width: 'auto',
             objectFit: 'contain'
           }}
-        />
+        /> */}
       </div>
       
       {/* Center - Name and Title */}
@@ -55,9 +58,7 @@ const PageHeader = ({ resumeData}) => (
           {resumeData.profile.title}
         </div>
       </div>
-      
-      {/* Right side - empty for balance */}
-      <div style={{ width: '120px' }}></div>
+     
     </div>
   );
   

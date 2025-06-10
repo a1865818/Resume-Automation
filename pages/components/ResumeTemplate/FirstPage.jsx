@@ -1,6 +1,5 @@
-import ContactSection from './ContactSection';
+import DecorationRight from './DecorationRight';
 import ExperienceItem from './ExperienceItem';
-import KeyAchievementsSection from './KeyAchievementsSection';
 import ProfileSection from './ProfileSection';
 import RefereesSection from './RefereesSection';
 
@@ -12,7 +11,9 @@ const FirstPage = ({ resumeData, mainExperience }) => {
         width: '100%', 
         backgroundColor: 'white', 
         boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
-        minHeight: 'fit-content'
+        minHeight: 'fit-content',
+           position: 'relative',
+      fontFamily: 'Montserrat'
       }}
     >
       <div style={{ display: 'grid', gridTemplateColumns: '350px 1fr' }}>
@@ -20,28 +21,28 @@ const FirstPage = ({ resumeData, mainExperience }) => {
       
         {/* Right Section */}
         <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr auto' }}>
-            {/* Middle Column - Profile */}
-            <div style={{ padding: '1.5rem', backgroundColor: '#f9fafb' }}>
-              <div>
-                <div style={{ height: '55px', display: 'flex', alignItems: 'center' }}>
-                  <h2 style={{ 
-                    fontSize: '1.25rem', 
-                    fontWeight: 'bold',
-                    color: '#1e293b', 
-                    letterSpacing: '0.05em',
-                    margin: 0
-                  }}>
-                    PROFILE
-                  </h2>
-                </div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 650px', height: '100%' }}>
+             {/* Middle Column - Profile and Skills */}
+             <div style={{ display: 'flex', flexDirection: 'column', backgroundColor: '#ededed' }}>
+              {/* Profile Section */}
+              <div style={{ padding: '1.5rem', flex: '0 0 auto' }}>
+                <h2 style={{ 
+                  fontSize: '1.25rem', 
+                  fontWeight: 'bold', 
+                  marginBottom: '0.75rem', 
+                  color: 'black', 
+                  letterSpacing: '0.05em',
+                  margin: '0 0 0.75rem 0'
+                }}>
+                  PROFILE
+                </h2>
                 <p style={{ 
                   fontSize: '14px', 
                   color: '#374151', 
                   lineHeight: '1.625', 
                   textAlign: 'justify', 
                   marginBottom: '0.75rem',
-                  margin: '0.75rem 0'
+                  margin: '0 0 0.75rem 0'
                 }}>
                   {resumeData.profile.description}
                 </p>
@@ -55,70 +56,76 @@ const FirstPage = ({ resumeData, mainExperience }) => {
                   {resumeData.profile.description2}
                 </p>
               </div>
-            </div>
-
-            {/* Right Column - References and Experience */}
-            <div style={{ width: '650px', padding: '1.5rem', backgroundColor: '#f3f4f6' }}>
-              <div style={{ 
-                display: 'flex', 
-                justifyContent: 'space-between', 
-                alignItems: 'center', 
-                height: '55px' // Same height as profile header
-              }}>
+              
+              {/* Skill Section */}
+            <div style={{color: 'white',  padding: '0.75rem 1.5rem 0 1.5rem', flex: '1 1 auto', backgroundColor: '#9e9e9e'  }}>
                 <h2 style={{ 
                   fontSize: '1.25rem', 
-                  fontWeight: 'bold',
+                  fontWeight: 'bold', 
+                  letterSpacing: '0.05em',
+                  margin: '0 0 0.75rem 0'
+                }}>
+                  SKILLS
+                </h2>
+                <ul style={{ fontSize: '14px', margin: 0, padding: 0, listStyle: 'none' }}>
+                  {resumeData.skills.map((skill, index) => (
+                    <li key={index} style={{ display: 'flex', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
+                      <span style={{  marginRight: '0.5rem', fontSize: '12px' }}>•</span>
+                      <span style={{ lineHeight: '1'}}>{skill}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            
+
+            {/* Right Column - References and Experience */}
+            {/* <div style={{ width: '650px', padding: '1.5rem', backgroundColor: '#f3f4f6' }}> */}
+
+            <div style={{ padding: '1.5rem', backgroundColor: 'white', position: 'relative', display: 'flex', flexDirection: 'column' }}>
+              {/* REFEREES Section */}
+              <div style={{ marginBottom: '1.5rem', flex: '0 0 auto' }}>
+                <h2 style={{ 
+                  fontSize: '1.25rem', 
+                  fontWeight: 'bold', 
                   color: '#1e293b', 
                   letterSpacing: '0.05em',
-                  margin: 0
+                  margin: '0 0 0.75rem 0'
                 }}>
-                  RECENT EXPERIENCE
+                  REFEREES
                 </h2>
-               
-                  
-    {/* Logo container to group the logos together */}
-    <div style={{ 
-      display: 'flex', 
-      alignItems: 'center',
-      gap: '8px' // Small gap between logos instead of pushing them to opposite ends
-    }}>
-      <img 
-        src="/SMELogo.jpeg" 
-        alt="SMEGATEway Logo" 
-        style={{ 
-          height: '70px', 
-          width: 'auto',
-          objectFit: 'contain'
-        }}
-      />
-      <img 
-        src="/PappspmLogo.jpeg" 
-        alt="PappsPM" 
-        style={{ 
-          height: '70px', 
-          width: 'auto',
-          objectFit: 'contain'
-        }}
-      />
-    </div>
-              </div>
-              
+              <RefereesSection resumeData={resumeData} />
+            </div>
+
+        <div style={{ flex: '1 1 auto' }}>
+            <h2 style={{ 
+                fontSize: '1.25rem', 
+                fontWeight: 'bold', 
+                marginBottom: '0.5rem', 
+                color: '#1e293b', 
+                letterSpacing: '0.05em',
+                margin: '0 0 0.5rem 0'
+            }}>
+                RELEVANT EXPERIENCE
+            </h2>
               <div style={{ display: 'flex', flexDirection: 'column', marginTop: '0.75rem' }}>
                 {mainExperience.map((exp, index) => (
                   <ExperienceItem key={index} exp={exp} />
                 ))}
               </div>
-
-              {/* Contact */}
-              <ContactSection resumeData={resumeData} />
-
-              {/* Referees */}
-              <RefereesSection resumeData={resumeData} />
             </div>
-          </div>
 
-          {/* Key Career Achievements */}
-          <KeyAchievementsSection resumeData={resumeData} />
+            <div style={{ 
+                position: 'absolute',
+                right: 0,
+                bottom: 0
+              }}>
+                <DecorationRight/>
+              </div>
+
+          </div>
+          </div>
         </div>
       </div>
     </div>  
