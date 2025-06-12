@@ -979,7 +979,7 @@ export async function generateResumeJSON(resumeText, apiKey = null) {
   "skills": ["Key technical and professional skills"],
   "keyAchievements": ["Major career achievements and accomplishments with quantifiable results where possible"],
   "experience": [
-  
+  //Return 3 most recent positions.
     {
       "title": "Job Title - Company (Organization if applicable)",
       "period": "Start Date - End Date",
@@ -987,6 +987,7 @@ export async function generateResumeJSON(resumeText, apiKey = null) {
     }
   ],
   "fullExperience": [
+  //REturn all positions provided in the resume text
     {
       "title": "Job Title - Company (Organization if applicable)",
       "period": "Start Date - End Date",

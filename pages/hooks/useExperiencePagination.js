@@ -67,7 +67,7 @@ export const useExperiencePagination = (
       let currentPageItems = [];
 
       // Page layout constants
-      const headerHeight = 400; // Actual header height from PageHeader component
+      const headerHeight = 340; // Actual header height from PageHeader component
       const paddingHeight = 96; // 1.5rem * 2 (top + bottom padding)
       const availableHeight = pageHeight
         ? pageHeight - headerHeight - paddingHeight
