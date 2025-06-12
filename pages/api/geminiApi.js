@@ -979,6 +979,7 @@ export async function generateResumeJSON(resumeText, apiKey = null) {
   "skills": ["Key technical and professional skills"],
   "keyAchievements": ["Major career achievements and accomplishments with quantifiable results where possible"],
   "experience": [
+  
     {
       "title": "Job Title - Company (Organization if applicable)",
       "period": "Start Date - End Date",
@@ -1019,7 +1020,6 @@ SPECIAL INSTRUCTIONS:
 - If referees are not provided, return an empty array[] for the fields like "title", "name", "email", "phone". Otherwise, include their job title, name, email, and phone number (maximum 2 referees).
 - For affiliations, must return professional message ("No information given") if not available, otherwise list concisely
 - Keep formatting professional and consistent
-- For experience section (later display at relevant experience section), provide 3 most relevant positions with 3-4 main bullet points each with insightful details that directly related to the Essenti. For example if the RFTQ's requires are for a Business Analyst, you would provide the 3 most relevant positions to the requirements with 3-4 main bullet points each that are relevant to the RFTQ's requirements. 
 
 
 

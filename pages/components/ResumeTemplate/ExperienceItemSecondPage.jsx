@@ -1,59 +1,99 @@
 
-const ExperienceItem = ({ exp }) => {
-    // Don't render anything if there are no responsibilities
-    if (!exp.responsibilities || exp.responsibilities.length === 0) {
-      return null;
-    }
-  
+const ExperienceHeader = ({ exp, content }) => {
+    console.log('Rendering ExperienceHeader:', { exp, content });
     return (
-      <div style={{ marginBottom: '1rem' }}>
-        <div style={{ display: 'flex', alignItems: 'flex-start', marginBottom: '0.75rem' }}>
+      <div style={{ marginBottom: '0.5rem', border: '1px solid green', padding: '4px' }}>
+        <div style={{ fontSize: '10px', color: 'green' }}>HEADER</div>
+        <div style={{ display: 'flex', alignItems: 'flex-start', marginBottom: '0.25rem' }}>
           <div>
             <h3 style={{ 
               fontWeight: 'bold', 
               color: '#1e293b', 
               fontSize: '0.875rem', 
-              lineHeight: '1', 
+              lineHeight: '1.2', 
               marginBottom: '0.25rem',
               margin: '0 0 0.25rem 0'
             }}>
-              {exp.title}
+              {content.title}
             </h3>
-            {/* Only show period for original items or first parts, not continued parts */}
-            {(!exp.isSecondPart) && (
-              <p style={{ fontSize: '0.875rem', color: '#4b5563', margin: 0 }}>
-                {exp.period}
+            {content.company && (
+              <p style={{ 
+                fontSize: '0.75rem', 
+                color: '#6b7280', 
+                margin: '0 0 0.125rem 0',
+                fontStyle: 'italic'
+              }}>
+                {content.company}
               </p>
             )}
+            <p style={{ 
+              fontSize: '0.875rem', 
+              color: '#4b5563', 
+              margin: 0,
+              lineHeight: '1.2'
+            }}>
+              {content.period}
+            </p>
           </div>
-        </div>
-        <div style={{ 
-          marginLeft: '0.25rem', 
-          display: 'flex', 
-          flexDirection: 'column', 
-          gap: '0.25rem'
-        }}>
-          {exp.responsibilities.map((resp, respIndex) => (
-            <div key={respIndex} style={{ display: 'flex', alignItems: 'flex-start' }}>
-              <span style={{ 
-                color: '#1e293b', 
-                marginRight: '0.5rem', 
-                marginTop: '0.125rem', 
-                fontSize: '0.875rem' 
-              }}>•</span>
-              <p style={{ 
-                fontSize: '0.875rem', 
-                color: '#374151', 
-                lineHeight: '1.425', 
-                margin: 0 
-              }}>
-                {resp}
-              </p>
-            </div>
-          ))}
         </div>
       </div>
     );
   };
   
-  export default ExperienceItem;
+  const ExperienceBullet = ({ content, expIndex, respIndex }) => {
+    console.log('Rendering ExperienceBullet:', { content, expIndex, respIndex });
+    return (
+      <div style={{ 
+        marginLeft: '0.25rem', 
+        marginBottom: '0.25rem',
+        display: 'flex', 
+        alignItems: 'flex-start',
+        border: '1px solid orange',
+        padding: '2px'
+      }}>
+        <div style={{ fontSize: '10px', color: 'orange', marginRight: '4px' }}>BULLET</div>
+        <span style={{ 
+          color: '#1e293b', 
+          marginRight: '0.5rem', 
+          fontSize: '0.875rem',
+          lineHeight: '1.25'
+        }}>•</span>
+        <p style={{ 
+          fontSize: '0.875rem', 
+          color: '#374151', 
+          lineHeight: '1.25', 
+          margin: 0 
+        }}>
+          {content.text}
+        </p>
+      </div>
+    );
+  };
+  
+  const ExperienceSecondPageItem = ({ item }) => {
+    console.log('ExperienceSecondPageItem received item:', item);
+    
+    if (!item) {
+      console.warn('ExperienceSecondPageItem: No item provided');
+      return <div style={{ color: 'red', fontSize: '12px' }}>NO ITEM</div>;
+    }
+  
+    if (item.type === 'header') {
+      return <ExperienceHeader exp={item.exp} content={item.content} />;
+    }
+  
+    if (item.type === 'bullet') {
+      return (
+        <ExperienceBullet 
+          content={item.content} 
+          expIndex={item.expIndex}
+          respIndex={item.respIndex}
+        />
+      );
+    }
+  
+    console.warn('ExperienceSecondPageItem: Unknown item type:', item.type);
+    return <div style={{ color: 'red', fontSize: '12px' }}>UNKNOWN TYPE: {item.type}</div>;
+  };
+  
+  export default ExperienceSecondPageItem;
