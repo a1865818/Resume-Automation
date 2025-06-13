@@ -181,7 +181,9 @@ return (
                     <div style={{ 
                         position: 'absolute', 
                         left: 0, 
-                        bottom: 0 
+                        bottom: 0 ,
+                        transform:'scale(1.75)',
+                        transformOrigin: 'bottom left',
                     }}>
                         <DecorationLeft/>
                     </div>

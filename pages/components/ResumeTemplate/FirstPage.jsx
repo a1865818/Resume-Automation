@@ -119,7 +119,9 @@ const FirstPage = ({ resumeData, mainExperience }) => {
             <div style={{ 
                 position: 'absolute',
                 right: 0,
-                bottom: 0
+                bottom: 0,
+                transform:'scale(1.75)',
+                transformOrigin: 'bottom right',
               }}>
                 <DecorationRight/>
               </div>
