@@ -83,7 +83,7 @@ const FirstPage = ({ resumeData, mainExperience }) => {
             {/* Right Column - References and Experience */}
             {/* <div style={{ width: '650px', padding: '1.5rem', backgroundColor: '#f3f4f6' }}> */}
 
-            <div style={{ padding: '1.5rem', backgroundColor: 'white', position: 'relative', display: 'flex', flexDirection: 'column' }}>
+            <div style={{ padding: '1.5rem 2rem 2rem 2rem ', backgroundColor: 'white', position: 'relative', display: 'flex', flexDirection: 'column',  paddingBottom:'1.5rem'}}>
               {/* REFEREES Section */}
               <div style={{ marginBottom: '1.5rem', flex: '0 0 auto' }}>
                 <h2 style={{ 
