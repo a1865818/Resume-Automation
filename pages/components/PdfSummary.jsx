@@ -1,8 +1,8 @@
 
 import config from '@/configs';
 import Avatar from "@/public/image.jpeg";
-import { useState } from 'react';
-import { generateResumeJSON, generateTailoredResumeJSON, generateTenderResponse } from '../api/geminiApi';
+import { useMemo, useState } from 'react';
+import { detectSector, generateResumeJSON, generateTailoredResumeJSON, generateTenderResponse, validateTenderResponseFormat } from '../api/geminiApi';
 import ErrorMessage from './PdfSummary/ErrorMessage';
 import GeneratorControls from './PdfSummary/GeneratorControls';
 import JobDescriptionUpload from './PdfSummary/JobDescriptionUpload';
@@ -11,6 +11,7 @@ import ProfilePictureStatus from './PdfSummary/ProfilePictureStatus';
 import SaveBanner from './PdfSummary/SaveBanner';
 import ResumeTemplate from './ResumeTemplate';
 import TenderResponseWrapper from './TenderResponse/TenderResponseWrapper';
+
 
 const PdfSummary = ({ pdfText, fileName, profilePicture, profilePicturePreview }) => {
     const [resumeData, setResumeData] = useState(null);
@@ -42,6 +43,8 @@ const PdfSummary = ({ pdfText, fileName, profilePicture, profilePicturePreview }
     const [isGeneratingTender, setIsGeneratingTender] = useState(false);
     const [jobAnalysisData, setJobAnalysisData] = useState(null);
     const [tenderError, setTenderError] = useState('');
+    const [isRegeneratingTender, setIsRegeneratingTender] = useState(false);
+
     
     const mockResumeData = {
       profile: {
@@ -239,35 +242,132 @@ const PdfSummary = ({ pdfText, fileName, profilePicture, profilePicturePreview }
     };
 
     // Generate tender response function
-    const handleGenerateTenderResponse = async () => {
-      setIsGeneratingTender(true);
-      setTenderError('');
+    // const handleGenerateTenderResponse = async () => {
+    //   setIsGeneratingTender(true);
+    //   setTenderError('');
       
-      try {
+    //   try {
+    //     // Check if we have the required data
+    //     if (!resumeData || !jobDescription || !jobAnalysisData) {
+    //       throw new Error('Missing required data for tender response generation. Please ensure you have a tailored resume and job description.');
+    //     }
+
+    //     // Generate tender response using the API
+    //     const tenderResponse = await generateTenderResponse(
+    //       resumeData,
+    //       jobDescription,
+    //       jobAnalysisData,
+    //       config.geminiApiKey
+    //     );
+
+    //     setTenderResponseData(tenderResponse);
+    //     setShowTenderResponse(true);
+    //     setShowResumeTemplate(false);
+    //   } catch (err) {
+    //     console.error('Tender response generation error:', err);
+    //     setTenderError(err.message || 'Failed to generate tender response. Please try again.');
+    //   } finally {
+    //     setIsGeneratingTender(false);
+    //   }
+    // };
+    
+    // Update the existing handleGenerateTenderResponse function
+    const handleGenerateTenderResponse = async () => {
+        setIsGeneratingTender(true);
+        setTenderError('');
+        
+        try {
         // Check if we have the required data
         if (!resumeData || !jobDescription || !jobAnalysisData) {
-          throw new Error('Missing required data for tender response generation. Please ensure you have a tailored resume and job description.');
+            throw new Error('Missing required data for tender response generation. Please ensure you have a tailored resume and job description.');
         }
-
-        // Generate tender response using the API
-        const tenderResponse = await generateTenderResponse(
-          resumeData,
-          jobDescription,
-          jobAnalysisData,
-          config.geminiApiKey
+    
+        console.log('🚀 Generating Criteria Statement...');
+        
+        // Generate the tender response using the generic function
+        const rawTenderResponse = await generateTenderResponse(
+            resumeData,
+            jobDescription,
+            jobAnalysisData,
+            config.geminiApiKey
         );
-
-        setTenderResponseData(tenderResponse);
+    
+        console.log('📝 Raw tender response generated:', rawTenderResponse);
+    
+        // Format the response for the template
+        const formattedTenderData = formatForTenderTemplate(rawTenderResponse);
+        
+        console.log('✅ Formatted tender data:', formattedTenderData);
+    
+        // Validate the format
+        const validation = validateTenderResponseFormat(formattedTenderData);
+        if (!validation.isValid) {
+            console.warn('⚠️ Validation warnings:', validation.warnings);
+            console.error('❌ Validation errors:', validation.missingElements);
+        }
+    
+        // Set the tender response data
+        setTenderResponseData(formattedTenderData);
         setShowTenderResponse(true);
         setShowResumeTemplate(false);
-      } catch (err) {
-        console.error('Tender response generation error:', err);
-        setTenderError(err.message || 'Failed to generate tender response. Please try again.');
-      } finally {
+        
+        console.log('🎉 Criteria Statement generation completed!');
+        } catch (err) {
+        console.error('Criteria Statement generation error:', err);
+        setTenderError(err.message || 'Failed to generate Criteria Statement. Please try again.');
+        } finally {
         setIsGeneratingTender(false);
-      }
+        }
+    };
+
+
+    // Add new regeneration handler
+    const handleRegenerateTenderResponse = async () => {
+        setIsRegeneratingTender(true);
+        setTenderError('');
+        
+        try {
+        // Check if we have the required data
+        if (!resumeData || !jobDescription || !jobAnalysisData) {
+            throw new Error('Missing required data for tender response regeneration.');
+        }
+    
+        console.log('🔄 Regenerating Criteria Statement...');
+        
+        // Generate a new tender response
+        const rawTenderResponse = await generateTenderResponse(
+            resumeData,
+            jobDescription,
+            jobAnalysisData,
+            config.geminiApiKey
+        );
+    
+        console.log('📝 New tender response generated:', rawTenderResponse);
+    
+        // Format the response for the template
+        const formattedTenderData = formatForTenderTemplate(rawTenderResponse);
+        
+        console.log('✅ New formatted tender data:', formattedTenderData);
+    
+        // Validate the format
+        const validation = validateTenderResponseFormat(formattedTenderData);
+        if (!validation.isValid) {
+            console.warn('⚠️ Validation warnings:', validation.warnings);
+        }
+    
+        // Update the tender response data
+        setTenderResponseData(formattedTenderData);
+        
+        console.log('🎉 Criteria Statement regeneration completed!');
+        } catch (err) {
+        console.error('Criteria Statement regeneration error:', err);
+        setTenderError(err.message || 'Failed to regenerate Criteria Statement. Please try again.');
+        } finally {
+        setIsRegeneratingTender(false);
+        }
     };
     
+
     const handleGenerateResume = async () => {
       // Reset save states when generating new resume
       setIsSaved(false);
@@ -387,49 +487,166 @@ const PdfSummary = ({ pdfText, fileName, profilePicture, profilePicturePreview }
       setShowResumeTemplate(true);
       setTenderError('');
     };
+
+    const handleBackToTenderResponse = () => {
+        if (tenderResponseData) {
+          setShowTenderResponse(true);
+          setShowResumeTemplate(false);
+        }
+      };
+      
   
     // If showing tender response, render it
-    if (showTenderResponse && tenderResponseData) {
-      return (
-        <TenderResponseWrapper
-          tenderData={tenderResponseData}
-          candidateName={resumeData?.profile?.name || 'Candidate'}
-          onBackToResume={handleBackToResume}
-        />
-      );
-    }
+    // if (showTenderResponse && tenderResponseData) {
+    //   return (
+    //     <TenderResponseWrapper
+    //       tenderData={tenderResponseData}
+    //       candidateName={resumeData?.profile?.name || 'Candidate'}
+    //       onBackToResume={handleBackToResume}
+    //     />
+    //   );
+    // }
 
-    // If showing resume template, render it
-    if (showResumeTemplate && resumeData) {
-      console.log('🖼️ Rendering resume template with data:', { 
-        hasResumeData: !!resumeData, 
-        showResumeTemplate,
-        generationMode,
-        hasJobDescription: !!jobDescription 
-      });
+    
+    // Add sector detection in the component
+    const detectedSector = useMemo(() => {
+        if (jobDescription && jobAnalysisData) {
+        return detectSector(jobDescription, jobAnalysisData);
+        }
+        return 'Government';
+    }, [jobDescription, jobAnalysisData]);
+  
+
+    const debugTenderData = (data) => {
+        console.log('🔍 Debugging tender data structure:');
+        console.log('- Candidate Details:', data?.candidateDetails);
+        console.log('- Essential Criteria Count:', data?.essentialCriteria?.length || 0);
+        console.log('- Desirable Criteria Count:', data?.desirableCriteria?.length || 0);
+        console.log('- Additional Information Count:', data?.additionalInformation?.length || 0);
+        
+        // Check for missing responses
+        const missingResponses = [];
+        data?.essentialCriteria?.forEach((criteria, index) => {
+          if (!criteria.response || criteria.response.trim().length < 50) {
+            missingResponses.push(`Essential ${index + 1}: ${criteria.criteria}`);
+          }
+        });
+        
+        if (missingResponses.length > 0) {
+          console.warn('⚠️ Criteria with insufficient responses:', missingResponses);
+        }
+        
+        return data;
+      };
       
-      return (
-        <div>
-          <SaveBanner
-            uploadedProfilePictureUrl={uploadedProfilePictureUrl}
-            isSaved={isSaved}
-            isSaving={isSaving}
-            saveMessage={saveMessage}
-            isJobTailored={generationMode === 'tailored'}
-            showTenderOption={generationMode === 'tailored' && jobDescription && jobDescription.trim().length > 50}
-            onSave={() => saveTemplateToHistory(resumeData, fileName)}
-            onGenerateTenderResponse={handleGenerateTenderResponse}
-            isGeneratingTender={isGeneratingTender}
+
+      const formatForTenderTemplate = (rawTenderData) => {
+        // Ensure the data structure matches exactly what the template expects
+        return {
+          candidateDetails: {
+            name: rawTenderData.candidateDetails?.name || 'Candidate Name',
+            proposedRole: rawTenderData.candidateDetails?.proposedRole || 'Application Response',
+            clearance: rawTenderData.candidateDetails?.clearance,
+            availability: rawTenderData.candidateDetails?.availability
+          },
+          essentialCriteria: rawTenderData.essentialCriteria?.map(criteria => ({
+            criteria: criteria.criteria || criteria.requirement,
+            response: criteria.response
+          })) || [],
+          desirableCriteria: rawTenderData.desirableCriteria?.map(criteria => ({
+            criteria: criteria.criteria || criteria.requirement,
+            response: criteria.response
+          })) || [],
+          additionalInformation: rawTenderData.additionalInformation?.map(info => ({
+            criteria: info.criteria || info.requirement,
+            response: info.response
+          })) || []
+        };
+      };
+      // Enhanced error handling for the new format
+      const handleTenderGenerationError = (error, isRegeneration = false) => {
+        console.error(`Tender ${isRegeneration ? 'regeneration' : 'generation'} failed:`, error);
+        
+        const errorMessages = {
+          'Missing required data': 'Please ensure you have uploaded both a resume and job description, and generated a tailored resume first.',
+          'API Error': 'There was an issue with the AI service. Please check your internet connection and try again.',
+          'Invalid format': 'The generated response format was invalid. Please try regenerating.',
+          'Validation failed': 'The generated response did not meet quality standards. Please try again.'
+        };
+        
+        let userFriendlyMessage = error.message;
+        for (const [key, message] of Object.entries(errorMessages)) {
+          if (error.message.includes(key)) {
+            userFriendlyMessage = message;
+            break;
+          }
+        }
+        
+        setTenderError(userFriendlyMessage);
+        
+        // Log detailed error for debugging
+        console.error('Detailed error:', {
+          originalMessage: error.message,
+          userMessage: userFriendlyMessage,
+          isRegeneration,
+          stack: error.stack,
+          timestamp: new Date().toISOString()
+        });
+      };
+
+      if (showTenderResponse && tenderResponseData) {
+        return (
+          <TenderResponseWrapper
+            tenderData={tenderResponseData}
+            candidateName={resumeData?.profile?.name || 'Candidate'}
+            onBackToResume={handleBackToResume}
+            templateType="criteria-statement"
+            // New props for regeneration
+            onRegenerateTenderResponse={handleRegenerateTenderResponse}
+            isRegenerating={isRegeneratingTender}
+            detectedSector={detectedSector}
           />
-          {tenderError && (
-            <div className="mx-4 mb-4">
-              <ErrorMessage error={tenderError} />
-            </div>
-          )}
-          <ResumeTemplate resumeData={resumeData} onBackToSummary={handleBackToSummary} />
+        );
+      }
+// Update the SaveBanner call to include sector detection
+if (showResumeTemplate && resumeData) {
+    console.log('🖼️ Rendering resume template with data:', { 
+      hasResumeData: !!resumeData, 
+      showResumeTemplate,
+      generationMode,
+      hasJobDescription: !!jobDescription,
+      hasTenderResponse: !!tenderResponseData,
+      detectedSector
+    });
+       
+  return (
+    <div>
+      <SaveBanner
+        uploadedProfilePictureUrl={uploadedProfilePictureUrl}
+        isSaved={isSaved}
+        isSaving={isSaving}
+        saveMessage={saveMessage}
+        isJobTailored={generationMode === 'tailored'}
+        showTenderOption={generationMode === 'tailored' && jobDescription && jobDescription.trim().length > 50}
+        onSave={() => saveTemplateToHistory(resumeData, fileName)}
+        onGenerateTenderResponse={handleGenerateTenderResponse}
+        isGeneratingTender={isGeneratingTender}
+        // Updated props for tender response navigation
+        hasTenderResponse={!!tenderResponseData}
+        onBackToTenderResponse={handleBackToTenderResponse}
+        detectedSector={detectedSector}
+      />
+      {tenderError && (
+        <div className="mx-4 mb-4">
+          <ErrorMessage error={tenderError} />
         </div>
-      );
-    }
+      )}
+      <ResumeTemplate resumeData={resumeData} onBackToSummary={handleBackToSummary} />
+    </div>
+  );
+}
+
+
     
     return (
       <div className="w-full px-4 py-8">
@@ -497,5 +714,6 @@ const PdfSummary = ({ pdfText, fileName, profilePicture, profilePicturePreview }
       </div>
     );
   };
+  
   
   export default PdfSummary;

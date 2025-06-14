@@ -1121,14 +1121,487 @@ export async function generateTailoredResumeJSON(
   );
 }
 
-/**
- * Generate tender response based on tailored resume and job requirements
- * @param {Object} tailoredResume - The tailored resume data
- * @param {string} jobDescription - Original job description/tender request
- * @param {Object} jobAnalysis - Job analysis from Step 1
- * @param {string} [apiKey] - Optional API key
- * @returns {Promise<Object>} - Tender response JSON
- */
+// /**
+//  * Generate tender response based on tailored resume and job requirements
+//  * @param {Object} tailoredResume - The tailored resume data
+//  * @param {string} jobDescription - Original job description/tender request
+//  * @param {Object} jobAnalysis - Job analysis from Step 1
+//  * @param {string} [apiKey] - Optional API key
+//  * @returns {Promise<Object>} - Tender response JSON
+//  */
+// export async function generateTenderResponse(
+//   tailoredResume,
+//   jobDescription,
+//   jobAnalysis,
+//   apiKey = null
+// ) {
+//   const effectiveApiKey = apiKey || config.geminiApiKey;
+
+//   if (!effectiveApiKey) {
+//     throw new Error("Gemini API key is required.");
+//   }
+
+//   const prompt = `You are an expert tender response writer specializing in government and corporate procurement. Using the provided tailored resume and job requirements, create a comprehensive tender response that demonstrates how the candidate meets each requirement.
+
+//   🎯 ORIGINAL JOB DESCRIPTION/TENDER REQUEST:
+//   ${jobDescription}
+
+//   📊 JOB ANALYSIS:
+//   ${JSON.stringify(jobAnalysis, null, 2)}
+
+//   👤 TAILORED RESUME DATA:
+//   ${JSON.stringify(tailoredResume, null, 2)}
+
+//   🏆 TENDER RESPONSE STRUCTURE:
+
+//   Create a JSON object with this exact structure:
+
+//   {
+//     "candidateDetails": {
+//       "name": "Candidate's full name from resume",
+//       "proposedRole": "Job title from job description",
+//       "clearance": "Security clearance level from resume or 'To be obtained' if required but not held",
+//       "availability": "Available immediately" or specific availability from resume context"
+//     },
+//     "essentialCriteria": [
+//       {
+//         "requirement": "Essential requirement 1 from job description",
+//         "response": "Detailed response explaining how candidate meets this requirement using specific examples from their experience, achievements, and skills. Include quantifiable results and relevant projects."
+//       },
+//       {
+//         "requirement": "Essential requirement 2 from job description",
+//         "response": "Detailed response with concrete examples..."
+//       }
+//       // Continue for all essential requirements
+//     ],
+//     "desirableCriteria": [
+//       {
+//         "requirement": "Desirable requirement 1 from job description",
+//         "response": "Response explaining relevant experience or skills, or honest statement about learning capability if not fully met"
+//       },
+//       {
+//         "requirement": "Desirable requirement 2 from job description",
+//         "response": "Response with examples..."
+//       }
+//       // Continue for all desirable requirements
+//     ],
+//     "additionalInformation": [
+//       {
+//         "requirement": "Does the candidate have the required Clearance, or the ability to obtain and maintain?",
+//         "response": "Clear statement about current clearance status and ability to obtain/maintain required level"
+//       },
+//       {
+//         "requirement": "Is the candidate a director/owner/account manager/partner of a Seller registered on BuyICT?",
+//         "response": "Yes/No with relevant details if applicable, or 'No conflicts of interest'"
+//       },
+//       {
+//         "requirement": "Previous work history with the Buyer (e.g., DHS, Defence)?",
+//         "response": "Details of previous work history including duration, role, and contact information, or 'No previous work history with this organization'"
+//       }
+//     ]
+//   }
+
+//   🔥 CRITICAL RESPONSE WRITING RULES:
+
+//   **CONTENT REQUIREMENTS:**
+//   - Extract ALL essential and desirable criteria from the job description
+//   - Use specific examples from the candidate's resume
+//   - Include quantifiable achievements where possible
+//   - Reference specific projects, technologies, and outcomes
+//   - Write strictly in third-person perspective. Do NOT use "I", "my", or "I'm confident". Instead, use the candidate’s full name or third-person pronouns like "he/she/they" (e.g., "Tuan Minh has extensive experience in...", "He demonstrated strong analytical skills by...")
+//   - Maintain a professional, confident tone
+//   - Be truthful — do not fabricate experience
+
+//   **RESPONSE QUALITY STANDARDS:**
+//   - Each essential criteria response: 100-150 words with concrete examples
+//   - Each desirable criteria response: 80-120 words
+//   - Use action verbs and specific technical terminology
+//   - Include metrics, timeframes, and business impact
+//   - Reference relevant experience from different roles if applicable
+//   - Show progression and growth in capabilities
+
+//   **ESSENTIAL CRITERIA FOCUS:**
+//   - Must demonstrate clear competency for each requirement
+//   - Use STAR method (Situation, Task, Action, Result) where appropriate
+//   - Include specific technologies, methodologies, and frameworks mentioned
+//   - Reference relevant certifications, training, or qualifications
+//   - Show depth of experience with concrete examples
+
+//   **DESIRABLE CRITERIA APPROACH:**
+//   - Highlight relevant experience that aligns with requirements
+//   - If partially met, show learning capability and relevant transferable skills
+//   - Be honest about gaps while emphasizing adaptability
+//   - Reference related experience that demonstrates capability to learn
+
+//   **ADDITIONAL INFORMATION PRECISION:**
+//   - Clearance: State exact current level and eligibility for required level
+//   - Conflicts of interest: Clear yes/no with specifics if applicable
+//   - Work history: Include specific roles, dates, managers, and contact details if available
+
+//   **FORMATTING REQUIREMENTS:**
+//   - Professional, clear language suitable for government/corporate evaluation
+//   - No bullet points in responses - use flowing paragraphs
+//   - Include specific company names, project names, and technologies
+//   - Reference timeframes and durations
+//   - Use industry-standard terminology
+
+//   🎯 EXTRACTION STRATEGY:
+
+//   **From Job Description:**
+//   1. Identify all numbered essential criteria
+//   2. Identify all numbered desirable criteria
+//   3. Extract specific technical requirements
+//   4. Note compliance and governance requirements
+//   5. Identify key competencies and skill areas
+
+//   **From Resume:**
+//   1. Match experience to each requirement
+//   2. Find quantifiable achievements that demonstrate competency
+//   3. Identify relevant projects and technologies
+//   4. Extract leadership and collaboration examples
+//   5. Note certifications and qualifications that support requirements
+
+//   **Response Construction:**
+//   1. Lead with strongest, most relevant experience
+//   2. Include specific examples with measurable outcomes
+//   3. Reference multiple roles if they provide supporting evidence
+//   4. Use technical terminology from the job description
+//   5. Demonstrate understanding of the role and organization
+
+//   🚨 QUALITY ASSURANCE:
+//   - Every requirement must have a substantive response
+//   - Responses must be grounded in actual resume content
+//   - Technical details must be accurate and specific
+//   - Professional tone throughout
+//   - No generic or template responses
+
+//   Return ONLY the JSON object, no additional text.`;
+
+//   try {
+//     const response = await makeGeminiRequest(
+//       prompt,
+//       effectiveApiKey,
+//       0.15,
+//       8192
+//     );
+//     return response;
+//   } catch (error) {
+//     console.error("Error generating tender response:", error);
+//     throw new Error(`Tender response generation failed: ${error.message}`);
+//   }
+// }
+
+// /**
+//  * Enhanced tender response generation for the new ICT Criteria Statement format
+//  * @param {Object} tailoredResume - The tailored resume data
+//  * @param {string} jobDescription - Original job description/tender request
+//  * @param {Object} jobAnalysis - Job analysis from RFQ analysis
+//  * @param {string} [apiKey] - Optional API key
+//  * @returns {Promise<Object>} - Tender response JSON optimized for ICT Criteria Statement
+//  */
+// export async function generateICTCriteriaStatement(
+//   tailoredResume,
+//   jobDescription,
+//   jobAnalysis,
+//   apiKey = null
+// ) {
+//   const effectiveApiKey = apiKey || config.geminiApiKey;
+
+//   if (!effectiveApiKey) {
+//     throw new Error("Gemini API key is required.");
+//   }
+
+//   const prompt = `You are an expert ICT tender response specialist creating a comprehensive ICT Criteria Statement for government procurement. Using the provided tailored resume and RFQ requirements, create a professional tender response that demonstrates how the candidate meets each criterion with specific examples and evidence.
+
+//   🎯 ORIGINAL JOB DESCRIPTION/RFQ:
+//   ${jobDescription}
+
+//   📊 RFQ ANALYSIS:
+//   ${JSON.stringify(jobAnalysis, null, 2)}
+
+//   👤 TAILORED RESUME DATA:
+//   ${JSON.stringify(tailoredResume, null, 2)}
+
+//   🏆 ICT CRITERIA STATEMENT STRUCTURE:
+
+//   Create a JSON object that follows this exact structure for an ICT Criteria Statement:
+
+//   {
+//     "candidateDetails": {
+//       "name": "Candidate's full name from resume",
+//       "proposedRole": "Application Response to [specific role/project name from RFQ]",
+//       "clearance": "Security clearance level or eligibility status",
+//       "availability": "Availability statement"
+//     },
+//     "essentialCriteria": [
+//       {
+//         "criteria": "Summary",
+//         "response": "Comprehensive 150-200 word professional summary highlighting the candidate's overall qualifications, years of experience, key expertise areas, and how they align with the role requirements. Focus on their background in ICT, project management, and relevant industry experience."
+//       },
+//       {
+//         "criteria": "Skills, Knowledge, and Experience Relevant to the Role",
+//         "response": "Detailed 400-500 word response covering:\n\n• ICT Project Management & Policy Expertise:\n[Specific examples of ICT project management experience with quantifiable results]\n\n• Stakeholder Engagement & Communication:\n[Examples of stakeholder management and communication success]\n\n• Strategic & Analytical Thinking:\n[Evidence of strategic thinking and analytical problem-solving capabilities]\n\nUse bullet points for key competency areas and provide specific examples from their experience."
+//       },
+//       {
+//         "criteria": "Interest in the Role & Contributions",
+//         "response": "100-150 word response explaining the candidate's specific interest in this role and how they can contribute to the project's success. Reference the project name and demonstrate understanding of the role's importance."
+//       },
+//       {
+//         "criteria": "Key Achievements Demonstrating Ability to Perform the Role",
+//         "response": "3-4 bullet points (150-200 words total) highlighting specific achievements that directly demonstrate their capability to perform this role. Include quantifiable results, project outcomes, and relevant success metrics."
+//       }
+//     ],
+//     "desirableCriteria": [
+//       {
+//         "criteria": "Summary",
+//         "response": "100-150 word summary of desirable qualities the candidate brings, including their enthusiasm, experience level, and self-driven motivation."
+//       },
+//       {
+//         "criteria": "Ability to Apply Judgment & Achieve Critical Outcomes",
+//         "response": "120-150 word response with specific examples of decision-making, risk management, and achieving critical project outcomes."
+//       },
+//       {
+//         "criteria": "Critical Thinking & Persuasive Communication",
+//         "response": "120-150 word response demonstrating analytical thinking skills and communication effectiveness with examples."
+//       },
+//       {
+//         "criteria": "Listening & Effective Communication Skill",
+//         "response": "120-150 word response showing communication skills, stakeholder engagement, and collaboration abilities."
+//       },
+//       {
+//         "criteria": "Ability to Work in a Collaborative Team Environment",
+//         "response": "120-150 word response highlighting teamwork experience, cross-functional collaboration, and team leadership examples."
+//       },
+//       {
+//         "criteria": "Trustworthiness, Transparency & Integrity",
+//         "response": "120-150 word response demonstrating ethical standards, governance compliance, and professional integrity."
+//       },
+//       {
+//         "criteria": "Capability to Deliver High-Quality Outcomes to Tight Deadlines",
+//         "response": "120-150 word response with specific examples of deadline management, project delivery success, and time management skills."
+//       }
+//     ],
+//     "additionalInformation": [
+//       {
+//         "criteria": "Security Clearance Status",
+//         "response": "Clear statement about current clearance level and ability to obtain/maintain required clearance"
+//       },
+//       {
+//         "criteria": "Availability and Start Date",
+//         "response": "Specific availability information and earliest possible start date"
+//       },
+//       {
+//         "criteria": "Previous Experience with Government/Defence Projects",
+//         "response": "Details of any previous government or defence work, including duration and nature of projects"
+//       }
+//     ]
+//   }
+
+//   🔥 CRITICAL WRITING GUIDELINES:
+
+//   **CONTENT REQUIREMENTS:**
+//   - Write exclusively in third-person perspective using the candidate's full name
+//   - Never use "I", "my", "me" - always use "Tony has...", "He demonstrates...", etc.
+//   - Provide specific examples from the candidate's actual experience
+//   - Include quantifiable achievements and metrics where possible
+//   - Use professional, confident language appropriate for government evaluation
+//   - Reference specific technologies, methodologies, and frameworks from their background
+
+//   **RESPONSE STRUCTURE:**
+//   - Essential "Skills, Knowledge, and Experience" should be the longest and most detailed response
+//   - Use bullet points with headers for key competency areas in the skills section
+//   - Each desirable criteria response should be substantial but concise
+//   - Include specific project names, organizations, and outcomes from their resume
+//   - Demonstrate clear understanding of the role and project requirements
+
+//   **QUALITY STANDARDS:**
+//   - Summary responses: 100-200 words focusing on overall qualifications
+//   - Skills response: 400-500 words with detailed competency breakdowns
+//   - Achievement responses: Include 3-4 specific, quantifiable accomplishments
+//   - Desirable responses: 120-150 words each with concrete examples
+//   - All responses must be grounded in actual resume content
+//   - For example, do not use something like this: "• **ICT Project Management & Policy Expertise:** ". The "**" should be removed, just use the text after it
+
+//   **GOVERNMENT TENDER OPTIMIZATION:**
+//   - Use terminology from the RFQ and job analysis
+//   - Address evaluation criteria systematically
+//   - Demonstrate value to government/defence objectives
+//   - Show compliance and governance awareness
+//   - Highlight relevant security and clearance experience
+
+//   **FORMATTING REQUIREMENTS:**
+//   - Professional language suitable for ICT procurement evaluation
+//   - Use bullet points strategically in the skills section
+//   - Include specific timeframes, project scales, and team sizes
+//   - Reference leadership experience with team size numbers
+//   - Maintain consistent professional tone throughout
+
+//   🚨 MANDATORY RULES:
+//   - All content must be truthful and based on actual resume information
+//   - Use exact project names, companies, and roles from the resume
+//   - Include specific years of experience and quantifiable metrics
+//   - Reference security clearance accurately as stated in resume
+//   - Maintain professional government tender standards
+//   - Every response must demonstrate specific competency for the role
+
+//   🎯 EXTRACTION STRATEGY:
+//   1. Map resume experience to each essential and desirable criterion
+//   2. Extract specific achievements that demonstrate required competencies
+//   3. Use quantifiable results and project outcomes as evidence
+//   4. Reference multiple roles if they provide supporting evidence
+//   5. Demonstrate progression and growth in capabilities
+
+//   Return ONLY the JSON object, no additional text.`;
+
+//   try {
+//     const response = await makeGeminiRequest(
+//       prompt,
+//       effectiveApiKey,
+//       0.15,
+//       8192
+//     );
+//     return response;
+//   } catch (error) {
+//     console.error("Error generating ICT Criteria Statement:", error);
+//     throw new Error(
+//       `ICT Criteria Statement generation failed: ${error.message}`
+//     );
+//   }
+// }
+
+// /**
+//  * Alternative function name for backward compatibility
+//  */
+// export async function generateTenderResponse(
+//   tailoredResume,
+//   jobDescription,
+//   jobAnalysis,
+//   apiKey = null
+// ) {
+//   return await generateICTCriteriaStatement(
+//     tailoredResume,
+//     jobDescription,
+//     jobAnalysis,
+//     apiKey
+//   );
+// }
+
+// /**
+//  * Utility function to validate the generated tender response format
+//  */
+// export function validateICTCriteriaFormat(tenderData) {
+//   const requiredSections = [
+//     "candidateDetails",
+//     "essentialCriteria",
+//     "desirableCriteria",
+//   ];
+//   const requiredEssentialCriteria = [
+//     "Summary",
+//     "Skills, Knowledge, and Experience Relevant to the Role",
+//     "Interest in the Role & Contributions",
+//     "Key Achievements Demonstrating Ability to Perform the Role",
+//   ];
+
+//   const requiredDesirableCriteria = [
+//     "Summary",
+//     "Ability to Apply Judgment & Achieve Critical Outcomes",
+//     "Critical Thinking & Persuasive Communication",
+//     "Listening & Effective Communication Skill",
+//     "Ability to Work in a Collaborative Team Environment",
+//     "Trustworthiness, Transparency & Integrity",
+//     "Capability to Deliver High-Quality Outcomes to Tight Deadlines",
+//   ];
+
+//   const validation = {
+//     isValid: true,
+//     missingElements: [],
+//     warnings: [],
+//   };
+
+//   // Check required sections
+//   requiredSections.forEach((section) => {
+//     if (!tenderData[section]) {
+//       validation.isValid = false;
+//       validation.missingElements.push(`Missing section: ${section}`);
+//     }
+//   });
+
+//   // Check essential criteria
+//   if (tenderData.essentialCriteria) {
+//     const essentialTitles = tenderData.essentialCriteria.map((c) => c.criteria);
+//     requiredEssentialCriteria.forEach((required) => {
+//       if (!essentialTitles.includes(required)) {
+//         validation.warnings.push(`Missing essential criteria: ${required}`);
+//       }
+//     });
+//   }
+
+//   // Check desirable criteria
+//   if (tenderData.desirableCriteria) {
+//     const desirableTitles = tenderData.desirableCriteria.map((c) => c.criteria);
+//     requiredDesirableCriteria.forEach((required) => {
+//       if (!desirableTitles.includes(required)) {
+//         validation.warnings.push(`Missing desirable criteria: ${required}`);
+//       }
+//     });
+//   }
+
+//   // Check response quality
+//   if (tenderData.essentialCriteria) {
+//     tenderData.essentialCriteria.forEach((criteria, index) => {
+//       const wordCount = criteria.response?.split(" ").length || 0;
+//       if (
+//         criteria.criteria ===
+//           "Skills, Knowledge, and Experience Relevant to the Role" &&
+//         wordCount < 300
+//       ) {
+//         validation.warnings.push(
+//           `Skills section response too brief: ${wordCount} words (minimum 300 recommended)`
+//         );
+//       } else if (wordCount < 50) {
+//         validation.warnings.push(
+//           `Essential criteria ${
+//             index + 1
+//           } response too brief: ${wordCount} words`
+//         );
+//       }
+//     });
+//   }
+
+//   return validation;
+// }
+
+// /**
+//  * Helper function to format the tender response for the new template
+//  */
+// export function formatForICTTemplate(rawTenderData) {
+//   // Ensure the data structure matches exactly what the new template expects
+//   return {
+//     candidateDetails: {
+//       name: rawTenderData.candidateDetails?.name || "Candidate Name",
+//       proposedRole:
+//         rawTenderData.candidateDetails?.proposedRole || "Application Response",
+//       clearance: rawTenderData.candidateDetails?.clearance,
+//       availability: rawTenderData.candidateDetails?.availability,
+//     },
+//     essentialCriteria:
+//       rawTenderData.essentialCriteria?.map((criteria) => ({
+//         criteria: criteria.criteria || criteria.requirement,
+//         response: criteria.response,
+//       })) || [],
+//     desirableCriteria:
+//       rawTenderData.desirableCriteria?.map((criteria) => ({
+//         criteria: criteria.criteria || criteria.requirement,
+//         response: criteria.response,
+//       })) || [],
+//     additionalInformation:
+//       rawTenderData.additionalInformation?.map((info) => ({
+//         criteria: info.criteria || info.requirement,
+//         response: info.response,
+//       })) || [],
+//   };
+// }
+
 export async function generateTenderResponse(
   tailoredResume,
   jobDescription,
@@ -1141,139 +1614,254 @@ export async function generateTenderResponse(
     throw new Error("Gemini API key is required.");
   }
 
-  const prompt = `You are an expert tender response writer specializing in government and corporate procurement. Using the provided tailored resume and job requirements, create a comprehensive tender response that demonstrates how the candidate meets each requirement.
+  // Detect sector from job description and analysis
+  const sectorKeywords = {
+    ICT: [
+      "ICT",
+      "IT",
+      "information technology",
+      "digital",
+      "software",
+      "systems",
+      "technology",
+    ],
+    Defence: [
+      "defence",
+      "defense",
+      "military",
+      "security",
+      "army",
+      "navy",
+      "air force",
+      "ADF",
+    ],
+    Finance: [
+      "finance",
+      "financial",
+      "accounting",
+      "treasury",
+      "budget",
+      "fiscal",
+      "economic",
+    ],
+    Health: [
+      "health",
+      "medical",
+      "healthcare",
+      "hospital",
+      "clinical",
+      "patient",
+    ],
+    Education: [
+      "education",
+      "school",
+      "university",
+      "teaching",
+      "academic",
+      "student",
+    ],
+    Infrastructure: [
+      "infrastructure",
+      "construction",
+      "engineering",
+      "transport",
+      "roads",
+    ],
+    Environment: [
+      "environment",
+      "sustainability",
+      "climate",
+      "conservation",
+      "renewable",
+    ],
+    Legal: [
+      "legal",
+      "law",
+      "judicial",
+      "court",
+      "legislation",
+      "compliance",
+      "regulatory",
+    ],
+  };
+
+  const jobText = (jobDescription + JSON.stringify(jobAnalysis)).toLowerCase();
+  let detectedSector = "Government";
+  let sectorTerminology = "professional";
+
+  for (const [sector, keywords] of Object.entries(sectorKeywords)) {
+    if (keywords.some((keyword) => jobText.includes(keyword))) {
+      detectedSector = sector;
+      sectorTerminology = sector.toLowerCase();
+      break;
+    }
+  }
+
+  const prompt = `You are an expert government tender response specialist creating a comprehensive Criteria Statement for ${detectedSector} sector procurement. Using the provided tailored resume and RFQ requirements, create a professional tender response that demonstrates how the candidate meets each criterion with specific examples and evidence.
   
-  🎯 ORIGINAL JOB DESCRIPTION/TENDER REQUEST:
+  🎯 ORIGINAL JOB DESCRIPTION/RFQ:
   ${jobDescription}
   
-  📊 JOB ANALYSIS:
+  📊 RFQ ANALYSIS:
   ${JSON.stringify(jobAnalysis, null, 2)}
   
   👤 TAILORED RESUME DATA:
   ${JSON.stringify(tailoredResume, null, 2)}
   
-  🏆 TENDER RESPONSE STRUCTURE:
+  🏆 CRITERIA STATEMENT STRUCTURE:
   
-  Create a JSON object with this exact structure:
+  Create a JSON object that follows this exact structure for a ${detectedSector} Criteria Statement:
   
   {
     "candidateDetails": {
       "name": "Candidate's full name from resume",
-      "proposedRole": "Job title from job description",
-      "clearance": "Security clearance level from resume or 'To be obtained' if required but not held",
-      "availability": "Available immediately" or specific availability from resume context"
+      "proposedRole": "Application Response to [specific role/project name from RFQ]",
+      "clearance": "Security clearance level or eligibility status (if applicable to sector)",
+      "availability": "Availability statement"
     },
     "essentialCriteria": [
       {
-        "requirement": "Essential requirement 1 from job description",
-        "response": "Detailed response explaining how candidate meets this requirement using specific examples from their experience, achievements, and skills. Include quantifiable results and relevant projects."
+        "criteria": "Summary",
+        "response": "Comprehensive 150-200 word professional summary highlighting the candidate's overall qualifications, years of experience, key expertise areas, and how they align with the role requirements. Focus on their background in ${sectorTerminology}, project management, and relevant industry experience."
       },
       {
-        "requirement": "Essential requirement 2 from job description", 
-        "response": "Detailed response with concrete examples..."
+        "criteria": "Skills, Knowledge, and Experience Relevant to the Role",
+        "response": "Detailed 400-500 word response covering:\n\n• ${detectedSector} Domain Expertise & Professional Experience:\n[Specific examples of ${sectorTerminology} experience with quantifiable results]\n\n• Stakeholder Engagement & Communication:\n[Examples of stakeholder management and communication success]\n\n• Strategic & Analytical Thinking:\n[Evidence of strategic thinking and analytical problem-solving capabilities]\n\nUse bullet points for key competency areas and provide specific examples from their experience."
+      },
+      {
+        "criteria": "Interest in the Role & Contributions",
+        "response": "100-150 word response explaining the candidate's specific interest in this role and how they can contribute to the project's success. Reference the project name and demonstrate understanding of the role's importance within the ${detectedSector} context."
+      },
+      {
+        "criteria": "Key Achievements Demonstrating Ability to Perform the Role",
+        "response": "3-4 bullet points (150-200 words total) highlighting specific achievements that directly demonstrate their capability to perform this role. Include quantifiable results, project outcomes, and relevant success metrics from ${sectorTerminology} experience."
       }
-      // Continue for all essential requirements
     ],
     "desirableCriteria": [
       {
-        "requirement": "Desirable requirement 1 from job description",
-        "response": "Response explaining relevant experience or skills, or honest statement about learning capability if not fully met"
+        "criteria": "Summary",
+        "response": "100-150 word summary of desirable qualities the candidate brings, including their enthusiasm, experience level, and self-driven motivation within the ${detectedSector} sector."
       },
       {
-        "requirement": "Desirable requirement 2 from job description",
-        "response": "Response with examples..."
+        "criteria": "Ability to Apply Judgment & Achieve Critical Outcomes",
+        "response": "120-150 word response with specific examples of decision-making, risk management, and achieving critical project outcomes in ${sectorTerminology} environments."
+      },
+      {
+        "criteria": "Critical Thinking & Persuasive Communication",
+        "response": "120-150 word response demonstrating analytical thinking skills and communication effectiveness with examples relevant to ${detectedSector} stakeholders."
+      },
+      {
+        "criteria": "Listening & Effective Communication Skill",
+        "response": "120-150 word response showing communication skills, stakeholder engagement, and collaboration abilities within ${detectedSector} contexts."
+      },
+      {
+        "criteria": "Ability to Work in a Collaborative Team Environment",
+        "response": "120-150 word response highlighting teamwork experience, cross-functional collaboration, and team leadership examples in ${sectorTerminology} settings."
+      },
+      {
+        "criteria": "Trustworthiness, Transparency & Integrity",
+        "response": "120-150 word response demonstrating ethical standards, governance compliance, and professional integrity relevant to ${detectedSector} sector requirements."
+      },
+      {
+        "criteria": "Capability to Deliver High-Quality Outcomes to Tight Deadlines",
+        "response": "120-150 word response with specific examples of deadline management, project delivery success, and time management skills in ${sectorTerminology} projects."
       }
-      // Continue for all desirable requirements
     ],
     "additionalInformation": [
       {
-        "requirement": "Does the candidate have the required Clearance, or the ability to obtain and maintain?",
-        "response": "Clear statement about current clearance status and ability to obtain/maintain required level"
+        "criteria": "Security Clearance Status${
+          detectedSector === "Defence"
+            ? " (Essential for Defence roles)"
+            : detectedSector === "ICT"
+            ? " (Often required for government ICT)"
+            : " (If applicable)"
+        }",
+        "response": "Clear statement about current clearance level and ability to obtain/maintain required clearance${
+          detectedSector === "Defence"
+            ? ", including any special defence clearances"
+            : ""
+        }"
       },
       {
-        "requirement": "Is the candidate a director/owner/account manager/partner of a Seller registered on BuyICT?",
-        "response": "Yes/No with relevant details if applicable, or 'No conflicts of interest'"
+        "criteria": "Availability and Start Date",
+        "response": "Specific availability information and earliest possible start date for this ${detectedSector} role"
       },
       {
-        "requirement": "Previous work history with the Buyer (e.g., DHS, Defence)?",
-        "response": "Details of previous work history including duration, role, and contact information, or 'No previous work history with this organization'"
+        "criteria": "Previous Experience with ${
+          detectedSector === "Defence"
+            ? "Defence/Military Projects"
+            : detectedSector === "ICT"
+            ? "Government/Defence ICT Projects"
+            : detectedSector === "Finance"
+            ? "Government/Public Sector Finance"
+            : `Government/${detectedSector} Projects`
+        }",
+        "response": "Details of any previous ${sectorTerminology} work with government or relevant organizations, including duration and nature of projects"
       }
     ]
   }
   
-  🔥 CRITICAL RESPONSE WRITING RULES:
+  🔥 CRITICAL WRITING GUIDELINES:
   
   **CONTENT REQUIREMENTS:**
-  - Extract ALL essential and desirable criteria from the job description
-  - Use specific examples from the candidate's resume
-  - Include quantifiable achievements where possible
-  - Reference specific projects, technologies, and outcomes
-  - Write strictly in third-person perspective. Do NOT use "I", "my", or "I'm confident". Instead, use the candidate’s full name or third-person pronouns like "he/she/they" (e.g., "Tuan Minh has extensive experience in...", "He demonstrated strong analytical skills by...")
-  - Maintain a professional, confident tone
-  - Be truthful — do not fabricate experience
+  - Write exclusively in third-person perspective using the candidate's full name
+  - Never use "I", "my", "me" - always use "[Name] has...", "They demonstrate...", etc.
+  - Provide specific examples from the candidate's actual experience
+  - Include quantifiable achievements and metrics where possible
+  - Use professional, confident language appropriate for government evaluation
+  - Reference specific technologies, methodologies, and frameworks from their background
+  - Tailor language to ${detectedSector} sector terminology and requirements
   
-  **RESPONSE QUALITY STANDARDS:**
-  - Each essential criteria response: 100-150 words with concrete examples
-  - Each desirable criteria response: 80-120 words 
-  - Use action verbs and specific technical terminology
-  - Include metrics, timeframes, and business impact
-  - Reference relevant experience from different roles if applicable
-  - Show progression and growth in capabilities
+  **RESPONSE STRUCTURE:**
+  - Essential "Skills, Knowledge, and Experience" should be the longest and most detailed response
+  - Use bullet points with headers for key competency areas in the skills section
+  - Each desirable criteria response should be substantial but concise
+  - Include specific project names, organizations, and outcomes from their resume
+  - Demonstrate clear understanding of the role and ${detectedSector} sector requirements
   
-  **ESSENTIAL CRITERIA FOCUS:**
-  - Must demonstrate clear competency for each requirement
-  - Use STAR method (Situation, Task, Action, Result) where appropriate
-  - Include specific technologies, methodologies, and frameworks mentioned
-  - Reference relevant certifications, training, or qualifications
-  - Show depth of experience with concrete examples
+  **QUALITY STANDARDS:**
+  - Summary responses: 100-200 words focusing on overall qualifications
+  - Skills response: 400-500 words with detailed competency breakdowns
+  - Achievement responses: Include 3-4 specific, quantifiable accomplishments
+  - Desirable responses: 120-150 words each with concrete examples
+  - All responses must be grounded in actual resume content
+  - Remove any markdown formatting like "**text**" - use plain text only
   
-  **DESIRABLE CRITERIA APPROACH:**
-  - Highlight relevant experience that aligns with requirements
-  - If partially met, show learning capability and relevant transferable skills
-  - Be honest about gaps while emphasizing adaptability
-  - Reference related experience that demonstrates capability to learn
-  
-  **ADDITIONAL INFORMATION PRECISION:**
-  - Clearance: State exact current level and eligibility for required level
-  - Conflicts of interest: Clear yes/no with specifics if applicable
-  - Work history: Include specific roles, dates, managers, and contact details if available
+  **GOVERNMENT TENDER OPTIMIZATION:**
+  - Use terminology from the RFQ and job analysis
+  - Address evaluation criteria systematically
+  - Demonstrate value to government/${detectedSector} objectives
+  - Show compliance and governance awareness
+  - Highlight relevant ${detectedSector} sector experience and understanding
+  - Reference industry standards and frameworks relevant to ${detectedSector}
   
   **FORMATTING REQUIREMENTS:**
-  - Professional, clear language suitable for government/corporate evaluation
-  - No bullet points in responses - use flowing paragraphs
-  - Include specific company names, project names, and technologies
-  - Reference timeframes and durations
-  - Use industry-standard terminology
+  - Professional language suitable for ${detectedSector} procurement evaluation
+  - Use bullet points strategically in the skills section
+  - Include specific timeframes, project scales, and team sizes
+  - Reference leadership experience with team size numbers
+  - Maintain consistent professional tone throughout
+  - Use ${detectedSector}-specific terminology where appropriate
+  
+  🚨 MANDATORY RULES:
+  - All content must be truthful and based on actual resume information
+  - Use exact project names, companies, and roles from the resume
+  - Include specific years of experience and quantifiable metrics
+  - Reference security clearance accurately as stated in resume (especially important for ${
+    detectedSector === "Defence" ? "Defence roles" : "government roles"
+  })
+  - Maintain professional government tender standards
+  - Every response must demonstrate specific competency for the role
+  - Adapt examples to highlight ${detectedSector} sector relevance
   
   🎯 EXTRACTION STRATEGY:
-  
-  **From Job Description:**
-  1. Identify all numbered essential criteria
-  2. Identify all numbered desirable criteria  
-  3. Extract specific technical requirements
-  4. Note compliance and governance requirements
-  5. Identify key competencies and skill areas
-  
-  **From Resume:**
-  1. Match experience to each requirement
-  2. Find quantifiable achievements that demonstrate competency
-  3. Identify relevant projects and technologies
-  4. Extract leadership and collaboration examples
-  5. Note certifications and qualifications that support requirements
-  
-  **Response Construction:**
-  1. Lead with strongest, most relevant experience
-  2. Include specific examples with measurable outcomes
-  3. Reference multiple roles if they provide supporting evidence
-  4. Use technical terminology from the job description
-  5. Demonstrate understanding of the role and organization
-  
-  🚨 QUALITY ASSURANCE:
-  - Every requirement must have a substantive response
-  - Responses must be grounded in actual resume content
-  - Technical details must be accurate and specific
-  - Professional tone throughout
-  - No generic or template responses
+  1. Map resume experience to each essential and desirable criterion
+  2. Extract specific achievements that demonstrate required competencies
+  3. Use quantifiable results and project outcomes as evidence
+  4. Reference multiple roles if they provide supporting evidence
+  5. Demonstrate progression and growth in capabilities
+  6. Emphasize ${detectedSector} sector knowledge and experience where available
+  7. Highlight transferable skills for cross-sector applications
   
   Return ONLY the JSON object, no additional text.`;
 
@@ -1286,7 +1874,209 @@ export async function generateTenderResponse(
     );
     return response;
   } catch (error) {
-    console.error("Error generating tender response:", error);
-    throw new Error(`Tender response generation failed: ${error.message}`);
+    console.error("Error generating Tender Response:", error);
+    throw new Error(`Tender Response generation failed: ${error.message}`);
   }
+}
+
+/**
+ * Alias for backward compatibility with ICT-specific naming
+ */
+export async function generateICTCriteriaStatement(
+  tailoredResume,
+  jobDescription,
+  jobAnalysis,
+  apiKey = null
+) {
+  return await generateTenderResponse(
+    tailoredResume,
+    jobDescription,
+    jobAnalysis,
+    apiKey
+  );
+}
+
+/**
+ * Utility function to validate the generated tender response format
+ */
+export function validateTenderResponseFormat(tenderData) {
+  const requiredSections = [
+    "candidateDetails",
+    "essentialCriteria",
+    "desirableCriteria",
+  ];
+  const requiredEssentialCriteria = [
+    "Summary",
+    "Skills, Knowledge, and Experience Relevant to the Role",
+    "Interest in the Role & Contributions",
+    "Key Achievements Demonstrating Ability to Perform the Role",
+  ];
+
+  const requiredDesirableCriteria = [
+    "Summary",
+    "Ability to Apply Judgment & Achieve Critical Outcomes",
+    "Critical Thinking & Persuasive Communication",
+    "Listening & Effective Communication Skill",
+    "Ability to Work in a Collaborative Team Environment",
+    "Trustworthiness, Transparency & Integrity",
+    "Capability to Deliver High-Quality Outcomes to Tight Deadlines",
+  ];
+
+  const validation = {
+    isValid: true,
+    missingElements: [],
+    warnings: [],
+  };
+
+  // Check required sections
+  requiredSections.forEach((section) => {
+    if (!tenderData[section]) {
+      validation.isValid = false;
+      validation.missingElements.push(`Missing section: ${section}`);
+    }
+  });
+
+  // Check essential criteria
+  if (tenderData.essentialCriteria) {
+    const essentialTitles = tenderData.essentialCriteria.map((c) => c.criteria);
+    requiredEssentialCriteria.forEach((required) => {
+      if (!essentialTitles.includes(required)) {
+        validation.warnings.push(`Missing essential criteria: ${required}`);
+      }
+    });
+  }
+
+  // Check desirable criteria
+  if (tenderData.desirableCriteria) {
+    const desirableTitles = tenderData.desirableCriteria.map((c) => c.criteria);
+    requiredDesirableCriteria.forEach((required) => {
+      if (!desirableTitles.includes(required)) {
+        validation.warnings.push(`Missing desirable criteria: ${required}`);
+      }
+    });
+  }
+
+  // Check response quality
+  if (tenderData.essentialCriteria) {
+    tenderData.essentialCriteria.forEach((criteria, index) => {
+      const wordCount = criteria.response?.split(" ").length || 0;
+      if (
+        criteria.criteria ===
+          "Skills, Knowledge, and Experience Relevant to the Role" &&
+        wordCount < 300
+      ) {
+        validation.warnings.push(
+          `Skills section response too brief: ${wordCount} words (minimum 300 recommended)`
+        );
+      } else if (wordCount < 50) {
+        validation.warnings.push(
+          `Essential criteria ${
+            index + 1
+          } response too brief: ${wordCount} words`
+        );
+      }
+    });
+  }
+
+  return validation;
+}
+
+/**
+ * Utility function to detect the sector from job description
+ */
+export function detectSector(jobDescription, jobAnalysis) {
+  const sectorKeywords = {
+    ICT: [
+      "ICT",
+      "IT",
+      "information technology",
+      "digital",
+      "software",
+      "systems",
+      "technology",
+      "cyber",
+    ],
+    Defence: [
+      "defence",
+      "defense",
+      "military",
+      "security",
+      "army",
+      "navy",
+      "air force",
+      "ADF",
+      "armed forces",
+    ],
+    Finance: [
+      "finance",
+      "financial",
+      "accounting",
+      "treasury",
+      "budget",
+      "fiscal",
+      "economic",
+      "revenue",
+    ],
+    Health: [
+      "health",
+      "medical",
+      "healthcare",
+      "hospital",
+      "clinical",
+      "patient",
+      "nursing",
+    ],
+    Education: [
+      "education",
+      "school",
+      "university",
+      "teaching",
+      "academic",
+      "student",
+      "curriculum",
+    ],
+    Infrastructure: [
+      "infrastructure",
+      "construction",
+      "engineering",
+      "transport",
+      "roads",
+      "utilities",
+    ],
+    Environment: [
+      "environment",
+      "sustainability",
+      "climate",
+      "conservation",
+      "renewable",
+      "green",
+    ],
+    Legal: [
+      "legal",
+      "law",
+      "judicial",
+      "court",
+      "legislation",
+      "compliance",
+      "regulatory",
+      "attorney",
+    ],
+  };
+
+  const jobText = (jobDescription + JSON.stringify(jobAnalysis)).toLowerCase();
+
+  for (const [sector, keywords] of Object.entries(sectorKeywords)) {
+    if (keywords.some((keyword) => jobText.includes(keyword))) {
+      return sector;
+    }
+  }
+
+  return "Government"; // Default fallback
+}
+
+/**
+ * Alias for backward compatibility with ICT-specific validation
+ */
+export function validateICTCriteriaFormat(tenderData) {
+  return validateTenderResponseFormat(tenderData);
 }
