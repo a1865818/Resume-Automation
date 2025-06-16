@@ -1,7 +1,6 @@
-
 import { useEffect, useState } from 'react';
 
-const TenderResponse = ({ tenderData }) => {
+const TenderResponseWordCompatible = ({ tenderData }) => {
   const [detectedSector, setDetectedSector] = useState('Government');
 
   // Detect sector from tender data
@@ -33,9 +32,13 @@ const TenderResponse = ({ tenderData }) => {
   // Check if tenderData exists and has the expected structure
   if (!tenderData) {
     return (
-      <div style={{ padding: '2rem', textAlign: 'center' }}>
-        <h2>Error: No tender data available</h2>
-        <p>Please go back and regenerate the tender response.</p>
+      <div style={{ 
+        padding: '32px', 
+        textAlign: 'center',
+        fontFamily: 'Arial, sans-serif' 
+      }}>
+        <h2 style={{ margin: '0 0 16px 0' }}>Error: No tender data available</h2>
+        <p style={{ margin: '0' }}>Please go back and regenerate the tender response.</p>
       </div>
     );
   }
@@ -46,10 +49,11 @@ const TenderResponse = ({ tenderData }) => {
         <tr key={`${sectionType}-empty`}>
           <td colSpan="2" style={{
             padding: '12px',
-            border: '1px solid #000',
+            border: '1px solid #000000',
             textAlign: 'center',
             fontStyle: 'italic',
-            fontSize: '12px'
+            fontSize: '12px',
+            fontFamily: 'Arial, sans-serif'
           }}>
             No {sectionType} criteria available
           </td>
@@ -61,22 +65,24 @@ const TenderResponse = ({ tenderData }) => {
       <tr key={`${sectionType}-${index}`}>
         <td style={{
           padding: '12px',
-          border: '1px solid #000',
+          border: '1px solid #000000',
           backgroundColor: '#f9f9f9',
           fontWeight: 'bold',
           verticalAlign: 'top',
           width: '25%',
-          fontSize: '12px'
+          fontSize: '12px',
+          fontFamily: 'Arial, sans-serif'
         }}>
           {item.requirement || item.criteria || `${sectionType} Requirement ${index + 1}`}
         </td>
         <td style={{
           padding: '12px',
-          border: '1px solid #000',
+          border: '1px solid #000000',
           verticalAlign: 'top',
           fontSize: '12px',
           lineHeight: '1.5',
-          whiteSpace: 'pre-line'
+          whiteSpace: 'pre-line',
+          fontFamily: 'Arial, sans-serif'
         }}>
           {item.response || 'No response provided'}
         </td>
@@ -122,73 +128,114 @@ const TenderResponse = ({ tenderData }) => {
       minHeight: '100vh',
       padding: '8px 20px 8px 20px',
       fontFamily: 'Arial, sans-serif',
-      maxWidth: '1012.8000488px',
+      maxWidth: '1012px',
       margin: '0 auto',
     }}>
-    
-      <div>
-        {/* Logos Container */}
-        <div>
-          {/* PappsPM Logo */}
-          <div style={{
-            height: "200px",     
-            width: "195px",
-            display: 'inline-block',
-            verticalAlign: 'top',
-            marginRight: '5px',
-            background: "url(/PappspmLogo.jpeg) no-repeat center center",
-            backgroundSize: 'contain'
-          }}>
-          </div>
-          
-          {/* SME Logo */}
-          <div style={{
-            height: '170px',
-            display: 'inline-block',
-            verticalAlign: 'top',
-            marginTop: '18.5px',
-          }}>
-            <img 
-              src="/assets/images/SMELogo.jpeg" 
-              alt="SME Logo" 
-              style={{ 
-                height: '170px',
-                maxWidth: '300px',
-                objectFit: 'contain'
-              }} 
-            />
-          </div>
-        </div>
-        
-        {/* Dynamic Sector Header */}
-        <div style={{
-          textAlign: 'center', 
-          backgroundColor: headerColor, 
-          padding: '8px 0',
-          marginBottom: '8px',
-        }}>
-          <h2 style={{
-            fontSize: '24px',
-            fontWeight: 'bold',
-            color: '#000',
-            margin: '0'
-          }}>
-            {headerText}
-          </h2>
-        </div>
-        
-        {/* Banner */}
-        <div style={{
-          backgroundImage: "url('/assets/images/BannerTenderResponse.jpg')",
-          backgroundSize: "cover", 
-          backgroundPosition: "center",
-          width: "100%",
-          height: "300px", 
-        }}>
-        </div>
-      </div>
+      {/* Header section with logos - using table for better Word compatibility */}
+        <table style={{ width: '100%', marginBottom: '8px', borderCollapse: 'collapse', border: 'none' }}>
+        <tbody>
+            <tr>
+            <td style={{ 
+                width: '130px', 
+                height: '125px',
+                verticalAlign: 'top',
+                // padding: '0 5px 0 0',
+                border: 'none'
+            }}>
+                <img
+                src="/PappspmLogo.jpeg"
+                alt="Pappspm Logo"
+                width="125"
+                height="125"
+                style={{
+                    objectFit: 'contain',
+                    display: 'block',
+                    border: 'none'
+                }}
+                />
+            </td>
+            <td style={{ 
+                verticalAlign: 'top',
+                paddingTop: '18px',
+                border: 'none'
+            }}>
+              <img 
+                src="/assets/images/SMELogo.jpeg" 
+                alt="SME Logo" 
+                width="175"
+                height="125"
+                style={{ 
+                
+                    objectFit: 'contain',
+                    display: 'block',
+                    border: 'none'
+                }} 
+                />
+            </td>
+            </tr>
+        </tbody>
+        </table>
 
-      {/* Header */}
+      
+      {/* Dynamic Sector Header */}
+      <table style={{ 
+  width: "100%", 
+  borderCollapse: "collapse",
+  backgroundColor: headerColor
+}}>
+  <tr>
+    <td style={{
+      textAlign: 'center',
+      padding: '8px 0',        
+      backgroundColor: headerColor,
+      border: `1px solid ${headerColor}`
+
+    }}>
+      <h2 style={{
+        fontSize: '24px',
+        fontWeight: 'bold',
+        color: '#000000',
+        margin: '0',
+        fontFamily: 'Arial, sans-serif'
+      }}>
+        {headerText}
+      </h2>
+    </td>
+  </tr>
+</table>
+      
+{/* Banner */}
+
+        <table style={{ 
+        width: "100%", 
+        height: "300px",
+        borderCollapse: "collapse",
+        border: "none",
+        marginTop:"8px"
+        }}>
+        <tr>
+            <td style={{ 
+            padding: "0", 
+            height: "300px",
+            textAlign: "center",
+            border: "none"
+            }}>
+            <img 
+                src="/assets/images/BannerTenderResponse.jpg" 
+                alt="Banner"
+                width="623"
+                height="300"
+                style={{ 
+                objectFit: "cover",
+                display: "block",
+                border: "none"
+                }} 
+            />
+            </td>
+        </tr>
+        </table>
+
+      {/* Candidate Header */}
       <div style={{
         textAlign: 'center',
         marginBottom: '24px',
@@ -198,7 +245,8 @@ const TenderResponse = ({ tenderData }) => {
           fontSize: '16px',
           fontWeight: 'bold',
           margin: '0',
-          lineHeight: '1.4'
+          lineHeight: '1.4',
+          fontFamily: 'Arial, sans-serif'
         }}>
           {candidateName}
         </h1>
@@ -206,38 +254,42 @@ const TenderResponse = ({ tenderData }) => {
           fontSize: '16px',
           fontWeight: 'bold',
           margin: '5px 0 0 0',
-          lineHeight: '1.4'
+          lineHeight: '1.4',
+          fontFamily: 'Arial, sans-serif'
         }}>
           {applicationTitle}
         </h2>
       </div>
+
       {/* Main Table */}
       <table style={{ 
         width: '100%',
         borderCollapse: 'collapse',
-        border: '1px solid #000'
+        border: '1px solid #000000'
       }}>
         {/* Table Header */}
         <thead>
           <tr>
             <th style={{
               padding: '12px',
-              border: '1px solid #000',
+              border: '1px solid #000000',
               backgroundColor: '#f0f0f0',
               fontWeight: 'bold',
               textAlign: 'left',
               fontSize: '12px',
-              width: '25%'
+              width: '25%',
+              fontFamily: 'Arial, sans-serif'
             }}>
               Criteria
             </th>
             <th style={{
               padding: '12px',
-              border: '1px solid #000',
+              border: '1px solid #000000',
               backgroundColor: '#f0f0f0',
               fontWeight: 'bold',
               textAlign: 'left',
-              fontSize: '12px'
+              fontSize: '12px',
+              fontFamily: 'Arial, sans-serif'
             }}>
               Candidate response
             </th>
@@ -251,11 +303,11 @@ const TenderResponse = ({ tenderData }) => {
               colSpan="2" 
               style={{
                 padding: '12px',
-                border: '1px solid #000',
+                border: '1px solid #000000',
                 backgroundColor: '#e0e0e0',
                 fontWeight: 'bold',
-                // textAlign: 'center',
-                fontSize: '12px'
+                fontSize: '12px',
+                fontFamily: 'Arial, sans-serif'
               }}
             >
               Essential
@@ -273,11 +325,11 @@ const TenderResponse = ({ tenderData }) => {
                   colSpan="2" 
                   style={{
                     padding: '12px',
-                    border: '1px solid #000',
+                    border: '1px solid #000000',
                     backgroundColor: '#e0e0e0',
                     fontWeight: 'bold',
-                    // textAlign: 'center',
-                    fontSize: '12px'
+                    fontSize: '12px',
+                    fontFamily: 'Arial, sans-serif'
                   }}
                 >
                   Desirable
@@ -297,11 +349,11 @@ const TenderResponse = ({ tenderData }) => {
                   colSpan="2" 
                   style={{
                     padding: '12px',
-                    border: '1px solid #000',
+                    border: '1px solid #000000',
                     backgroundColor: '#e0e0e0',
                     fontWeight: 'bold',
-                    // textAlign: 'center',
-                    fontSize: '12px'
+                    fontSize: '12px',
+                    fontFamily: 'Arial, sans-serif'
                   }}
                 >
                   Additional Information
@@ -320,12 +372,15 @@ const TenderResponse = ({ tenderData }) => {
         textAlign: 'center',
         marginTop: '20px',
         fontSize: '10px',
-        color: '#666'
+        color: '#666666',
+        fontFamily: 'Arial, sans-serif'
       }}>
-        <p>Professional {detectedSector} Sector Tender Response | Generated by PappsPM</p>
+        <p style={{ margin: '0' }}>
+          Professional {detectedSector} Sector Tender Response | Generated by PappsPM
+        </p>
       </div>
     </div>
   );
 };
 
-export default TenderResponse;
+export default TenderResponseWordCompatible;
