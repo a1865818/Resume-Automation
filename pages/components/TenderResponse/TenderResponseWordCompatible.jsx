@@ -268,7 +268,7 @@ const TenderResponseWordCompatible = ({ tenderData }) => {
         border: '1px solid #000000'
       }}>
         {/* Table Header */}
-        <thead>
+        
           <tr>
             <th style={{
               padding: '12px',
@@ -294,7 +294,7 @@ const TenderResponseWordCompatible = ({ tenderData }) => {
               Candidate response
             </th>
           </tr>
-        </thead>
+    
         
         <tbody>
           {/* Essential Section Header */}
