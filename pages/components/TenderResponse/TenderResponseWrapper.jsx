@@ -88,7 +88,7 @@ const TenderResponseWrapperWithWord = ({
     }
   };
 
- // Replace the handleDownloadWord and handleDownloadWordSimple functions with this version
+ // Replace the handleDownloadWord
  const handleDownloadWord = async () => {
     setIsWordLoading(true);
     
@@ -229,89 +229,6 @@ const TenderResponseWrapperWithWord = ({
     }
   };
 
-  // Alternative Word download method using simple HTML export
-  const handleDownloadWordSimple = () => {
-    setIsWordLoading(true);
-    
-    try {
-      const name = candidateName || tenderData?.candidateDetails?.name || 'Criteria_Statement';
-      const sanitizedName = name
-        .replace(/[^a-zA-Z0-9\s]/g, '')
-        .replace(/\s+/g, '_')
-        .trim();
-      const filename = `${sanitizedName}_${detectedSector}_Criteria_Statement.doc`;
-      
-      // Get the HTML content
-      const htmlContent = wordTenderRef.current.innerHTML;
-      
-      // Create a simple Word-compatible HTML document
-      const wordHtml = `
-        <html xmlns:o='urn:schemas-microsoft-com:office:office' 
-              xmlns:w='urn:schemas-microsoft-com:office:word' 
-              xmlns='http://www.w3.org/TR/REC-html40'>
-        <head>
-          <meta charset='utf-8'>
-          <title>${detectedSector} Criteria Statement</title>
-          <!--[if gte mso 9]>
-          <xml>
-            <w:WordDocument>
-              <w:View>Print</w:View>
-              <w:Zoom>90</w:Zoom>
-              <w:DoNotPromptForConvert/>
-              <w:DoNotShowInsertionsAndDeletions/>
-            </w:WordDocument>
-          </xml>
-          <![endif]-->
-          <style>
-            @page {
-              margin: 1in;
-            }
-            body {
-              font-family: Arial, sans-serif;
-              font-size: 12pt;
-              line-height: 1.3;
-            }
-            table {
-              border-collapse: collapse;
-              width: 100%;
-            }
-            td, th {
-              border: 1px solid black;
-              padding: 8px;
-              vertical-align: top;
-            }
-          </style>
-        </head>
-        <body>
-          ${htmlContent}
-        </body>
-        </html>
-      `;
-      
-      // Create blob with Word MIME type
-      const blob = new Blob(['\ufeff', wordHtml], {
-        type: 'application/msword'
-      });
-      
-      // Create download link
-      const link = document.createElement('a');
-      link.href = window.URL.createObjectURL(blob);
-      link.download = filename;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      
-      // Clean up URL
-      window.URL.revokeObjectURL(link.href);
-      
-      console.log(`${detectedSector} Criteria Statement Word document (HTML format) generated successfully!`);
-    } catch (error) {
-      console.error('Error generating simple Word document:', error);
-      alert('There was an error generating the Word document. Please try again.');
-    } finally {
-      setIsWordLoading(false);
-    }
-  };
 
   const handleRegenerateClick = () => {
     const sectorText = detectedSector === 'Government' ? 'Criteria Statement' : `${detectedSector} Criteria Statement`;
@@ -452,28 +369,7 @@ const TenderResponseWrapperWithWord = ({
           )}
         </button>
 
-        {/* Alternative Simple Word Button */}
-        <button
-          onClick={handleDownloadWordSimple}
-          disabled={isWordLoading || isRegenerating}
-          className={`px-6 py-3 rounded-lg font-medium flex items-center gap-2 transition-colors duration-200 ${
-            isWordLoading || isRegenerating
-              ? 'bg-gray-400 text-gray-700 cursor-not-allowed' 
-              : 'bg-purple-600 text-white hover:bg-purple-700'
-          }`}
-        >
-          {isWordLoading ? (
-            <>
-              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-              Generating Word...
-            </>
-          ) : (
-            <>
-              <span>📄</span>
-              Download Word (.doc)
-            </>
-          )}
-        </button>
+  
 
         {/* Regenerate Response Button */}
         <button
