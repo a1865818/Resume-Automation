@@ -530,7 +530,7 @@ const FirstPageWord = ({ resumeData, mainExperience, scaleFactor, wordPageWidth,
                       verticalAlign: 'top'
                     }}>
                       {/* Referees */}
-                      <table style={{
+                      {/* <table style={{
                         width: '100%',
                         borderCollapse: 'collapse',
                         marginBottom: `${Math.round(18 * scaleFactor)}px`,
@@ -586,6 +586,15 @@ const FirstPageWord = ({ resumeData, mainExperience, scaleFactor, wordPageWidth,
                                             margin: '0'
                                           }}>M: {referee.phone}</p>
                                         </td>
+                                        <td>
+                                           <img
+                                           height={80}
+                                           src="/assets/images/SMELogo.jpeg" alt="SME Gateway" />
+                                        </td>
+
+                                        <td>
+                                          <img height={80} src="/PappspmLogo.jpeg" alt="PappsPM"/>
+                                        </td>
                                       </tr>
                                     ))}
                                   </tbody>
@@ -601,10 +610,135 @@ const FirstPageWord = ({ resumeData, mainExperience, scaleFactor, wordPageWidth,
                                   Available upon request
                                 </div>
                               )}
+                                 <td>
+                                           <img
+                                           height={60}
+                                           src="/assets/images/SMELogo.jpeg" alt="SME Gateway" />
+                                        </td>
+
+                                        <td>
+                                          <img height={60} src="/PappspmLogo.jpeg" alt="PappsPM"/>
+                                        </td>
                             </td>
                           </tr>
                         </tbody>
-                      </table>
+                      </table> */}
+
+                      <table style={{
+  width: '100%',
+  borderCollapse: 'collapse',
+  marginBottom: `${Math.round(18 * scaleFactor)}px`,
+  border: 'none'
+}}>
+  <tbody>
+    <tr>
+      {/* Left column - Referees content */}
+      <td style={{
+        padding: '0',
+        border: 'none',
+        verticalAlign: 'top',
+        width: 'auto'
+      }}>
+        <h2 style={{
+          fontSize: `${Math.round(15 * scaleFactor)}px`,
+          fontWeight: 'bold',
+          color: '#1e293b',
+          letterSpacing: `${0.6 * scaleFactor}px`,
+          margin: `0 0 ${Math.round(9 * scaleFactor)}px 0`,
+          fontFamily: "'Montserrat', Arial, sans-serif"
+        }}>REFEREES</h2>
+        
+        {resumeData.referees && resumeData.referees.length > 0 ? (
+          <table style={{
+            width: '100%',
+            borderCollapse: 'collapse',
+            border: 'none'
+          }}>
+            <tbody>
+              {resumeData.referees.map((referee, index) => (
+                <tr key={index}>
+                  <td style={{
+                    fontSize: `${Math.round(10.5 * scaleFactor)}px`,
+                    fontFamily: "'Montserrat', Arial, sans-serif",
+                    padding: '0',
+                    paddingBottom: `${Math.round(12 * scaleFactor)}px`,
+                    border: 'none',
+                    verticalAlign: 'top'
+                  }}>
+                    <p style={{
+                      fontWeight: '600',
+                      color: '#1e293b',
+                      margin: `0 0 ${Math.round(3 * scaleFactor)}px 0`
+                    }}>{referee.title}</p>
+                    <p style={{
+                      color: '#374151',
+                      margin: `0 0 ${Math.round(3 * scaleFactor)}px 0`
+                    }}>N: {referee.name}</p>
+                    <p style={{
+                      color: '#374151',
+                      margin: `0 0 ${Math.round(3 * scaleFactor)}px 0`
+                    }}>E: {referee.email}</p>
+                    <p style={{
+                      color: '#374151',
+                      margin: '0'
+                    }}>M: {referee.phone}</p>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <div style={{
+            fontSize: `${Math.round(10.5 * scaleFactor)}px`,
+            color: '#374151',
+            fontStyle: 'italic',
+            marginTop: `${Math.round(6 * scaleFactor)}px`,
+            fontFamily: "'Montserrat', Arial, sans-serif"
+          }}>
+            Available upon request
+          </div>
+        )}
+      </td>
+      
+      {/* Right column - Logos */}
+      <td style={{
+        padding: `0 0 0 ${Math.round(20 * scaleFactor)}px`,
+        border: 'none',
+        verticalAlign: 'top',
+        textAlign: 'right',
+        width: 'auto'
+      }}>
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'flex-end',
+          gap: `${Math.round(10 * scaleFactor)}px`
+        }}>
+          <img
+            // height={Math.round(60 * scaleFactor)}
+            height={60}
+            src="/assets/images/SMELogo.jpeg" 
+            alt="SME Gateway"
+            style={{
+              objectFit: 'contain',
+              border: 'none'
+            }}
+          />
+          <img 
+            // height={Math.round(60 * scaleFactor)} 
+            height={60}
+            src="/PappspmLogo.jpeg" 
+            alt="PappsPM"
+            style={{
+              objectFit: 'contain',
+              border: 'none'
+            }}
+          />
+        </div>
+      </td>
+    </tr>
+  </tbody>
+</table>
                       
                       {/* Experience */}
                       <table style={{

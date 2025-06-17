@@ -161,7 +161,7 @@ const SecondPageWord = ({ resumeData, experienceLayout, getExperiencePages, scal
                   width: `calc(50% - ${Math.round(1 * scaleFactor)}px)`,
                   padding: `${Math.round(12 * scaleFactor)}px`,
                   verticalAlign: 'top',
-                  borderRight: '1.5px solid #000',
+                  borderRight: '1px solid #000',
                   border: 'none',
                   borderRightStyle: 'solid',
                   borderRightColor: '#000'

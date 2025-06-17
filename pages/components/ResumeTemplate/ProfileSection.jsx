@@ -5,24 +5,7 @@ const ProfileSection = ({ resumeData }) => {
 return (
     <div style={{ backgroundColor: 'black', color: 'white' }}>
 
-             {/* PappsPM Logo - Positioned at top right corner */}
-        {/* <div style={{
-            position: 'absolute',
-            top: 0,
-            right: 0,
-            zIndex: 10
-        }}>
-            <PappsLogo />
-         
-              <div style={{
-                position: 'absolute',
-                top: '0.5rem',
-                left: '0.5rem',
-                zIndex: 10
-            }}>
-                <img src="/assets/images/SMELogo.jpeg" alt="SME Logo" style={{ height: '2rem' }} />
-
-        </div>    */}
+       
            <div style={{
             position: 'absolute',
             top: 0,
