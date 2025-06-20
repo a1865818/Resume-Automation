@@ -721,7 +721,7 @@
 import config from '@/configs';
 import Avatar from "@/public/image.jpeg";
 import { useMemo, useState } from 'react';
-import { detectSector, generateResumeJSON, generateTailoredResumeJSON, generateTenderResponse, validateTenderResponseFormat } from '../api/geminiApi';
+import { detectSector, generateResumeJSON, generateTailoredResumeJSON, generateTenderResponse } from '../api/geminiApi';
 import ErrorMessage from './PdfSummary/ErrorMessage';
 import GeneratorControls from './PdfSummary/GeneratorControls';
 import JobDescriptionUpload from './PdfSummary/JobDescriptionUpload';
@@ -1025,13 +1025,8 @@ const PdfSummary = ({ pdfText, fileName, profilePicture, profilePicturePreview }
         
         console.log('✅ Formatted tender data:', formattedTenderData);
     
-        // Validate the format
-        const validation = validateTenderResponseFormat(formattedTenderData);
-        if (!validation.isValid) {
-            console.warn('⚠️ Validation warnings:', validation.warnings);
-            console.error('❌ Validation errors:', validation.missingElements);
-        }
-    
+   
+   
         // Set the tender response data
         setTenderResponseData(formattedTenderData);
         setShowTenderResponse(true);
@@ -1074,11 +1069,7 @@ const PdfSummary = ({ pdfText, fileName, profilePicture, profilePicturePreview }
         
         console.log('✅ New formatted tender data:', formattedTenderData);
     
-        // Validate the format
-        const validation = validateTenderResponseFormat(formattedTenderData);
-        if (!validation.isValid) {
-            console.warn('⚠️ Validation warnings:', validation.warnings);
-        }
+ 
     
         // Update the tender response data
         setTenderResponseData(formattedTenderData);
@@ -1237,11 +1228,13 @@ const PdfSummary = ({ pdfText, fileName, profilePicture, profilePicturePreview }
             availability: rawTenderData.candidateDetails?.availability
           },
           essentialCriteria: rawTenderData.essentialCriteria?.map(criteria => ({
-            criteria: criteria.criteria || criteria.requirement,
+            criteriaTitle: criteria.criteriaTitle || criteria.title || criteria.criteria || criteria.requirement || '',
+            criteriaDescription: criteria.criteriaDescription || criteria.description || '',
             response: criteria.response
           })) || [],
           desirableCriteria: rawTenderData.desirableCriteria?.map(criteria => ({
-            criteria: criteria.criteria || criteria.requirement,
+            criteriaTitle: criteria.criteriaTitle || criteria.title || criteria.criteria || criteria.requirement || '',
+            criteriaDescription: criteria.criteriaDescription || criteria.description || '',
             response: criteria.response
           })) || [],
           additionalInformation: rawTenderData.additionalInformation?.map(info => ({

@@ -1,3 +1,6 @@
+
+
+
 import { useRef, useState } from 'react';
 import generatePDF from 'react-to-pdf';
 import TenderResponseNew from './TenderResponseNew';
@@ -18,30 +21,68 @@ const TenderResponseWrapperWithWord = ({
   const tenderRef = useRef();
   const wordTenderRef = useRef();
 
-   // Convert image to base64
-   const convertImageToBase64 = (imageSrc) => {
-    return new Promise((resolve, reject) => {
-      const img = new Image();
-      img.crossOrigin = 'anonymous';
-      img.onload = () => {
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        canvas.width = img.width;
-        canvas.height = img.height;
-        ctx.drawImage(img, 0, 0);
-        try {
-          const dataURL = canvas.toDataURL('image/png');
-          resolve(dataURL);
-        } catch (error) {
-          reject(error);
+  // Enhanced validation for dynamic tender responses
+  const validateTenderData = (data) => {
+    if (!data) return { isValid: false, errors: ['No tender data provided'] };
+    
+    const errors = [];
+    const warnings = [];
+
+    // Check for required sections
+    if (!data.candidateDetails) {
+      errors.push('Missing candidate details');
+    }
+
+    if (!data.essentialCriteria || data.essentialCriteria.length === 0) {
+      errors.push('Missing essential criteria');
+    }
+
+    // Validate essential criteria structure
+    if (data.essentialCriteria) {
+      data.essentialCriteria.forEach((criterion, index) => {
+        if (!criterion.response) {
+          errors.push(`Essential criterion ${index + 1} missing response`);
         }
-      };
-      img.onerror = reject;
-      img.src = imageSrc;
-    });
+        if (!criterion.criteriaTitle && !criterion.criteria) {
+          warnings.push(`Essential criterion ${index + 1} missing title`);
+        }
+      });
+    }
+
+    // Validate desirable criteria structure if present
+    if (data.desirableCriteria) {
+      data.desirableCriteria.forEach((criterion, index) => {
+        if (!criterion.response) {
+          warnings.push(`Desirable criterion ${index + 1} missing response`);
+        }
+      });
+    }
+
+    return {
+      isValid: errors.length === 0,
+      errors,
+      warnings,
+      criteriaCount: {
+        essential: data.essentialCriteria?.length || 0,
+        desirable: data.desirableCriteria?.length || 0,
+        additional: data.additionalInformation?.length || 0
+      }
+    };
   };
 
-  // Handle PDF download (existing functionality)
+  // Validate tender data on load
+  useState(() => {
+    if (tenderData) {
+      const validation = validateTenderData(tenderData);
+      setValidationResults(validation);
+      
+      if (!validation.isValid) {
+        console.warn('Tender data validation issues:', validation.errors);
+      }
+    }
+  }, [tenderData]);
+
+  // Handle PDF download
   const handleDownloadPDF = async () => {
     setIsPdfLoading(true);
     
@@ -51,7 +92,11 @@ const TenderResponseWrapperWithWord = ({
         .replace(/[^a-zA-Z0-9\s]/g, '')
         .replace(/\s+/g, '_')
         .trim();
-      const filename = `${sanitizedName}_${detectedSector}_Criteria_Statement.pdf`;
+      
+      // Enhanced filename with RFQ info if available
+      const rfqNumber = tenderData?.rfqAnalysis?.procurementDetails?.rfqNumber;
+      const rfqSuffix = rfqNumber ? `_${rfqNumber}` : '';
+      const filename = `${sanitizedName}_${detectedSector}_Criteria_Statement${rfqSuffix}.pdf`;
       
       const options = {
         filename: filename,
@@ -88,8 +133,8 @@ const TenderResponseWrapperWithWord = ({
     }
   };
 
- // Replace the handleDownloadWord
- const handleDownloadWord = async () => {
+  // Handle Word download with enhanced metadata
+  const handleDownloadWord = async () => {
     setIsWordLoading(true);
     
     try {
@@ -98,7 +143,11 @@ const TenderResponseWrapperWithWord = ({
         .replace(/[^a-zA-Z0-9\s]/g, '')
         .replace(/\s+/g, '_')
         .trim();
-      const filename = `${sanitizedName}_${detectedSector}_Criteria_Statement.doc`;
+      
+      // Enhanced filename with RFQ info
+      const rfqNumber = tenderData?.rfqAnalysis?.procurementDetails?.rfqNumber;
+      const rfqSuffix = rfqNumber ? `_${rfqNumber}` : '';
+      const filename = `${sanitizedName}_${detectedSector}_Criteria_Statement${rfqSuffix}.doc`;
       
       // Clone the HTML content to avoid modifying the original DOM
       const contentDiv = wordTenderRef.current.cloneNode(true);
@@ -108,18 +157,16 @@ const TenderResponseWrapperWithWord = ({
       
       // Convert each image to base64
       await Promise.all(Array.from(images).map(async (img) => {
-        // Skip images that are already data URLs
         if (img.src.startsWith('data:')) return;
         
         try {
-          // Fetch the image and convert to base64
           const response = await fetch(img.src);
           const blob = await response.blob();
           
           return new Promise((resolve, reject) => {
             const reader = new FileReader();
             reader.onloadend = () => {
-              img.src = reader.result; // Replace src with base64 data
+              img.src = reader.result;
               resolve();
             };
             reader.onerror = reject;
@@ -127,21 +174,22 @@ const TenderResponseWrapperWithWord = ({
           });
         } catch (err) {
           console.warn('Failed to convert image to base64:', err);
-          // Keep the original src if conversion fails
         }
       }));
       
-      // Get the updated HTML content with base64 images
       const htmlContent = contentDiv.innerHTML;
       
-      // Create a Word-compatible HTML document
+      // Enhanced Word-compatible HTML with metadata
       const wordHtml = `
         <html xmlns:o='urn:schemas-microsoft-com:office:office' 
               xmlns:w='urn:schemas-microsoft-com:office:word' 
               xmlns='http://www.w3.org/TR/REC-html40'>
         <head>
           <meta charset='utf-8'>
-          <title>${detectedSector} Criteria Statement</title>
+          <title>${detectedSector} Criteria Statement - ${name}</title>
+          <meta name="description" content="Government tender criteria statement generated by PappsPM">
+          <meta name="keywords" content="${detectedSector}, tender, criteria, government, RFQ">
+          <meta name="author" content="PappsPM">
           <!--[if gte mso 9]>
           <xml>
             <w:WordDocument>
@@ -204,20 +252,16 @@ const TenderResponseWrapperWithWord = ({
         </html>
       `;
       
-      // Create blob with Word MIME type
       const blob = new Blob(['\ufeff', wordHtml], {
         type: 'application/msword'
       });
       
-      // Create download link
       const link = document.createElement('a');
       link.href = window.URL.createObjectURL(blob);
       link.download = filename;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      
-      // Clean up URL
       window.URL.revokeObjectURL(link.href);
       
       console.log(`${detectedSector} Criteria Statement Word document generated successfully!`);
@@ -228,7 +272,6 @@ const TenderResponseWrapperWithWord = ({
       setIsWordLoading(false);
     }
   };
-
 
   const handleRegenerateClick = () => {
     const sectorText = detectedSector === 'Government' ? 'Criteria Statement' : `${detectedSector} Criteria Statement`;
@@ -288,7 +331,7 @@ const TenderResponseWrapperWithWord = ({
           </p>
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 max-w-md mx-auto">
             <p className="text-blue-800 text-sm">
-              💡 <strong>Tip:</strong> The new response will use the latest analysis of your resume and job requirements.
+              💡 <strong>Tip:</strong> The new response will use the latest analysis of your resume and RFQ requirements.
             </p>
           </div>
         </div>
@@ -369,8 +412,6 @@ const TenderResponseWrapperWithWord = ({
           )}
         </button>
 
-  
-
         {/* Regenerate Response Button */}
         <button
           onClick={handleRegenerateClick}
@@ -395,7 +436,7 @@ const TenderResponseWrapperWithWord = ({
         </button>
       </div>
 
-      {/* Document Info Banner */}
+      {/* Enhanced Document Info Banner */}
       <div style={{
         maxWidth: '1012.8000488px',
         margin: '0 auto 1rem auto',
@@ -412,8 +453,22 @@ const TenderResponseWrapperWithWord = ({
             <p className="text-blue-700 text-sm">
               Professional tender response for: <strong>{tenderData.candidateDetails?.proposedRole || `${detectedSector} Government Role`}</strong>
             </p>
+            {validationResults && (
+              <div className="text-xs mt-2">
+                <span className="text-green-600">
+                  ✅ {validationResults.criteriaCount?.essential || 0} Essential | 
+                  {validationResults.criteriaCount?.desirable || 0} Desirable | 
+                  {validationResults.criteriaCount?.additional || 0} Additional
+                </span>
+                {validationResults.warnings?.length > 0 && (
+                  <span className="text-yellow-600 ml-2">
+                    ⚠️ {validationResults.warnings.length} warnings
+                  </span>
+                )}
+              </div>
+            )}
             <p className="text-blue-600 text-xs mt-1">
-              ✨ <strong>New:</strong> Now available in both PDF and Word formats!
+              ✨ <strong>Enhanced:</strong> Dynamic criteria extraction and response generation!
             </p>
           </div>
           <div className="text-right">
@@ -423,9 +478,15 @@ const TenderResponseWrapperWithWord = ({
             <div className="text-xs text-blue-500">
               Generated: {new Date().toLocaleDateString()}
             </div>
+            {tenderData.candidateDetails?.responseFormat && (
+              <div className="text-xs text-blue-500">
+                Format: {tenderData.candidateDetails.responseFormat}
+              </div>
+            )}
           </div>
         </div>
       </div>
+
 
       {/* Display tender response for PDF generation */}
       <div style={{

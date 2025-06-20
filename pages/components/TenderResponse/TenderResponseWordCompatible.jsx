@@ -10,8 +10,9 @@ const TenderResponseWordCompatible = ({ tenderData }) => {
       const allText = JSON.stringify(tenderData).toLowerCase();
       
       const sectorKeywords = {
-        'ICT': ['ict', 'it', 'information technology', 'digital', 'software', 'systems', 'technology'],
+        'ICT': ['ict', 'it', 'information technology', 'digital', 'software', 'systems', 'technology', 'business analyst'],
         'Defence': ['defence', 'defense', 'military', 'security', 'army', 'navy', 'air force'],
+        'Maritime': ['maritime', 'marine', 'vessel', 'ship', 'port', 'navigation', 'safety authority'],
         'Finance': ['finance', 'financial', 'accounting', 'treasury', 'budget', 'fiscal'],
         'Health': ['health', 'medical', 'healthcare', 'hospital', 'clinical', 'patient'],
         'Education': ['education', 'school', 'university', 'teaching', 'academic'],
@@ -43,7 +44,7 @@ const TenderResponseWordCompatible = ({ tenderData }) => {
     );
   }
 
-  const renderCriteriaRows = (criteriaArray, sectionType) => {
+  const renderDynamicCriteriaRows = (criteriaArray, sectionType) => {
     if (!criteriaArray || criteriaArray.length === 0) {
       return (
         <tr key={`${sectionType}-empty`}>
@@ -61,43 +62,51 @@ const TenderResponseWordCompatible = ({ tenderData }) => {
       );
     }
 
-    return criteriaArray.map((item, index) => (
-      <tr key={`${sectionType}-${index}`}>
-        <td style={{
-          padding: '12px',
-          border: '1px solid #000000',
-          backgroundColor: '#f9f9f9',
-          fontWeight: 'bold',
-          verticalAlign: 'top',
-          width: '25%',
-          fontSize: '12px',
-          fontFamily: 'Arial, sans-serif'
-        }}>
-          {item.requirement || item.criteria || `${sectionType} Requirement ${index + 1}`}
-        </td>
-        <td style={{
-          padding: '12px',
-          border: '1px solid #000000',
-          verticalAlign: 'top',
-          fontSize: '12px',
-          lineHeight: '1.5',
-          whiteSpace: 'pre-line',
-          fontFamily: 'Arial, sans-serif'
-        }}>
-          {item.response || 'No response provided'}
-        </td>
-      </tr>
-    ));
+    return criteriaArray.map((item, index) => {
+      // Handle both old format (criteria/requirement) and new dynamic format
+      const criteriaTitle = item.criteriaTitle || item.criteria || item.requirement || `${sectionType} Requirement ${index + 1}`;
+      const displayTitle =  criteriaTitle;
+      
+      return (
+        <tr key={`${sectionType}-${index}`}>
+          <td style={{
+            padding: '12px',
+            border: '1px solid #000000',
+            backgroundColor: '#f9f9f9',
+            fontWeight: 'bold',
+            verticalAlign: 'top',
+            width: '25%',
+            fontSize: '12px',
+            fontFamily: 'Arial, sans-serif'
+          }}>
+            {displayTitle}
+          </td>
+          <td style={{
+            padding: '12px',
+            border: '1px solid #000000',
+            verticalAlign: 'top',
+            fontSize: '12px',
+            lineHeight: '1.5',
+            whiteSpace: 'pre-line',
+            fontFamily: 'Arial, sans-serif'
+          }}>
+            {item.response || 'No response provided'}
+          </td>
+        </tr>
+      );
+    });
   };
 
   // Extract candidate name and application title from tender data
   const candidateName = tenderData.candidateDetails?.name || 'Candidate Name';
   const applicationTitle = tenderData.candidateDetails?.proposedRole || 'Application Response';
+  const responseFormat = tenderData.candidateDetails?.responseFormat || '';
 
   // Sector-specific styling and headers
   const sectorColors = {
     'ICT': '#4ECDC4',
     'Defence': '#2C3E50',
+    'Maritime': '#0077BE',
     'Finance': '#27AE60',
     'Health': '#E74C3C',
     'Education': '#9B59B6',
@@ -110,6 +119,7 @@ const TenderResponseWordCompatible = ({ tenderData }) => {
   const sectorHeaders = {
     'ICT': 'ICT Criteria Statement',
     'Defence': 'Defence Criteria Statement',
+    'Maritime': 'Maritime Criteria Statement',
     'Finance': 'Finance Criteria Statement',
     'Health': 'Health Criteria Statement',
     'Education': 'Education Criteria Statement',
@@ -132,32 +142,31 @@ const TenderResponseWordCompatible = ({ tenderData }) => {
       margin: '0 auto',
     }}>
       {/* Header section with logos - using table for better Word compatibility */}
-        <table style={{ width: '100%', marginBottom: '8px', borderCollapse: 'collapse', border: 'none' }}>
+      <table style={{ width: '100%', marginBottom: '8px', borderCollapse: 'collapse', border: 'none' }}>
         <tbody>
-            <tr>
+          <tr>
             <td style={{ 
-                width: '130px', 
-                height: '125px',
-                verticalAlign: 'top',
-                // padding: '0 5px 0 0',
-                border: 'none'
+              width: '130px', 
+              height: '125px',
+              verticalAlign: 'top',
+              border: 'none'
             }}>
-                <img
+              <img
                 src="/PappspmLogo.jpeg"
                 alt="Pappspm Logo"
                 width="125"
                 height="125"
                 style={{
-                    objectFit: 'contain',
-                    display: 'block',
-                    border: 'none'
+                  objectFit: 'contain',
+                  display: 'block',
+                  border: 'none'
                 }}
-                />
+              />
             </td>
             <td style={{ 
-                verticalAlign: 'top',
-                paddingTop: '18px',
-                border: 'none'
+              verticalAlign: 'top',
+              paddingTop: '18px',
+              border: 'none'
             }}>
               <img 
                 src="/assets/images/SMELogo.jpeg" 
@@ -165,75 +174,71 @@ const TenderResponseWordCompatible = ({ tenderData }) => {
                 width="175"
                 height="125"
                 style={{ 
-                
-                    objectFit: 'contain',
-                    display: 'block',
-                    border: 'none'
+                  objectFit: 'contain',
+                  display: 'block',
+                  border: 'none'
                 }} 
-                />
+              />
             </td>
-            </tr>
+          </tr>
         </tbody>
-        </table>
+      </table>
 
-      
       {/* Dynamic Sector Header */}
       <table style={{ 
-  width: "100%", 
-  borderCollapse: "collapse",
-  backgroundColor: headerColor
-}}>
-  <tr>
-    <td style={{
-      textAlign: 'center',
-      padding: '8px 0',        
-      backgroundColor: headerColor,
-      border: `1px solid ${headerColor}`
-
-    }}>
-      <h2 style={{
-        fontSize: '24px',
-        fontWeight: 'bold',
-        color: '#000000',
-        margin: '0',
-        fontFamily: 'Arial, sans-serif'
+        width: "100%", 
+        borderCollapse: "collapse",
+        backgroundColor: headerColor
       }}>
-        {headerText}
-      </h2>
-    </td>
-  </tr>
-</table>
+        <tr>
+          <td style={{
+            textAlign: 'center',
+            padding: '8px 0',        
+            backgroundColor: headerColor,
+            border: `1px solid ${headerColor}`
+          }}>
+            <h2 style={{
+              fontSize: '24px',
+              fontWeight: 'bold',
+              color: '#000000',
+              margin: '0',
+              fontFamily: 'Arial, sans-serif'
+            }}>
+              {headerText}
+            </h2>
+          </td>
+        </tr>
+      </table>
       
-{/* Banner */}
-
-        <table style={{ 
+      {/* Banner */}
+      <table style={{ 
         width: "100%", 
         height: "300px",
         borderCollapse: "collapse",
         border: "none",
         marginTop:"8px"
-        }}>
+      }}>
         <tr>
-            <td style={{ 
+          <td style={{ 
             padding: "0", 
             height: "300px",
             textAlign: "center",
             border: "none"
-            }}>
+          }}>
             <img 
-                src="/assets/images/BannerTenderResponse.jpg" 
-                alt="Banner"
-                width="623"
-                height="300"
-                style={{ 
+              src="/assets/images/BannerTenderResponse.jpg" 
+              alt="Banner"
+              width="623"
+              height="300"
+              style={{ 
                 objectFit: "cover",
                 display: "block",
                 border: "none"
-                }} 
+              }} 
             />
-            </td>
+          </td>
         </tr>
-        </table>
+      </table>
 
       {/* Candidate Header */}
       <div style={{
@@ -259,6 +264,17 @@ const TenderResponseWordCompatible = ({ tenderData }) => {
         }}>
           {applicationTitle}
         </h2>
+        {responseFormat && (
+          <p style={{
+            fontSize: '12px',
+            color: '#666666',
+            margin: '5px 0 0 0',
+            fontStyle: 'italic',
+            fontFamily: 'Arial, sans-serif'
+          }}>
+            {responseFormat}
+          </p>
+        )}
       </div>
 
       {/* Main Table */}
@@ -268,33 +284,31 @@ const TenderResponseWordCompatible = ({ tenderData }) => {
         border: '1px solid #000000'
       }}>
         {/* Table Header */}
-        
-          <tr>
-            <th style={{
-              padding: '12px',
-              border: '1px solid #000000',
-              backgroundColor: '#f0f0f0',
-              fontWeight: 'bold',
-              textAlign: 'left',
-              fontSize: '12px',
-              width: '25%',
-              fontFamily: 'Arial, sans-serif'
-            }}>
-              Criteria
-            </th>
-            <th style={{
-              padding: '12px',
-              border: '1px solid #000000',
-              backgroundColor: '#f0f0f0',
-              fontWeight: 'bold',
-              textAlign: 'left',
-              fontSize: '12px',
-              fontFamily: 'Arial, sans-serif'
-            }}>
-              Candidate response
-            </th>
-          </tr>
-    
+        <tr>
+          <th style={{
+            padding: '12px',
+            border: '1px solid #000000',
+            backgroundColor: '#f0f0f0',
+            fontWeight: 'bold',
+            textAlign: 'left',
+            fontSize: '12px',
+            width: '25%',
+            fontFamily: 'Arial, sans-serif'
+          }}>
+            Criteria
+          </th>
+          <th style={{
+            padding: '12px',
+            border: '1px solid #000000',
+            backgroundColor: '#f0f0f0',
+            fontWeight: 'bold',
+            textAlign: 'left',
+            fontSize: '12px',
+            fontFamily: 'Arial, sans-serif'
+          }}>
+            Candidate response
+          </th>
+        </tr>
         
         <tbody>
           {/* Essential Section Header */}
@@ -314,8 +328,8 @@ const TenderResponseWordCompatible = ({ tenderData }) => {
             </td>
           </tr>
           
-          {/* Essential Criteria Rows */}
-          {renderCriteriaRows(tenderData.essentialCriteria, 'essential')}
+          {/* Dynamic Essential Criteria Rows */}
+          {renderDynamicCriteriaRows(tenderData.essentialCriteria, 'essential')}
           
           {/* Desirable Section Header - Only show if desirable criteria exist */}
           {tenderData.desirableCriteria && tenderData.desirableCriteria.length > 0 && (
@@ -336,8 +350,8 @@ const TenderResponseWordCompatible = ({ tenderData }) => {
                 </td>
               </tr>
               
-              {/* Desirable Criteria Rows */}
-              {renderCriteriaRows(tenderData.desirableCriteria, 'desirable')}
+              {/* Dynamic Desirable Criteria Rows */}
+              {renderDynamicCriteriaRows(tenderData.desirableCriteria, 'desirable')}
             </>
           )}
 
@@ -361,7 +375,7 @@ const TenderResponseWordCompatible = ({ tenderData }) => {
               </tr>
               
               {/* Additional Information Rows */}
-              {renderCriteriaRows(tenderData.additionalInformation, 'additional')}
+              {renderDynamicCriteriaRows(tenderData.additionalInformation, 'additional')}
             </>
           )}
         </tbody>
