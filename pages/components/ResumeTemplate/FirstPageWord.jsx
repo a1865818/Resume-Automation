@@ -835,6 +835,7 @@ const FirstPageWord = ({ resumeData, mainExperience, scaleFactor, wordPageWidth,
                                         marginBottom: `${Math.round(1 * scaleFactor)}px`, // Reduced spacing between items
                                         textAlign: 'justify',
                                         verticalAlign: 'middle',
+                                        fontSize:'8px'
                                         }}>
                                         {resp}
                                         </li>

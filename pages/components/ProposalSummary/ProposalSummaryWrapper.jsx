@@ -1,34 +1,25 @@
-
-
-
 import { useRef, useState } from 'react';
 import generatePDF from 'react-to-pdf';
-import TenderResponseNew from './TenderResponseNew';
-import TenderResponseWordCompatible from './TenderResponseWordCompatible';
+import ProposalSummary from './ProposalSummary';
+import ProposalSummaryWordCompatible from './ProposalSummaryWordCompatible';
 
-const TenderResponseWrapperWithWord = ({ 
-  tenderData, 
+const ProposalSummaryWrapper = ({ 
+  proposalData, 
   candidateName, 
-  onBackToResume, 
-  templateType = "criteria-statement",
-  onRegenerateTenderResponse = null,
+  onBackToTenderResponse, 
+  onRegenerateProposalSummary = null,
   isRegenerating = false,
-  detectedSector = 'Government',
-    // NEW: Proposal summary props
-    onGenerateProposalSummary = null,
-    isGeneratingProposal = false,
-    hasProposalSummary = false,
-    onBackToProposalSummary = null
+  detectedSector = 'Government'
 }) => {
   const [isPdfLoading, setIsPdfLoading] = useState(false);
   const [isWordLoading, setIsWordLoading] = useState(false);
   const [validationResults, setValidationResults] = useState(null);
-  const tenderRef = useRef();
-  const wordTenderRef = useRef();
+  const proposalRef = useRef();
+  const wordProposalRef = useRef();
 
-  // Enhanced validation for dynamic tender responses
-  const validateTenderData = (data) => {
-    if (!data) return { isValid: false, errors: ['No tender data provided'] };
+  // Enhanced validation for proposal summary
+  const validateProposalData = (data) => {
+    if (!data) return { isValid: false, errors: ['No proposal data provided'] };
     
     const errors = [];
     const warnings = [];
@@ -38,70 +29,67 @@ const TenderResponseWrapperWithWord = ({
       errors.push('Missing candidate details');
     }
 
-    if (!data.essentialCriteria || data.essentialCriteria.length === 0) {
-      errors.push('Missing essential criteria');
+    if (!data.proposalSummary || !data.proposalSummary.content) {
+      errors.push('Missing proposal summary content');
     }
 
-    // Validate essential criteria structure
-    if (data.essentialCriteria) {
-      data.essentialCriteria.forEach((criterion, index) => {
-        if (!criterion.response) {
-          errors.push(`Essential criterion ${index + 1} missing response`);
-        }
-        if (!criterion.criteriaTitle && !criterion.criteria) {
-          warnings.push(`Essential criterion ${index + 1} missing title`);
-        }
-      });
+    // Validate proposal summary length
+    if (data.proposalSummary && data.proposalSummary.content) {
+      const wordCount = data.proposalSummary.content.split(/\s+/).length;
+      if (wordCount < 180) {
+        warnings.push('Proposal summary may be too short (less than 180 words)');
+      } else if (wordCount > 280) {
+        warnings.push('Proposal summary may be too long (more than 280 words)');
+      }
     }
 
-    // Validate desirable criteria structure if present
-    if (data.desirableCriteria) {
-      data.desirableCriteria.forEach((criterion, index) => {
-        if (!criterion.response) {
-          warnings.push(`Desirable criterion ${index + 1} missing response`);
-        }
-      });
+    // Validate key highlights
+    if (!data.keyHighlights || data.keyHighlights.length === 0) {
+      warnings.push('No key highlights provided');
+    }
+
+    // Validate value proposition
+    if (!data.valueProposition || !data.valueProposition.content) {
+      warnings.push('Missing value proposition');
     }
 
     return {
       isValid: errors.length === 0,
       errors,
       warnings,
-      criteriaCount: {
-        essential: data.essentialCriteria?.length || 0,
-        desirable: data.desirableCriteria?.length || 0,
-        additional: data.additionalInformation?.length || 0
+      sections: {
+        summary: !!data.proposalSummary?.content,
+        highlights: data.keyHighlights?.length || 0,
+        valueProposition: !!data.valueProposition?.content
       }
     };
   };
 
-  // Validate tender data on load
+  // Validate proposal data on load
   useState(() => {
-    if (tenderData) {
-      const validation = validateTenderData(tenderData);
+    if (proposalData) {
+      const validation = validateProposalData(proposalData);
       setValidationResults(validation);
       
       if (!validation.isValid) {
-        console.warn('Tender data validation issues:', validation.errors);
+        console.warn('Proposal data validation issues:', validation.errors);
       }
     }
-  }, [tenderData]);
+  }, [proposalData]);
 
   // Handle PDF download
   const handleDownloadPDF = async () => {
     setIsPdfLoading(true);
     
     try {
-      const name = candidateName || tenderData?.candidateDetails?.name || 'Criteria_Statement';
+      const name = candidateName || proposalData?.candidateDetails?.name || 'Proposal_Summary';
       const sanitizedName = name
         .replace(/[^a-zA-Z0-9\s]/g, '')
         .replace(/\s+/g, '_')
         .trim();
       
       // Enhanced filename with RFQ info if available
-      const rfqNumber = tenderData?.rfqAnalysis?.procurementDetails?.rfqNumber;
-      const rfqSuffix = rfqNumber ? `_${rfqNumber}` : '';
-      const filename = `${sanitizedName}_${detectedSector}_Criteria_Statement${rfqSuffix}.pdf`;
+      const filename = `${sanitizedName}_${detectedSector}_Proposal_Summary.pdf`;
       
       const options = {
         filename: filename,
@@ -127,9 +115,9 @@ const TenderResponseWrapperWithWord = ({
       };
       
       await new Promise(resolve => setTimeout(resolve, 200));
-      await generatePDF(tenderRef, options);
+      await generatePDF(proposalRef, options);
       
-      console.log(`${detectedSector} Criteria Statement PDF generated successfully!`);
+      console.log(`${detectedSector} Proposal Summary PDF generated successfully!`);
     } catch (error) {
       console.error('Error generating PDF:', error);
       alert('There was an error generating the PDF. Please try again.');
@@ -143,19 +131,17 @@ const TenderResponseWrapperWithWord = ({
     setIsWordLoading(true);
     
     try {
-      const name = candidateName || tenderData?.candidateDetails?.name || 'Criteria_Statement';
+      const name = candidateName || proposalData?.candidateDetails?.name || 'Proposal_Summary';
       const sanitizedName = name
         .replace(/[^a-zA-Z0-9\s]/g, '')
         .replace(/\s+/g, '_')
         .trim();
       
-      // Enhanced filename with RFQ info
-      const rfqNumber = tenderData?.rfqAnalysis?.procurementDetails?.rfqNumber;
-      const rfqSuffix = rfqNumber ? `_${rfqNumber}` : '';
-      const filename = `${sanitizedName}_${detectedSector}_Criteria_Statement${rfqSuffix}.doc`;
+      // Enhanced filename
+      const filename = `${sanitizedName}_${detectedSector}_Proposal_Summary.doc`;
       
       // Clone the HTML content to avoid modifying the original DOM
-      const contentDiv = wordTenderRef.current.cloneNode(true);
+      const contentDiv = wordProposalRef.current.cloneNode(true);
       
       // Find all images in the content
       const images = contentDiv.querySelectorAll('img');
@@ -191,9 +177,9 @@ const TenderResponseWrapperWithWord = ({
               xmlns='http://www.w3.org/TR/REC-html40'>
         <head>
           <meta charset='utf-8'>
-          <title>${detectedSector} Criteria Statement - ${name}</title>
-          <meta name="description" content="Government tender criteria statement generated by PappsPM">
-          <meta name="keywords" content="${detectedSector}, tender, criteria, government, RFQ">
+          <title>${detectedSector} Proposal Summary - ${name}</title>
+          <meta name="description" content="Government tender proposal summary generated by PappsPM">
+          <meta name="keywords" content="${detectedSector}, proposal, summary, government, RFQ">
           <meta name="author" content="PappsPM">
           <!--[if gte mso 9]>
           <xml>
@@ -212,16 +198,7 @@ const TenderResponseWrapperWithWord = ({
             body {
               font-family: Arial, sans-serif;
               font-size: 12pt;
-              line-height: 1.3;
-            }
-            table {
-              border-collapse: collapse;
-              width: 100%;
-            }
-            td, th {
-              border: 1px solid black;
-              padding: 8px;
-              vertical-align: top;
+              line-height: 1.4;
             }
             .header {
               text-align: center;
@@ -236,18 +213,24 @@ const TenderResponseWrapperWithWord = ({
               margin: 12pt 0;
             }
             .section-header {
-              background-color: #e0e0e0;
               font-weight: bold;
-              text-align: left;
+              border-bottom: 2px solid #4ECDC4;
+              padding-bottom: 5px;
+              margin-bottom: 15px;
             }
-            .criteria-cell {
-              background-color: #f9f9f9;
-              font-weight: bold;
-              width: 25%;
+            .content {
+              text-align: justify;
+              line-height: 1.7;
             }
             img {
               max-width: 100%;
               height: auto;
+            }
+            ul {
+              padding-left: 20px;
+            }
+            li {
+              margin-bottom: 8px;
             }
           </style>
         </head>
@@ -269,7 +252,7 @@ const TenderResponseWrapperWithWord = ({
       document.body.removeChild(link);
       window.URL.revokeObjectURL(link.href);
       
-      console.log(`${detectedSector} Criteria Statement Word document generated successfully!`);
+      console.log(`${detectedSector} Proposal Summary Word document generated successfully!`);
     } catch (error) {
       console.error('Error generating Word document:', error);
       alert('There was an error generating the Word document. Please try again.');
@@ -279,29 +262,18 @@ const TenderResponseWrapperWithWord = ({
   };
 
   const handleRegenerateClick = () => {
-    const sectorText = detectedSector === 'Government' ? 'Criteria Statement' : `${detectedSector} Criteria Statement`;
+    const sectorText = detectedSector === 'Government' ? 'Proposal Summary' : `${detectedSector} Proposal Summary`;
     
     if (window.confirm(`Are you sure you want to generate a new ${sectorText}? This will replace the current one.`)) {
-      if (onRegenerateTenderResponse) {
-        onRegenerateTenderResponse();
+      if (onRegenerateProposalSummary) {
+        onRegenerateProposalSummary();
       } else {
         console.warn('No regeneration handler provided');
       }
     }
   };
 
-    // NEW: Handle generate proposal summary click
-    const handleGenerateProposalSummaryClick = () => {
-        const sectorText = detectedSector === 'Government' ? 'Proposal Summary' : `${detectedSector} Proposal Summary`;
-        
-        if (onGenerateProposalSummary) {
-          onGenerateProposalSummary();
-        } else {
-          console.warn('No proposal summary handler provided');
-        }
-      };
-
-  if (!tenderData) {
+  if (!proposalData) {
     return (
       <div style={{ 
         minHeight: '100vh', 
@@ -312,12 +284,12 @@ const TenderResponseWrapperWithWord = ({
         alignItems: 'center',
         justifyContent: 'center'
       }}>
-        <h2>No tender response data available</h2>
+        <h2>No proposal summary data available</h2>
         <button
-          onClick={onBackToResume}
+          onClick={onBackToTenderResponse}
           className="mt-4 px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors duration-200 font-medium"
         >
-          ← Back to Resume
+          ← Back to Criteria Statement
         </button>
       </div>
     );
@@ -340,14 +312,14 @@ const TenderResponseWrapperWithWord = ({
             <div className="w-16 h-16 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto"></div>
           </div>
           <h2 className="text-2xl font-bold text-gray-800 mb-2">
-            Regenerating {detectedSector} Criteria Statement
+            Regenerating {detectedSector} Proposal Summary
           </h2>
           <p className="text-gray-600 mb-4">
-            Please wait while we generate a new response based on your tailored resume...
+            Please wait while we generate a new proposal summary based on your criteria statement...
           </p>
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 max-w-md mx-auto">
             <p className="text-blue-800 text-sm">
-              💡 <strong>Tip:</strong> The new response will use the latest analysis of your resume and RFQ requirements.
+              💡 <strong>Tip:</strong> The new proposal summary will synthesize your criteria statement into a compelling narrative format.
             </p>
           </div>
         </div>
@@ -372,14 +344,14 @@ const TenderResponseWrapperWithWord = ({
         paddingRight: '1rem',
         flexWrap: 'wrap'
       }}>
-        {/* Back to Resume Button */}
+        {/* Back to Criteria Statement Button */}
         <button
-          onClick={onBackToResume}
+          onClick={onBackToTenderResponse}
           disabled={isRegenerating}
           className="px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors duration-200 font-medium flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <span>←</span>
-          Back to Tailored Resume
+          Back to Criteria Statement
         </button>
         
         {/* Download PDF Button */}
@@ -428,37 +400,12 @@ const TenderResponseWrapperWithWord = ({
           )}
         </button>
 
-           {/* NEW: Generate Proposal Summary Button */}
-           {onGenerateProposalSummary && (
-          <button
-            onClick={handleGenerateProposalSummaryClick}
-            disabled={isGeneratingProposal || isRegenerating}
-            className={`px-6 py-3 rounded-lg font-medium flex items-center gap-2 transition-colors duration-200 ${
-              isGeneratingProposal || isRegenerating
-                ? 'bg-gray-400 text-gray-700 cursor-not-allowed'
-                : 'bg-purple-600 text-white hover:bg-purple-700'
-            }`}
-          >
-            {isGeneratingProposal ? (
-              <>
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                Generating Summary...
-              </>
-            ) : (
-              <>
-                <span>📋</span>
-                Generate Proposal Summary
-              </>
-            )}
-          </button>
-        )}
-
-        {/* Regenerate Response Button */}
+        {/* Regenerate Proposal Summary Button */}
         <button
           onClick={handleRegenerateClick}
-          disabled={isRegenerating || !onRegenerateTenderResponse}
+          disabled={isRegenerating || !onRegenerateProposalSummary}
           className={`px-6 py-3 rounded-lg font-medium flex items-center gap-2 transition-colors duration-200 ${
-            isRegenerating || !onRegenerateTenderResponse
+            isRegenerating || !onRegenerateProposalSummary
               ? 'bg-gray-400 text-gray-700 cursor-not-allowed'
               : 'bg-orange-600 text-white hover:bg-orange-700'
           }`}
@@ -471,22 +418,10 @@ const TenderResponseWrapperWithWord = ({
           ) : (
             <>
               <span>🔄</span>
-              Regenerate Statement
+              Regenerate Summary
             </>
           )}
         </button>
-
-        
-        {/* NEW: Back to Proposal Summary Button */}
-        {hasProposalSummary && onBackToProposalSummary && (
-          <button
-            onClick={onBackToProposalSummary}
-            className="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors duration-200 font-medium flex items-center gap-2"
-          >
-            <span>📑</span>
-            Back to Proposal Summary
-          </button>
-        )}
       </div>
 
       {/* Enhanced Document Info Banner */}
@@ -501,17 +436,17 @@ const TenderResponseWrapperWithWord = ({
         <div className="flex items-center justify-between flex-wrap gap-4">
           <div>
             <h3 className="font-semibold text-blue-900 mb-1">
-              📋 {detectedSector} Criteria Statement Generated
+              📋 {detectedSector} Proposal Summary Generated
             </h3>
             <p className="text-blue-700 text-sm">
-              Professional tender response for: <strong>{tenderData.candidateDetails?.proposedRole || `${detectedSector} Government Role`}</strong>
+              Narrative proposal summary for: <strong>{proposalData.candidateDetails?.proposedRole || `${detectedSector} Government Role`}</strong>
             </p>
             {validationResults && (
               <div className="text-xs mt-2">
                 <span className="text-green-600">
-                  ✅ {validationResults.criteriaCount?.essential || 0} Essential | 
-                  {validationResults.criteriaCount?.desirable || 0} Desirable | 
-                  {validationResults.criteriaCount?.additional || 0} Additional
+                  ✅ Summary: {validationResults.sections?.summary ? 'Complete' : 'Missing'} | 
+                  Highlights: {validationResults.sections?.highlights || 0} | 
+                  Value Prop: {validationResults.sections?.valueProposition ? 'Complete' : 'Missing'}
                 </span>
                 {validationResults.warnings?.length > 0 && (
                   <span className="text-yellow-600 ml-2">
@@ -521,59 +456,21 @@ const TenderResponseWrapperWithWord = ({
               </div>
             )}
             <p className="text-blue-600 text-xs mt-1">
-              ✨ <strong>Enhanced:</strong> Dynamic criteria extraction and response generation!
+              ✨ <strong>Narrative Format:</strong> 200-250 word flowing summary instead of table format!
             </p>
-               {/* NEW: Proposal summary status */}
-               {hasProposalSummary && (
-              <p className="text-purple-600 text-xs mt-1">
-                📑 <strong>Proposal Summary Available:</strong> Narrative format ready for download!
-              </p>
-            )}
           </div>
           <div className="text-right">
             <div className="text-sm text-blue-600">
-              Candidate: <strong>{candidateName || tenderData.candidateDetails?.name}</strong>
+              Candidate: <strong>{candidateName || proposalData.candidateDetails?.name}</strong>
             </div>
             <div className="text-xs text-blue-500">
               Generated: {new Date().toLocaleDateString()}
             </div>
-            {tenderData.candidateDetails?.responseFormat && (
-              <div className="text-xs text-blue-500">
-                Format: {tenderData.candidateDetails.responseFormat}
-              </div>
-            )}
           </div>
         </div>
       </div>
-      
-    {/* NEW: Next Steps Info Banner */}
-    {onGenerateProposalSummary && !hasProposalSummary && (
-            <div style={{
-            maxWidth: '1012.8000488px',
-            margin: '0 auto 1rem auto',
-            padding: '1rem',
-            backgroundColor: '#f3f4f6',
-            border: '1px solid #d1d5db',
-            borderRadius: '0.5rem'
-            }}>
-            <div className="flex items-start gap-3">
-                <div className="text-purple-600 text-2xl">📋</div>
-                <div>
-                <h4 className="font-semibold text-gray-900 mb-1">Next Step: Generate Proposal Summary</h4>
-                <p className="text-gray-700 text-sm mb-2">
-                    Transform your criteria statement into a compelling 200-250 word narrative proposal summary.
-                </p>
-                <div className="text-xs text-gray-600">
-                    <span className="inline-block mr-4">✓ Same professional formatting</span>
-                    <span className="inline-block mr-4">✓ Flowing paragraph style</span>
-                    <span className="inline-block">✓ PDF & Word download ready</span>
-                </div>
-                </div>
-            </div>
-            </div>
-        )}
 
-      {/* Display tender response for PDF generation */}
+      {/* Display proposal summary for PDF generation */}
       <div style={{
         maxWidth: '1012.8000488px',
         margin: '0 auto',
@@ -582,8 +479,8 @@ const TenderResponseWrapperWithWord = ({
         borderRadius: '0.5rem',
         overflow: 'hidden'
       }}>
-        <div ref={tenderRef}>
-          <TenderResponseNew tenderData={tenderData} />
+        <div ref={proposalRef}>
+          <ProposalSummary proposalData={proposalData} />
         </div>
       </div>
 
@@ -594,12 +491,12 @@ const TenderResponseWrapperWithWord = ({
         top: '-9999px',
         width: '1012px'
       }}>
-        <div ref={wordTenderRef}>
-          <TenderResponseWordCompatible tenderData={tenderData} />
+        <div ref={wordProposalRef}>
+          <ProposalSummaryWordCompatible proposalData={proposalData} />
         </div>
       </div>
     </div>
   );
 };
 
-export default TenderResponseWrapperWithWord;
+export default ProposalSummaryWrapper;

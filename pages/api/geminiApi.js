@@ -502,30 +502,30 @@ Return ONLY the JSON object, no additional text or formatting.`;
         : [],
       experience: Array.isArray(response.experience)
         ? response.experience.map((exp) => ({
-          title: exp.title || "Position",
-          period: exp.period || "Date not specified",
-          responsibilities: Array.isArray(exp.responsibilities)
-            ? exp.responsibilities
-            : [],
-        }))
+            title: exp.title || "Position",
+            period: exp.period || "Date not specified",
+            responsibilities: Array.isArray(exp.responsibilities)
+              ? exp.responsibilities
+              : [],
+          }))
         : [],
       fullExperience: Array.isArray(response.fullExperience)
         ? response.fullExperience.map((exp) => ({
-          title: exp.title || "Position",
-          period: exp.period || "Date not specified",
-          responsibilities: Array.isArray(exp.responsibilities)
-            ? exp.responsibilities
-            : [],
-        }))
+            title: exp.title || "Position",
+            period: exp.period || "Date not specified",
+            responsibilities: Array.isArray(exp.responsibilities)
+              ? exp.responsibilities
+              : [],
+          }))
         : [],
       referees:
         Array.isArray(response.referees) && response.referees.length > 0
           ? response.referees.map((ref) => ({
-            name: ref?.name,
-            title: ref?.title,
-            email: ref?.email,
-            phone: ref?.phone,
-          }))
+              name: ref?.name,
+              title: ref?.title,
+              email: ref?.email,
+              phone: ref?.phone,
+            }))
           : null,
     };
   } catch (error) {
@@ -699,30 +699,33 @@ export async function generateTenderResponse(
     ],
     "additionalInformation": [
       {
-        "criteria": "Security Clearance Status${detectedSector === "Defence"
-      ? " (Essential for Defence roles)"
-      : detectedSector === "ICT"
-        ? " (Often required for government ICT)"
-        : " (If applicable)"
-    }",
-        "response": "Clear statement about current clearance level and ability to obtain/maintain required clearance${detectedSector === "Defence"
-      ? ", including any special defence clearances"
-      : ""
-    }"
+        "criteria": "Security Clearance Status${
+          detectedSector === "Defence"
+            ? " (Essential for Defence roles)"
+            : detectedSector === "ICT"
+            ? " (Often required for government ICT)"
+            : " (If applicable)"
+        }",
+        "response": "Clear statement about current clearance level and ability to obtain/maintain required clearance${
+          detectedSector === "Defence"
+            ? ", including any special defence clearances"
+            : ""
+        }"
       },
       {
         "criteria": "Availability and Start Date",
         "response": "Specific availability information and earliest possible start date for this ${detectedSector} role"
       },
       {
-        "criteria": "Previous Experience with ${detectedSector === "Defence"
-      ? "Defence/Military Projects"
-      : detectedSector === "ICT"
-        ? "Government/Defence ICT Projects"
-        : detectedSector === "Finance"
-          ? "Government/Public Sector Finance"
-          : `Government/${detectedSector} Projects`
-    }",
+        "criteria": "Previous Experience with ${
+          detectedSector === "Defence"
+            ? "Defence/Military Projects"
+            : detectedSector === "ICT"
+            ? "Government/Defence ICT Projects"
+            : detectedSector === "Finance"
+            ? "Government/Public Sector Finance"
+            : `Government/${detectedSector} Projects`
+        }",
         "response": "Details of any previous ${sectorTerminology} work with government or relevant organizations, including duration and nature of projects"
       }
     ]
@@ -774,8 +777,9 @@ export async function generateTenderResponse(
   - All content must be truthful and based on actual resume information
   - Use exact project names, companies, and roles from the resume
   - Include specific years of experience and quantifiable metrics
-  - Reference security clearance accurately as stated in resume (especially important for ${detectedSector === "Defence" ? "Defence roles" : "government roles"
-    })
+  - Reference security clearance accurately as stated in resume (especially important for ${
+    detectedSector === "Defence" ? "Defence roles" : "government roles"
+  })
   - Maintain professional government tender standards
   - Every response must demonstrate specific competency for the role
   - Adapt examples to highlight ${detectedSector} sector relevance
@@ -802,6 +806,236 @@ export async function generateTenderResponse(
   } catch (error) {
     console.error("Error generating Tender Response:", error);
     throw new Error(`Tender Response generation failed: ${error.message}`);
+  }
+}
+
+/**
+ * Updated generateProposalSummary function to match your examples exactly
+ */
+export async function generateProposalSummary(
+  tenderResponseData,
+  jobDescription,
+  jobAnalysis,
+  apiKey = null
+) {
+  const effectiveApiKey = apiKey || config.geminiApiKey;
+
+  if (!effectiveApiKey) {
+    throw new Error("Gemini API key is required.");
+  }
+
+  // Detect sector from job description and analysis
+  const sectorKeywords = {
+    ICT: [
+      "ICT",
+      "IT",
+      "information technology",
+      "digital",
+      "software",
+      "systems",
+      "technology",
+    ],
+    Defence: [
+      "defence",
+      "defense",
+      "military",
+      "security",
+      "army",
+      "navy",
+      "air force",
+      "ADF",
+    ],
+    Maritime: [
+      "maritime",
+      "marine",
+      "vessel",
+      "ship",
+      "port",
+      "navigation",
+      "safety authority",
+    ],
+    Finance: [
+      "finance",
+      "financial",
+      "accounting",
+      "treasury",
+      "budget",
+      "fiscal",
+      "economic",
+    ],
+    Health: [
+      "health",
+      "medical",
+      "healthcare",
+      "hospital",
+      "clinical",
+      "patient",
+    ],
+    Education: [
+      "education",
+      "school",
+      "university",
+      "teaching",
+      "academic",
+      "student",
+    ],
+    Infrastructure: [
+      "infrastructure",
+      "construction",
+      "engineering",
+      "transport",
+      "roads",
+    ],
+    Environment: [
+      "environment",
+      "sustainability",
+      "climate",
+      "conservation",
+      "renewable",
+    ],
+    Legal: [
+      "legal",
+      "law",
+      "judicial",
+      "court",
+      "legislation",
+      "compliance",
+      "regulatory",
+    ],
+  };
+
+  const jobText = (jobDescription + JSON.stringify(jobAnalysis)).toLowerCase();
+  let detectedSector = "Government";
+
+  for (const [sector, keywords] of Object.entries(sectorKeywords)) {
+    if (keywords.some((keyword) => jobText.includes(keyword))) {
+      detectedSector = sector;
+      break;
+    }
+  }
+
+  const prompt = `You are an expert government tender response specialist creating a comprehensive, executive-level Proposal Summary for ${detectedSector} sector procurement that directly addresses RFQ requirements with detailed professional content.
+  
+  🎯 ORIGINAL RFQ/JOB DESCRIPTION:
+  ${jobDescription}
+  
+  📊 RFQ ANALYSIS:
+  ${JSON.stringify(jobAnalysis, null, 2)}
+  
+  📋 TENDER RESPONSE DATA:
+  ${JSON.stringify(tenderResponseData, null, 2)}
+  
+  🏆 REQUIRED OUTPUT FORMAT:
+  
+  Create a JSON object with this exact structure:
+  
+  {
+    "candidateDetails": {
+      "name": "Candidate's full name from tender response",
+      "proposedRole": "Application Response to [specific role/project name from RFQ]",
+      "clearance": "Security clearance level or eligibility status",
+      "availability": "Availability statement from tender response",
+      "responseFormat": "Proposal Summary"
+    },
+    "proposalSummary": {
+      "title": "Proposal Summary",
+      "content": "A comprehensive 400-500 word professional summary structured as 5-6 distinct paragraphs separated by double line breaks (\\n\\n), each addressing a major aspect of the candidate's suitability for the RFQ requirements. Each paragraph should be 70-90 words and focus on a specific theme directly related to the essential criteria and RFQ needs. Format as: Paragraph1\\n\\nParagraph2\\n\\nParagraph3\\n\\nParagraph4\\n\\nParagraph5\\n\\nParagraph6"
+    }
+  }
+  
+  🔥 CRITICAL WRITING GUIDELINES:
+  
+  **CONTENT STRUCTURE - MANDATORY 5-6 PARAGRAPH FORMAT:**
+  
+  **Paragraph 1: Company Nomination & Professional Overview (70-90 words)**
+  - Open with "PappsPM is pleased to nominate [Name] for the position of [exact role] for [organization] under [RFQ number]"
+  - Include total years of experience in relevant field
+  - Highlight sector-specific background (government, ${detectedSector}, etc.)
+  - Mention key professional strengths that align with RFQ objectives
+  - Reference unique value proposition for this specific role
+  
+  **Paragraph 2: Essential Criteria Compliance & Recent Leadership (70-90 words)**
+  - Detail how candidate meets the most critical essential criteria from RFQ analysis
+  - Reference specific recent roles and leadership positions
+  - Include quantifiable achievements and project outcomes
+  - Mention team sizes, project values, and organizational impact
+  - Use exact terminology from RFQ essential criteria
+  - Highlight ${detectedSector}-specific experience and understanding
+  
+  **Paragraph 3: Technical Qualifications & Methodological Expertise (70-90 words)**
+  - Detail certifications, qualifications, and professional credentials
+  - Reference specific methodologies mentioned in RFQ (Agile, PRINCE2, etc.)
+  - Include technology platforms and technical frameworks relevant to role
+  - Mention compliance frameworks and governance standards experience
+  - Highlight training and professional development relevant to ${detectedSector}
+  - Connect technical skills directly to RFQ technical requirements
+  
+  **Paragraph 4: Stakeholder Management & Delivery Excellence (70-90 words)**
+  - Demonstrate stakeholder engagement and communication capabilities
+  - Reference cross-functional collaboration and matrix management experience
+  - Include vendor management, procurement, and contract administration experience
+  - Highlight risk management and quality assurance capabilities
+  - Mention change management and business transformation experience
+  - Connect to RFQ requirements for stakeholder engagement and delivery management
+  
+  **Paragraph 5: RFQ-Specific Value Delivery & Sector Understanding (70-90 words)**
+  - Address desirable criteria and competitive advantages
+  - Demonstrate deep understanding of ${detectedSector} sector challenges
+  - Reference government processes, compliance requirements, and policy frameworks
+  - Include specific outcomes and benefits delivered in similar roles
+  - Highlight innovation, efficiency improvements, and strategic contributions
+  - Connect candidate's experience to specific project/role objectives from RFQ
+  
+  **Paragraph 6: Compliance, Availability & Confidence Statement (70-90 words)**
+  - Confirm security clearance status and ability to obtain required level
+  - State availability and start date alignment with RFQ timeline
+  - Reference citizenship requirements and location compliance
+  - Include any additional compliance factors (COVID policies, etc.)
+  - Express confidence in delivery outcomes and organizational benefits
+  - Close with commitment to ${detectedSector} objectives and mission success
+  
+  **QUALITY STANDARDS:**
+  - Each paragraph must be 70-90 words (strict requirement)
+  - Address different aspects of candidacy - no repetition between paragraphs
+  - Use third-person perspective throughout with candidate's full name
+  - Extract specific details from tender response criteria answers
+  - Include quantifiable metrics, project names, and organizational achievements
+  - Use professional government tender language appropriate for ${detectedSector}
+  - Directly reference RFQ essential and desirable criteria terminology
+  - Maintain flow between paragraphs while keeping distinct themes
+  
+  **RFQ ALIGNMENT REQUIREMENTS:**
+  - Paragraph themes must directly address the essential criteria from RFQ analysis
+  - Use exact terminology and keywords from the RFQ document
+  - Reference specific role requirements, responsibilities, and expectations
+  - Address evaluation criteria systematically across the paragraphs
+  - Demonstrate clear understanding of ${detectedSector} sector priorities
+  - Show alignment with project objectives and organizational goals
+  
+  🚨 MANDATORY RULES:
+  - EXACTLY 5-6 paragraphs, each 70-90 words
+  - Each paragraph addresses different major competency area
+  - Base all content on provided tender response data - no fabrication
+  - Use specific achievements, roles, and metrics from criteria responses
+  - Reference exact RFQ requirements and compliance statements
+  - Include precise clearance status and availability information
+  - Use ${detectedSector}-specific terminology and demonstrate sector knowledge
+  - Maintain professional executive tone suitable for senior procurement evaluation
+  - Ensure each paragraph has distinct focus - avoid overlap or repetition
+  
+  Return ONLY the JSON object, no additional text.`;
+
+  try {
+    const response = await makeGeminiRequest(
+      prompt,
+      effectiveApiKey,
+      0.1,
+      8192
+    );
+    return response;
+  } catch (error) {
+    console.error("Error generating Proposal Summary:", error);
+    throw new Error(`Proposal Summary generation failed: ${error.message}`);
   }
 }
 

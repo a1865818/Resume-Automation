@@ -100,14 +100,14 @@ const TenderResponse = ({ tenderData }) => {
   // Sector-specific styling and headers
   const sectorColors = {
     'ICT': '#4ECDC4',
-    'Defence': '#2C3E50',
-    'Maritime': '#0077BE',
-    'Finance': '#27AE60',
-    'Health': '#E74C3C',
-    'Education': '#9B59B6',
-    'Infrastructure': '#F39C12',
-    'Environment': '#16A085',
-    'Legal': '#34495E',
+    'Defence': '#4ECDC4',
+    'Maritime': '#4ECDC4',
+    'Finance': '#4ECDC4',
+    'Health': '#4ECDC4',
+    'Education': '#4ECDC4',
+    'Infrastructure': '#4ECDC4',
+    'Environment': '#4ECDC4',
+    'Legal': '#4ECDC4',
     'Government': '#4ECDC4' // Default
   };
 
