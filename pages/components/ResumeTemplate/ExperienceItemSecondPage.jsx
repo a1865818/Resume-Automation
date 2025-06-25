@@ -2,8 +2,8 @@
 const ExperienceHeader = ({ exp, content }) => {
     console.log('Rendering ExperienceHeader:', { exp, content });
     return (
-      <div style={{ marginBottom: '0.5rem', border: '1px solid green', padding: '4px' }}>
-        <div style={{ fontSize: '10px', color: 'green' }}>HEADER</div>
+      <div style={{ marginBottom: '0.5rem', padding: '4px' }}>
+        <div style={{ fontSize: '10px', color: 'white' }}>HEADER</div>
         <div style={{ display: 'flex', alignItems: 'flex-start', marginBottom: '0.25rem' }}>
           <div>
             <h3 style={{ 
@@ -48,10 +48,10 @@ const ExperienceHeader = ({ exp, content }) => {
         marginBottom: '0.25rem',
         display: 'flex', 
         alignItems: 'flex-start',
-        border: '1px solid orange',
+        // border: '1px solid orange',
         padding: '2px'
       }}>
-        <div style={{ fontSize: '10px', color: 'orange', marginRight: '4px' }}>BULLET</div>
+        {/* <div style={{ fontSize: '5px', color: 'white'}}>BULLET</div> */}
         <span style={{ 
           color: '#1e293b', 
           marginRight: '0.5rem', 
@@ -59,7 +59,7 @@ const ExperienceHeader = ({ exp, content }) => {
           lineHeight: '1.25'
         }}>•</span>
         <p style={{ 
-          fontSize: '0.875rem', 
+          fontSize: '0.885rem', 
           color: '#374151', 
           lineHeight: '1.25', 
           margin: 0 

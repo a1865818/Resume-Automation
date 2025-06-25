@@ -31,6 +31,14 @@ const TenderResponse = ({ tenderData }) => {
     }
   }, [tenderData]);
 
+  // Enhanced function to check if desirable criteria should be shown
+  const hasDesirableCriteria = (criteriaArray) => {
+    return criteriaArray && 
+           Array.isArray(criteriaArray) && 
+           criteriaArray.length > 0 &&
+           criteriaArray.some(item => item.response && item.response.trim().length > 0);
+  };
+
   // Check if tenderData exists and has the expected structure
   if (!tenderData) {
     return (

@@ -60,7 +60,8 @@ return (
                         </h1>
                      
                         <div style={{ 
-                            color: '#fbbf24', 
+                            // color: '#fbbf24', 
+                            color: 'white',
                             fontSize: '1rem', 
                             fontWeight: 'bold', 
                             marginBottom: '0.25rem', 
@@ -85,7 +86,8 @@ return (
                 <h2 style={{ 
                     fontSize: '1.25rem', 
                     fontWeight: 'bold', 
-                    color: '#fbbf24', 
+                    // color: '#fbbf24', 
+                    color: 'white',
                     letterSpacing: '0.05em',
                     margin: '0 0 0.5rem 0'
                 }}>
@@ -94,13 +96,16 @@ return (
                 <div style={{ fontSize: '13px', lineHeight: '1.25' }}>
                     {resumeData.profile.clearance && resumeData.profile.clearance !== 'NONE' ? (
                         <div style={{ display: 'flex', alignItems: 'flex-start' }}>
-                            <span style={{ color: '#fbbf24', marginRight: '0.5rem', fontSize: '12px' }}>•</span>
+                            {/* <span style={{ color: '#fbbf24', marginRight: '0.5rem', fontSize: '12px' }}>•</span> */}
+                            <span style={{ color: 'white', marginRight: '0.5rem', fontSize: '12px' }}>•</span>
+
                             <span>{resumeData.profile.clearance}</span>
                         </div>
                     ) : (
                         <div style={{ 
                             fontStyle: 'italic', 
-                            color: '#9CA3AF',
+                            // color: '#9CA3AF',
+                            color: 'white',
                             fontSize: '12px'
                         }}>
                             Able to obtain security clearance.
@@ -114,7 +119,8 @@ return (
                         <h2 style={{ 
                             fontSize: '1.25rem', 
                             fontWeight: 'bold', 
-                            color: '#fbbf24', 
+                            // color: '#fbbf24', 
+                            color: 'white',
                             letterSpacing: '0.05em',
                             margin: '0 0 0.5rem 0'
                         }}>
@@ -123,7 +129,8 @@ return (
                         <ul style={{ fontSize: '0.75rem', margin: 0, padding: 0, listStyle: 'none' }}>
                             {resumeData.qualifications.map((qual, index) => (
                                 <li key={index} style={{ display: 'flex', alignItems: 'flex-start', marginBottom: '0.25rem' }}>
-                                    <span style={{ color: '#fbbf24', marginRight: '0.5rem', fontSize: '12px' }}>•</span>
+                                    {/* <span style={{ color: '#fbbf24', marginRight: '0.5rem', fontSize: '12px' }}>•</span> */}
+                                    <span style={{ color: 'white', marginRight: '0.5rem', fontSize: '12px' }}>•</span>
                                     <span style={{ lineHeight: '1.25', fontSize:'13px' }}>{qual}</span>
                                 </li>
                             ))}
@@ -135,7 +142,8 @@ return (
                         <h2 style={{ 
                             fontSize: '1.25rem', 
                             fontWeight: 'bold', 
-                            color: '#fbbf24', 
+                            // color: '#fbbf24', 
+                            color: 'white',
                             letterSpacing: '0.05em',
                             margin: '0 0 0.5rem 0'
                         }}>
@@ -145,7 +153,8 @@ return (
                             <ul style={{ fontSize: '0.75rem', margin: 0, padding: 0, listStyle: 'none' }}>
                                 {resumeData.affiliations.map((affiliation, index) => (
                                     <li key={index} style={{ display: 'flex', alignItems: 'flex-start', marginBottom: '0.25rem' }}>
-                                        <span style={{ color: '#fbbf24', marginRight: '0.5rem', fontSize: '10px' }}>•</span>
+                                        {/* <span style={{ color: '#fbbf24', marginRight: '0.5rem', fontSize: '10px' }}>•</span> */}
+                                        <span style={{ color: 'white', marginRight: '0.5rem', fontSize: '10px' }}>•</span>
                                         <span style={{ lineHeight: '1.25', fontSize:'13px' }}>{affiliation}</span>
                                     </li>
                                 ))}
@@ -154,7 +163,8 @@ return (
                             <div style={{ 
                             lineHeight: '1.25', fontSize:'13px'
                             }}>
-                                        <span style={{ color: '#fbbf24', marginRight: '0.5rem', fontSize: '10px' }}>•</span>
+                                        {/* <span style={{ color: '#fbbf24', marginRight: '0.5rem', fontSize: '10px' }}>•</span> */}
+                            <span style={{ color: 'white', marginRight: '0.5rem', fontSize: '10px' }}>•</span>
 
                                 No information given
                             </div>

@@ -38,7 +38,7 @@ const PageHeader = ({ resumeData }) => (
         zIndex: 5
       }}>
         <h1 style={{ 
-          fontSize: '2rem', 
+          fontSize: '2.5rem', 
           fontWeight: 'bold',
           margin: 0,
           color: 'white',
@@ -47,8 +47,11 @@ const PageHeader = ({ resumeData }) => (
           {resumeData.profile.name}
         </h1>
         <div style={{ 
-          color: '#fbbf24', 
-          fontSize: '0.875rem', 
+        //   color: '#fbbf24', 
+        color: 'white',
+        //   fontSize: '0.875rem', 
+          fontSize: '1.25rem', 
+
           fontWeight: 'normal', 
           textTransform: 'uppercase', 
           letterSpacing: '0.05em',

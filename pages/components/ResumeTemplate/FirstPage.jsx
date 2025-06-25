@@ -120,7 +120,7 @@ const FirstPage = ({ resumeData, mainExperience }) => {
                 position: 'absolute',
                 right: 0,
                 bottom: 0,
-                transform:'scale(1.75)',
+                transform:'scale(1.5)',
                 transformOrigin: 'bottom right',
               }}>
                 <DecorationRight/>

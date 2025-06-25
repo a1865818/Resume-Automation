@@ -18,7 +18,7 @@ const ResumeWordCompatible = ({ resumeData, mainExperience, experienceLayout, ge
   return (
     <div style={{
       fontFamily: "'Montserrat', 'Arial', sans-serif",
-      marginBottom: '50px',
+    //   marginBottom: '50px',
       // Add Word-specific styles for document generation
       '@page': {
         size: 'A4 landscape',

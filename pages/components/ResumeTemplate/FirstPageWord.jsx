@@ -16,7 +16,6 @@ const FirstPageWord = ({ resumeData, mainExperience, scaleFactor, wordPageWidth,
         maxHeight: `${wordPageHeight}px`,
         backgroundColor: '#ffffff',
         display: 'block'
-        // Removed pageBreakAfter since this is first page
       },
       
       mainTable: {
@@ -107,6 +106,7 @@ const FirstPageWord = ({ resumeData, mainExperience, scaleFactor, wordPageWidth,
                   width: '100%',
                   borderCollapse: 'collapse',
                   border: 'none',
+                //   backgroundColor:'pink',
                 
                 }}>
                   <tbody>
@@ -127,7 +127,8 @@ const FirstPageWord = ({ resumeData, mainExperience, scaleFactor, wordPageWidth,
                           width: '100%',
                           borderCollapse: 'collapse',
                           marginBottom: `${Math.round(12 * scaleFactor)}px`,
-                          border: 'none'
+                          border: 'none',
+                        //   backgroundColor: 'purple',
                         }}>
                           <tbody>
                             <tr>
@@ -145,7 +146,8 @@ const FirstPageWord = ({ resumeData, mainExperience, scaleFactor, wordPageWidth,
                                 }}>{resumeData.profile.name}</h1>
                                 
                                 <div style={{
-                                  color: '#fbbf24',
+                                //   color: '#fbbf24',
+                                color:'white',
                                   fontSize: `${Math.round(12 * scaleFactor)}px`,
                                   fontWeight: 'bold',
                                   textTransform: 'uppercase',
@@ -171,7 +173,8 @@ const FirstPageWord = ({ resumeData, mainExperience, scaleFactor, wordPageWidth,
                           width: '100%',
                           borderCollapse: 'collapse',
                           marginBottom: `${Math.round(16 * scaleFactor)}px`,
-                          border: 'none'
+                          border: 'none',
+                        //   backgroundColor:'orange',
                         }}>
                           <tbody>
                             <tr>
@@ -183,7 +186,9 @@ const FirstPageWord = ({ resumeData, mainExperience, scaleFactor, wordPageWidth,
                                 <h2 style={{
                                   fontSize: `${Math.round(15 * scaleFactor)}px`,
                                   fontWeight: 'bold',
-                                  color: '#fbbf24',
+                                //   color: '#fbbf24',
+                                color:'white',
+
                                   letterSpacing: `${0.6 * scaleFactor}px`,
                                   margin: `0 0 ${Math.round(6 * scaleFactor)}px 0`,
                                   fontFamily: "'Montserrat', Arial, sans-serif",
@@ -193,7 +198,8 @@ const FirstPageWord = ({ resumeData, mainExperience, scaleFactor, wordPageWidth,
                                 <table style={{
                                   width: '100%',
                                   borderCollapse: 'collapse',
-                                  border: 'none'
+                                  border: 'none',
+
                                 }}>
                                   <tbody>
                                     <tr>
@@ -205,8 +211,8 @@ const FirstPageWord = ({ resumeData, mainExperience, scaleFactor, wordPageWidth,
                                         <ul style={{
                                           margin: '0',
                                           listStyleType: 'disc',
-                                          color: '#fbbf24',
-                                          lineHeight: '1.75',
+                                          color: 'white',
+                                          lineHeight: '1.25',
                                         }}>
                                           {resumeData.profile.clearance && resumeData.profile.clearance !== 'NONE' ? (
                                             <li
@@ -215,7 +221,7 @@ const FirstPageWord = ({ resumeData, mainExperience, scaleFactor, wordPageWidth,
                                                 width: '100%',
                                                 marginBottom: `${Math.round(4 * scaleFactor)}px`,
                                                 color: 'white',
-                                                lineHeight: '1.75',
+                                                lineHeight: '1.25',
                                                 fontSize: `${Math.round(10.5 * scaleFactor)}px`,
                                                 fontFamily: "'Montserrat', Arial, sans-serif",
                                                 padding: '0',
@@ -233,7 +239,7 @@ const FirstPageWord = ({ resumeData, mainExperience, scaleFactor, wordPageWidth,
                                                 width: '100%',
                                                 marginBottom: `${Math.round(4 * scaleFactor)}px`,
                                                 color: 'white',
-                                                lineHeight: '1.75',
+                                                lineHeight: '1.25',
                                                 fontSize: `${Math.round(10.5 * scaleFactor)}px`,
                                                 fontFamily: "'Montserrat', Arial, sans-serif",
                                                 padding: '0',
@@ -261,7 +267,9 @@ const FirstPageWord = ({ resumeData, mainExperience, scaleFactor, wordPageWidth,
                           width: '100%',
                           borderCollapse: 'collapse',
                           marginBottom: `${Math.round(16 * scaleFactor)}px`,
-                          border: 'none'
+                          border: 'none',
+                        //   backgroundColor:'gray',
+
                         }}>
                           <tbody>
                             <tr>
@@ -273,7 +281,9 @@ const FirstPageWord = ({ resumeData, mainExperience, scaleFactor, wordPageWidth,
                                 <h2 style={{
                                   fontSize: `${Math.round(15 * scaleFactor)}px`,
                                   fontWeight: 'bold',
-                                  color: '#fbbf24',
+                                //   color: '#fbbf24',
+                                color:'white',
+
                                   letterSpacing: `${0.6 * scaleFactor}px`,
                                   margin: `0 0 ${Math.round(6 * scaleFactor)}px 0`,
                                   fontFamily: "'Montserrat', Arial, sans-serif",
@@ -296,8 +306,8 @@ const FirstPageWord = ({ resumeData, mainExperience, scaleFactor, wordPageWidth,
                                           margin: '0',
                                        
                                           listStyleType: 'disc',
-                                          color: '#fbbf24',
-                                          lineHeight: '1.75',
+                                        //   color: '#fbbf24',
+                                          lineHeight: '1.25',
                                           }}>
                                           {resumeData.qualifications.map((qual, index) => (
                                               <li
@@ -307,7 +317,7 @@ const FirstPageWord = ({ resumeData, mainExperience, scaleFactor, wordPageWidth,
                                                       width: '100%',
                                                       marginBottom: `${Math.round(4 * scaleFactor)}px`,
                                                       color: 'white',
-                                                      lineHeight: '1.75',
+                                                      lineHeight: '1.25',
                                                       fontSize: `${Math.round(10.5 * scaleFactor)}px`,
                                                       fontFamily: "'Montserrat', Arial, sans-serif",
                                                       padding: '0',
@@ -335,7 +345,8 @@ const FirstPageWord = ({ resumeData, mainExperience, scaleFactor, wordPageWidth,
                           width: '100%',
                           borderCollapse: 'collapse',
                           marginBottom: `${Math.round(16 * scaleFactor)}px`,
-                          border: 'none'
+                          border: 'none',
+                        //   backgroundColor:"yellow",
                         }}>
                           <tbody>
                             <tr>
@@ -347,7 +358,9 @@ const FirstPageWord = ({ resumeData, mainExperience, scaleFactor, wordPageWidth,
                                 <h2 style={{
                                   fontSize: `${Math.round(15 * scaleFactor)}px`,
                                   fontWeight: 'bold',
-                                  color: '#fbbf24',
+                                //   color: '#fbbf24',
+                                color:'white',
+
                                   letterSpacing: `${0.6 * scaleFactor}px`,
                                   margin: `0 0 ${Math.round(6 * scaleFactor)}px 0`,
                                   fontFamily: "'Montserrat', Arial, sans-serif",
@@ -357,6 +370,7 @@ const FirstPageWord = ({ resumeData, mainExperience, scaleFactor, wordPageWidth,
                                 <table style={{
                                   width: '100%',
                                   borderCollapse: 'collapse',
+                                //   backgroundColor:'red',
                                   border: 'none'
                                 }}>
                                   <tbody>
@@ -369,8 +383,8 @@ const FirstPageWord = ({ resumeData, mainExperience, scaleFactor, wordPageWidth,
                                         <ul style={{
                                           margin: '0',
                                           listStyleType: 'disc',
-                                          color: '#fbbf24',
-                                          lineHeight: '1.75',
+                                        //   color: '#fbbf24',
+                                          lineHeight: '1.25',
                                         }}>
                                           {(resumeData.affiliations && resumeData.affiliations.length > 0) ? (
                                             resumeData.affiliations.map((affiliation, index) => (
@@ -381,7 +395,7 @@ const FirstPageWord = ({ resumeData, mainExperience, scaleFactor, wordPageWidth,
                                                   width: '100%',
                                                   marginBottom: `${Math.round(4 * scaleFactor)}px`,
                                                   color: 'white',
-                                                  lineHeight: '1.75',
+                                                  lineHeight: '1.25',
                                                   fontSize: `${Math.round(10.5 * scaleFactor)}px`,
                                                   fontFamily: "'Montserrat', Arial, sans-serif",
                                                   padding: '0',
@@ -400,7 +414,7 @@ const FirstPageWord = ({ resumeData, mainExperience, scaleFactor, wordPageWidth,
                                                 width: '100%',
                                                 marginBottom: `${Math.round(4 * scaleFactor)}px`,
                                                 color: 'white',
-                                                lineHeight: '1.75',
+                                                lineHeight: '1.25',
                                                 fontSize: `${Math.round(10.5 * scaleFactor)}px`,
                                                 fontFamily: "'Montserrat', Arial, sans-serif",
                                                 padding: '0',
@@ -431,33 +445,6 @@ const FirstPageWord = ({ resumeData, mainExperience, scaleFactor, wordPageWidth,
                     </tr>
                   </tbody>
                 </table>
-                {/* <div style={{
-                  width: '200px',
-                  maxWidth: '200px',
-                  height: `${Math.round(30 * scaleFactor)}px`,
-                  backgroundColor: '#374151',
-                  display: 'flex',
-                  alignItems: 'flex-start',
-                  justifyContent: 'center',
-                  overflow: 'hidden',
-                  marginTop: 0,
-                  paddingTop: 0
-                }}>
-                  <img
-                    src="/assets/images/DecorationLeft.jpeg"
-                    alt="Decoration Left"
-                    width={150}
-                    style={{
-                    //   width: '200px',
-                      height: `${Math.round(30 * scaleFactor)}px`,
-                      objectFit: 'contain',
-                      display: 'block',
-                      marginTop: 0,
-                      paddingTop: 0
-                    }}
-                  />
-                </div> */}
-                        
               </td>
               
               {/* Middle Column - Profile & Skills */}
@@ -565,15 +552,15 @@ const FirstPageWord = ({ resumeData, mainExperience, scaleFactor, wordPageWidth,
                                       }}>
                                           <ul style={{
                                           listStyleType: 'disc',
-                                          lineHeight: '1.75',
+                                          lineHeight: '1.25',
                                           }}>
                                           {resumeData.skills.map((skill, index) => (
                                               <li key={index} style={{
                                               fontSize: `${Math.round(10.5 * scaleFactor)}px`,
-                                              lineHeight: '1.75',
+                                              lineHeight: '1.25',
                                               fontFamily: "'Montserrat', Arial, sans-serif",
                                               color: '#ffffff',
-                                              marginBottom: `${Math.round(6 * scaleFactor)}px`, // Same spacing as original paddingBottom
+                                              marginBottom: `${Math.round(4 * scaleFactor)}px`, // Same spacing as original paddingBottom
                                               textAlign: 'justify',
                                               verticalAlign: 'middle',
                                               }}>
@@ -601,7 +588,7 @@ const FirstPageWord = ({ resumeData, mainExperience, scaleFactor, wordPageWidth,
                   height: '100%',
                   borderCollapse: 'collapse',
                   border: 'none',
-             
+                    // backgroundColor:'green'
                 }}>
                   <tbody>
                     <tr>
@@ -826,18 +813,22 @@ const FirstPageWord = ({ resumeData, mainExperience, scaleFactor, wordPageWidth,
                                     paddingLeft: `${Math.round(8 * scaleFactor)}px`, // Reduced from 16px
                                     margin: '0',
                                     listStyleType: 'disc',
-                                    }}>
+                                    
+                                    }}
+                                    className="body-text">
                                     {exp.responsibilities.map((resp, respIndex) => (
                                         <li key={respIndex} style={{
                                         lineHeight: '1.25',
                                         color: '#000000',
                                         fontFamily: "'Montserrat', Arial, sans-serif",
-                                        marginBottom: `${Math.round(1 * scaleFactor)}px`, // Reduced spacing between items
+                                        marginBottom: `${Math.round(4 * scaleFactor)}px`, // Reduced spacing between items
                                         textAlign: 'justify',
                                         verticalAlign: 'middle',
-                                        fontSize:'8px'
+                                        fontSize: `${Math.round(10.5 * scaleFactor)}px`,
+
                                         }}>
                                         {resp}
+                                        
                                         </li>
                                     ))}
                                     </ul>
@@ -855,39 +846,77 @@ const FirstPageWord = ({ resumeData, mainExperience, scaleFactor, wordPageWidth,
                             </tr>
                           </tbody>
                         </table>
+
+
+                        
                       </td>
                     </tr>
                   </tbody>
                 </table>
-{/* 
-                <div style={{
-                  width: '100%',
-                  height: `${Math.round(30 * scaleFactor)}px`,
-                  display: 'flex',
-                  alignItems: 'flex-end',
-                  justifyContent: 'flex-end',
-                  overflow: 'hidden',
-                  marginTop: `${Math.round(18 * scaleFactor)}px`,
-                  paddingTop: 0
-                }}>
-                  <img
-                    src="/assets/images/DecorationRight.jpeg"
-                    alt="Decoration Right"
-                    width={150}
-                    style={{
-                
-                      height: `${Math.round(30 * scaleFactor)}px`,
-                      objectFit: 'contain',
-                      display: 'block',
-                      marginTop: 0,
-                      paddingTop: 0
-                    }}
-                  />
-                </div> */}
+       
               </td>
             </tr>
+
+
+              {/* Decorations Row */}
+    <tr>
+      {/* Decoration Left */}
+      <td style={{
+        padding: 0,
+        border: 'none',
+        verticalAlign: 'bottom',
+        textAlign: 'left',
+        width: `${scaledProfileWidth}px`,
+        backgroundColor:'black',
+        height: `${Math.round(40 * scaleFactor)}px`
+      }}>
+        <img
+          src="/assets/images/DecorationLeft.jpeg"
+          alt="Decoration Left"
+          width={150}
+          style={{
+            height: `${Math.round(30 * scaleFactor)}px`,
+            objectFit: 'contain',
+            display: 'inline-block',
+            margin: 0,
+            padding: 0
+          }}
+        />
+      </td>
+      {/* Empty cell for middle column */}
+      <td style={{ padding: 0, border: 'none',
+        width: `${scaledMiddleWidth}px`,
+        backgroundColor: '#9e9e9e',
+        
+       }}></td>
+      {/* Decoration Right */}
+      <td style={{
+        padding: 0,
+        border: 'none',
+        verticalAlign: 'bottom',
+        textAlign: 'right',
+        width: `${scaledRightWidth}px`,
+        backgroundColor: '#ffffff',
+
+        height: `${Math.round(40 * scaleFactor)}px`
+      }}>
+        <img
+          src="/assets/images/DecorationRight.jpeg"
+          alt="Decoration Right"
+          width={150}
+          style={{
+            height: `${Math.round(30 * scaleFactor)}px`,
+            objectFit: 'contain',
+            display: 'inline-block',
+            margin: 0,
+            padding: 0
+          }}
+        />
+      </td>
+    </tr>
           </tbody>
         </table>
+        
       </div>
       
     );

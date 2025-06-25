@@ -649,6 +649,12 @@ export async function generateTenderResponse(
     }
   }
 
+  // Check if RFQ analysis has desirable criteria
+  const hasDesirableCriteria =
+    jobAnalysis?.desirableCriteria &&
+    Array.isArray(jobAnalysis.desirableCriteria) &&
+    jobAnalysis.desirableCriteria.length > 0;
+
   const prompt = `You are an expert government tender response specialist creating a comprehensive Criteria Statement for ${detectedSector} sector procurement. Using the provided tailored resume and RFQ requirements, create a professional tender response that demonstrates how the candidate meets each criterion with specific examples and evidence. . Create a comprehensive tender response that addresses each criterion EXACTLY as specified in the RFQ analysis. Use the dynamic criteria structure provided to create responses that match the specific requirements.
   
   🎯 ORIGINAL JOB DESCRIPTION/RFQ:
@@ -684,17 +690,26 @@ export async function generateTenderResponse(
     // Repeat for each essential criterion from RFQ analysis
     }
     ],
-    "desirableCriteria": [
-    {
-      "criteriaTitle": "Summary",
-      "criteriaDescription": "Overall summary of the candidate's qualifications relevant to the desirable criteria",
-      "response": "Summary response (100–200 words) highlighting how the candidate exceeds desirable expectations and offers added value"
-    },
+     "desirableCriteria": [
+        ${
+          hasDesirableCriteria
+            ? `
+        {
+        "criteriaTitle": "Summary",
+        "criteriaDescription": "Overall summary of the candidate's qualifications relevant to the desirable criteria",
+        "response": "Summary response (100–200 words) highlighting how the candidate exceeds desirable expectations and offers added value"
+        },
         {
         "criteriaTitle": "Exact title from RFQ analysis. For example: if the RFQ has a title like 'Experience with Agile Methodologies', use that exact title", 
         "criteriaDescription": "Full criteria text from RFQ (for reference)",
         "response": "Detailed response (100-200 words) addressing this specific criterion"
+        }
         // Repeat for each desirable criterion from RFQ analysis
+        `
+            : `
+        // CRITICAL: If RFQ analysis shows NO desirable criteria, return EMPTY ARRAY []
+        // DO NOT CREATE desirable criteria if none exist in the RFQ analysis
+        `
         }
     ],
     "additionalInformation": [
@@ -732,6 +747,12 @@ export async function generateTenderResponse(
   }
   
   🔥 CRITICAL WRITING GUIDELINES:
+
+  🚨 CRITICAL DESIRABLE CRITERIA RULES:
+    1. IF NO DESIRABLE CRITERIA IN RFQ ANALYSIS: Return desirableCriteria as an empty array []
+    2. IF DESIRABLE CRITERIA EXIST IN RFQ ANALYSIS: Create detailed responses for each one
+    3. NEVER CREATE FICTIONAL DESIRABLE CRITERIA: Only use what's explicitly in the RFQ analysis
+    4. CONDITIONAL LOGIC: Check jobAnalysis.desirableCriteria array length before creating responses
   
   **CONTENT REQUIREMENTS:**
   - Write exclusively in third-person perspective using the candidate's full name
@@ -1147,4 +1168,52 @@ export function detectSector(jobDescription, jobAnalysis) {
   }
 
   return "Government"; // Default fallback
+}
+
+// Enhanced formatForTenderTemplate function with better desirable criteria handling
+export function formatForTenderTemplate(rawTenderData) {
+  // Ensure the data structure matches exactly what the template expects
+  return {
+    candidateDetails: {
+      name: rawTenderData.candidateDetails?.name || "Candidate Name",
+      proposedRole:
+        rawTenderData.candidateDetails?.proposedRole || "Application Response",
+      clearance: rawTenderData.candidateDetails?.clearance,
+      availability: rawTenderData.candidateDetails?.availability,
+    },
+    essentialCriteria:
+      rawTenderData.essentialCriteria?.map((criteria) => ({
+        criteriaTitle:
+          criteria.criteriaTitle ||
+          criteria.title ||
+          criteria.criteria ||
+          criteria.requirement ||
+          "",
+        criteriaDescription:
+          criteria.criteriaDescription || criteria.description || "",
+        response: criteria.response,
+      })) || [],
+    // Enhanced desirable criteria handling - ensure empty array if no criteria
+    desirableCriteria:
+      rawTenderData.desirableCriteria &&
+      Array.isArray(rawTenderData.desirableCriteria) &&
+      rawTenderData.desirableCriteria.length > 0
+        ? rawTenderData.desirableCriteria.map((criteria) => ({
+            criteriaTitle:
+              criteria.criteriaTitle ||
+              criteria.title ||
+              criteria.criteria ||
+              criteria.requirement ||
+              "",
+            criteriaDescription:
+              criteria.criteriaDescription || criteria.description || "",
+            response: criteria.response,
+          }))
+        : [], // Explicitly return empty array if no desirable criteria
+    additionalInformation:
+      rawTenderData.additionalInformation?.map((info) => ({
+        criteria: info.criteria || info.requirement,
+        response: info.response,
+      })) || [],
+  };
 }
