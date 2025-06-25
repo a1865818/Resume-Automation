@@ -1,10 +1,13 @@
+import FirstPageWordDefault from "./FirstPageWordDefault";
+import SecondPageWordDefault from "./SecondPageWordDefault";
+const ResumeWordCompatibleDefault = ({ 
+  resumeData, 
+  mainExperience, 
+  experienceLayout, 
+  getExperiencePages, 
+  pageHeight,
 
-
-
-import FirstPageWord from './FirstPageWord';
-import SecondPageWord from './SecondPageWord';
-
-const ResumeWordCompatible = ({ resumeData, mainExperience, experienceLayout, getExperiencePages, pageHeight }) => {
+}) => {
   // Word landscape dimensions (A4 landscape at 96 DPI)
   const wordPageWidth = 1123; // A4 landscape width in pixels
   const wordPageHeight = 794; // A4 landscape height in pixels
@@ -18,37 +21,33 @@ const ResumeWordCompatible = ({ resumeData, mainExperience, experienceLayout, ge
   return (
     <div style={{
       fontFamily: "'Montserrat', 'Arial', sans-serif",
-    //   marginBottom: '50px',
-      // Add Word-specific styles for document generation
       '@page': {
         size: 'A4 landscape',
-        // margin: '0.5in'
       }
     }}>
       {/* First Page - Profile, Skills, Referees, Main Experience */}
-      <FirstPageWord 
+      <FirstPageWordDefault
         resumeData={resumeData}
         mainExperience={mainExperience}
         scaleFactor={scaleFactor}
         wordPageWidth={wordPageWidth}
         wordPageHeight={wordPageHeight}
+    
       />
       
-    <br />
-
-
+      <br />
       
-      {/* Additional Experience Pages - Will start on new page in Word */}
-      <SecondPageWord 
+      {/* Additional Experience Pages */}
+      <SecondPageWordDefault
         resumeData={resumeData}
         experienceLayout={experienceLayout}
         getExperiencePages={getExperiencePages}
         scaleFactor={scaleFactor}
         wordPageWidth={wordPageWidth}
         wordPageHeight={wordPageHeight}
+
       />
     </div>
   );
 };
-
-export default ResumeWordCompatible;
+export default ResumeWordCompatibleDefault;

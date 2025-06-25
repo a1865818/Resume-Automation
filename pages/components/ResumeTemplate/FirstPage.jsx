@@ -3,7 +3,7 @@ import ExperienceItem from './ExperienceItem';
 import ProfileSection from './ProfileSection';
 import RefereesSection from './RefereesSection';
 
-const FirstPage = ({ resumeData, mainExperience }) => {
+const FirstPage = ({ resumeData, mainExperience, templateType = 'sme-gateway' }) => {
   return (
     <div 
       id="first-page"
@@ -17,7 +17,7 @@ const FirstPage = ({ resumeData, mainExperience }) => {
       }}
     >
       <div style={{ display: 'grid', gridTemplateColumns: '350px 1fr' }}>
-        <ProfileSection resumeData={resumeData} />
+        <ProfileSection resumeData={resumeData} templateType={templateType} />
       
         {/* Right Section */}
         <div style={{ display: 'flex', flexDirection: 'column' }}>

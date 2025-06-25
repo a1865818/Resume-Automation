@@ -3,7 +3,7 @@ import DecorationLeft from "./DecorationLeft";
 import PappsLogo from "./PappsLogo";
 import PersonalPicture from "./PersonalPicture";
 
-const ProfileSection = ({ resumeData }) => {
+const ProfileSection = ({ resumeData, templateType = 'sme-gateway' }) => {
     const [decorationScale, setDecorationScale] = useState(1.75);
     const contentRef = useRef(null);
     const containerRef = useRef(null);
@@ -65,7 +65,7 @@ const ProfileSection = ({ resumeData }) => {
         }}>
 
            
-               <div style={{
+               {/* <div style={{
                 position: 'absolute',
                 top: 0,
                 right: 0,
@@ -73,22 +73,72 @@ const ProfileSection = ({ resumeData }) => {
                 display: 'flex',
                 alignItems: 'flex-start',
                 gap: '0.5rem'
-            }}>
+            }}> */}
                 {/* SME Logo on the left */}
-                <div style={{
+                {/* <div style={{
                     marginTop: '0.5rem'
                 }}>
                     <img src="/assets/images/SMELogo.jpeg" alt="SME Logo" style={{ height: '80px' }} />
-                </div>
+                </div> */}
                 
                 {/* Papps Logo on the right - made smaller */}
-                <div style={{
+                {/* <div style={{
                     transform: 'scale(0.8)',
                     transformOrigin: 'top right'
                 }}>
                     <PappsLogo />
                 </div>
-            </div>   
+            </div>    */}
+
+               {/* Conditional Logo Rendering */}
+               {templateType === 'sme-gateway' ? (
+                // SME Gateway Template - Two logos
+                <div style={{
+                    position: 'absolute',
+                    top: 0,
+                    right: 0,
+                    zIndex: 10,
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    gap: '0.5rem'
+                }}>
+                    {/* SME Logo on the left */}
+                    <div style={{
+                        marginTop: '0.5rem'
+                    }}>
+                        <img src="/assets/images/SMELogo.jpeg" alt="SME Logo" style={{ height: '80px' }} />
+                    </div>
+                    
+                    {/* Papps Logo on the right - made smaller */}
+                    <div style={{
+                        transform: 'scale(0.8)',
+                        transformOrigin: 'top right'
+                    }}>
+                        <PappsLogo />
+                    </div>
+                </div>
+            ) : (
+                // Default Template - Only Papps logo, centered
+                <div style={{
+                    position: 'absolute',
+                    top: 0,
+                    right: 0,
+                    zIndex: 10,
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    gap: '0.5rem'
+                }}>
+                    <div style={{
+                        transform: 'scale(1.25)',
+                        transformOrigin: 'top right'
+                    }}>
+                        <PappsLogo />
+                    </div>
+                </div>
+            )}
+
+
+
                 {/* Profile Photo - Only show if photo is provided */}
                 {resumeData.profile.photo && resumeData.profile.photo !== "/api/placeholder/400/600" && (
                 <div

@@ -1,4 +1,4 @@
-const FirstPageWord = ({ resumeData, mainExperience, scaleFactor, wordPageWidth, wordPageHeight }) => {
+const FirstPageWordDefault = ({ resumeData, mainExperience, scaleFactor, wordPageWidth, wordPageHeight }) => {
     // Scaled dimensions for landscape layout
     const scaledProfileWidth = Math.round(250 * scaleFactor);
     const scaledRightWidth = Math.round(750 * scaleFactor);
@@ -693,19 +693,19 @@ const FirstPageWord = ({ resumeData, mainExperience, scaleFactor, wordPageWidth,
             alignItems: 'flex-end',
             gap: `${Math.round(10 * scaleFactor)}px`
           }}>
-            <img
+            {/* <img
               // height={Math.round(60 * scaleFactor)}
-              height={60}
+              height={55}
               src="/assets/images/SMELogo.jpeg" 
               alt="SME Gateway"
               style={{
                 objectFit: 'contain',
                 border: 'none'
               }}
-            />
+            /> */}
             <img 
               // height={Math.round(60 * scaleFactor)} 
-              height={60}
+              height={80}
               src="/PappspmLogo.jpeg" 
               alt="PappsPM"
               style={{
@@ -922,4 +922,4 @@ const FirstPageWord = ({ resumeData, mainExperience, scaleFactor, wordPageWidth,
     );
   };
   
-  export default FirstPageWord;
+  export default FirstPageWordDefault;

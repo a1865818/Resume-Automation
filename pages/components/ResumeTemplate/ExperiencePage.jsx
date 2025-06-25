@@ -1,9 +1,12 @@
 
 import DecorationLeft from './DecorationLeft';
+import DefaultPageHeader from './DefaultPageHeader';
 import ExperienceItemSecondPage from './ExperienceItemSecondPage';
 import PageHeader from './PageHeader';
 
-const ExperiencePage = ({ experiences, pageNumber, resumeData, pageHeight }) => {
+const ExperiencePage = ({ experiences, pageNumber, resumeData, pageHeight, 
+    templateType='sme-gateway'  
+ }) => {
   // Group items by column while maintaining order
   const organizeItemsByColumn = () => {
     const leftColumn = [];
@@ -35,7 +38,12 @@ const ExperiencePage = ({ experiences, pageNumber, resumeData, pageHeight }) => 
         display: 'flex',
         flexDirection: 'column'
     }}>
-      <PageHeader resumeData={resumeData} />
+      {/* <PageHeader resumeData={resumeData} /> */}
+      {templateType === 'sme-gateway' ? (
+                            <PageHeader resumeData={resumeData} />
+                        ) : (
+                            <DefaultPageHeader resumeData={resumeData} />
+                        )}
       
       <div style={{ 
         flex: 1,
@@ -61,15 +69,17 @@ const ExperiencePage = ({ experiences, pageNumber, resumeData, pageHeight }) => 
             
           ))}
 
+             {templateType === 'default' && (
             <div style={{ 
-                        position: 'absolute', 
-                        left: 0, 
-                        bottom: 0 ,
-                        transform:'scale(1.25)',
-                        transformOrigin: 'bottom left',
-                    }}>
-                        <DecorationLeft/>
-                    </div>
+              position: 'absolute', 
+              left: 0, 
+              bottom: 0,
+              transform:'scale(1.25)',
+              transformOrigin: 'bottom left',
+            }}>
+              <DecorationLeft/>
+            </div>
+          )}
                    
            
         </div>
@@ -97,10 +107,10 @@ const ExperiencePage = ({ experiences, pageNumber, resumeData, pageHeight }) => 
           ))}
         </div>
       </div>
-          <div style={{border: '1px solid black'}}>
-            
-          </div>
-
+      {templateType === 'default' && (
+        <div style={{ border: '1px solid black' }}></div>
+      )}
+    
     </div>
   );
 };

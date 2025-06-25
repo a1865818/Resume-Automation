@@ -1,14 +1,17 @@
 import Head from 'next/head';
 import { useEffect, useRef, useState } from 'react';
 import generatePDF from 'react-to-pdf';
+import TemplateToggle from './ResumeTemplate/TemplateToggle';
 
 // Import custom hooks
 import { useExperiencePagination } from '../hooks/useExperiencePagination';
 import { usePdfSettings } from '../hooks/usePdfSettings';
 import { useResumeMeasurement } from '../hooks/useResumeMeasurement';
 
+
 // Import Word-compatible components
 import ResumeWordCompatible from './ResumeTemplate/ResumeWordCompatible';
+import ResumeWordCompatibleDefault from './ResumeTemplate/ResumeWordCompatibleDefault';
 
 import BackButton from './ResumeTemplate/BackButton';
 import ControlButtons from './ResumeTemplate/ControlButtons';
@@ -16,11 +19,15 @@ import DimensionsDisplay from './ResumeTemplate/DimensionsDisplay';
 import ExperienceLayoutControls from './ResumeTemplate/ExperienceLayoutControls';
 import ExperiencePage from './ResumeTemplate/ExperiencePage';
 import FirstPage from './ResumeTemplate/FirstPage';
+
+
 import HiddenMeasurementArea from './ResumeTemplate/HiddenMeasurementArea';
 import PdfSettingsModal from './ResumeTemplate/PdfSettingsModal';
 
 const ResumeTemplate = ({ resumeData, onBackToSummary, viewMode = 'generate' }) => {
     
+    const [templateType, setTemplateType] = useState('sme-gateway'); // Add this line
+
     const [isPdfLoading, setIsPdfLoading] = useState(false);
     const [isWordLoading, setIsWordLoading] = useState(false);
     const [showPdfSettings, setShowPdfSettings] = useState(false);
@@ -397,7 +404,7 @@ const ResumeTemplate = ({ resumeData, onBackToSummary, viewMode = 'generate' }) 
           }
         `}</style>
 
-<div style={{ position: 'absolute', left: '-9999px', top: '-9999px' }}>
+{/* <div style={{ position: 'absolute', left: '-9999px', top: '-9999px' }}>
         <div ref={wordResumeRef}>
           <ResumeWordCompatible
             resumeData={resumeData}
@@ -407,7 +414,31 @@ const ResumeTemplate = ({ resumeData, onBackToSummary, viewMode = 'generate' }) 
             pageHeight={pageHeight}
           />
         </div>
-      </div>
+      </div> */}
+
+<div style={{ position: 'absolute', left: '-9999px', top: '-9999px' }}>
+  <div ref={wordResumeRef}>
+    {templateType === 'sme-gateway' ? (
+      <ResumeWordCompatible
+        resumeData={resumeData}
+        mainExperience={mainExperience}
+        experienceLayout={experienceLayout}
+        getExperiencePages={getExperiencePages}
+        pageHeight={pageHeight}
+ 
+      />
+    ) : (
+      <ResumeWordCompatibleDefault
+        resumeData={resumeData}
+        mainExperience={mainExperience}
+        experienceLayout={experienceLayout}
+        getExperiencePages={getExperiencePages}
+        pageHeight={pageHeight}
+
+      />
+    )}
+  </div>
+</div>
 
         
         {/* Control Buttons */}
@@ -422,6 +453,12 @@ const ResumeTemplate = ({ resumeData, onBackToSummary, viewMode = 'generate' }) 
               remeasureResume={remeasureResume}
               onBackToSummary={onBackToSummary}
             />
+
+               {/* Add Template Toggle here */}
+               <TemplateToggle 
+                        templateType={templateType} 
+                        setTemplateType={setTemplateType} 
+                    />
   
             <ExperienceLayoutControls
               experienceLayout={experienceLayout}
@@ -449,11 +486,16 @@ const ResumeTemplate = ({ resumeData, onBackToSummary, viewMode = 'generate' }) 
           flexDirection: 'column', 
           alignItems: 'center' 
         }}>
-          <FirstPage
+          {/* <FirstPage
             resumeData={resumeData}
             mainExperience={mainExperience}
           />
-          
+           */}
+            <FirstPage
+            resumeData={resumeData}
+            mainExperience={mainExperience}
+            templateType={templateType}
+          />
           {/* Experience Pages with Consistent Heights */}
           {experienceLayout === 'paginated' && getExperiencePages.map((pageData, pageIndex) => (
             <ExperiencePage
@@ -464,24 +506,40 @@ const ResumeTemplate = ({ resumeData, onBackToSummary, viewMode = 'generate' }) 
               pageHeight={pageHeight}
               fullExperience={fullExperience}
               experienceHeights={experienceHeights}
+              templateType={templateType} 
             />
           ))}
         </div>
 
         {/* Word-Compatible Resume Content */}
+
+          
+
         <div id="resume-word-content" style={{ 
-          display: downloadFormat === 'word' ? 'block' : 'none',
-          width: '100%'
-        }}>
-          <ResumeWordCompatible
-            resumeData={resumeData}
-            mainExperience={mainExperience}
-            experienceLayout={experienceLayout}
-            getExperiencePages={getExperiencePages}
-            pageHeight={pageHeight}
-          />
-        </div>
-  
+            display: downloadFormat === 'word' ? 'block' : 'none',
+            width: '100%'
+            }}>
+            {templateType === 'sme-gateway' ? (
+                <ResumeWordCompatible
+                resumeData={resumeData}
+                mainExperience={mainExperience}
+                experienceLayout={experienceLayout}
+                getExperiencePages={getExperiencePages}
+                pageHeight={pageHeight}
+                // templateType={templateType}
+                />
+            ) : (
+                <ResumeWordCompatibleDefault
+                resumeData={resumeData}
+                mainExperience={mainExperience}
+                experienceLayout={experienceLayout}
+                getExperiencePages={getExperiencePages}
+                pageHeight={pageHeight}
+                // templateType={templateType}
+                />
+            )}
+            </div>
+
         <HiddenMeasurementArea
           experienceLayout={experienceLayout}
           fullExperience={fullExperience}
