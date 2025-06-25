@@ -1,4 +1,5 @@
 
+import DecorationLeft from './DecorationLeft';
 import ExperienceItemSecondPage from './ExperienceItemSecondPage';
 import PageHeader from './PageHeader';
 
@@ -60,15 +61,15 @@ const ExperiencePage = ({ experiences, pageNumber, resumeData, pageHeight }) => 
             
           ))}
 
-            {/* <div style={{ 
+            <div style={{ 
                         position: 'absolute', 
                         left: 0, 
                         bottom: 0 ,
-                        transform:'scale(1.75)',
+                        transform:'scale(1.25)',
                         transformOrigin: 'bottom left',
                     }}>
                         <DecorationLeft/>
-                    </div> */}
+                    </div>
                    
            
         </div>
@@ -96,20 +97,13 @@ const ExperiencePage = ({ experiences, pageNumber, resumeData, pageHeight }) => 
           ))}
         </div>
       </div>
-      {/* <div style={{ 
-      backgroundColor: 'black', 
-      color: 'white', 
-    //   padding: '1rem 1.5rem',
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-    //   position: 'relative',
-      height: '5px',
-    }}>
+          <div style={{border: '1px solid black'}}>
+            
+          </div>
 
-    </div> */}
     </div>
   );
 };
 
 export default ExperiencePage;
+

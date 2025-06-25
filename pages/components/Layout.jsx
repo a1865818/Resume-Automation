@@ -33,7 +33,7 @@ const Layout = ({ children }) => {
       <main className="flex-grow">{children}</main>
 
       {/* Footer - always sticks to bottom */}
-      <footer className="bg-white border-t py-6 mt-auto">
+      <footer className="bg-white border-t py-6 mt-0">
         <div className="max-w-6xl mx-auto px-4 text-center text-gray-500 text-sm">
           © {new Date().getFullYear()} Candidate Finder. All rights reserved.
         </div>
