@@ -393,52 +393,6 @@ const SecondPageWordDefault = ({ resumeData, experienceLayout, getExperiencePage
               </table>
             </div>
   
-            {/* Bottom Decorations Row - Added to second page */}
-            {/* <div style={{
-              height: `${Math.round(40 * scaleFactor)}px`,
-              flexShrink: 0
-            }}>
-              <table style={{
-                width: '100%',
-                height: '100%',
-                borderCollapse: 'collapse',
-                border: 'none',
-                // backgroundColor:'green',
-                margin: 0,
-                padding: 0
-              }}>
-                <colgroup>
-                  <col style={{ width: '50%' }} />
-                  <col style={{ width: '50%' }} />
-                </colgroup>
-                <tbody>
-                  <tr>
-            
-                    <td style={{
-                      padding: 0,
-                      border: 'none',
-                      verticalAlign: 'bottom',
-                      textAlign: 'left',
-                      
-                      height: `${Math.round(40 * scaleFactor)}px`
-                    }}>
-                      <img
-                        src="/assets/images/DecorationLeftSecondPage.jpeg"
-                        alt="Decoration Left Second Page"
-                        width={150}
-                        style={{
-                          height: `${Math.round(30 * scaleFactor)}px`,
-                          objectFit: 'contain',
-                          display: 'inline-block',
-                          margin: 0,
-                          padding: 0
-                        }}
-                      />
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div> */}
           </div>
         ))}
       </>
