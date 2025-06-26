@@ -452,15 +452,52 @@ const PdfSummary = ({ pdfText, fileName, profilePicture, profilePicturePreview }
       setIsSaved(false);
       setSaveMessage('');
       
+
+      const convertFileToBase64 = (file) => {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
+      };
+    
+
       // If using mock data, just set it and show template
-      if (useMockData) {
+    //   if (useMockData) {
+    //     let mockDataWithPhoto = { ...mockResumeData };
+        
+    //     // Upload profile picture if provided
+    //     if (profilePicture) {
+    //       const uploadedUrl = await uploadProfilePicture(profilePicture);
+    //       if (uploadedUrl) {
+    //         mockDataWithPhoto.profile.photo = uploadedUrl;
+    //       }
+    //     } else if (profilePicturePreview) {
+    //       // Use preview URL for mock data if no file to upload
+    //       mockDataWithPhoto.profile.photo = profilePicturePreview;
+    //     }
+        
+    //     setResumeData(mockDataWithPhoto);
+    //     setShowResumeTemplate(true);
+    //     return;
+    //   }
+
+    if (useMockData) {
         let mockDataWithPhoto = { ...mockResumeData };
         
-        // Upload profile picture if provided
+        // Convert profile picture to base64 if provided
         if (profilePicture) {
-          const uploadedUrl = await uploadProfilePicture(profilePicture);
-          if (uploadedUrl) {
-            mockDataWithPhoto.profile.photo = uploadedUrl;
+          try {
+            const base64Photo = await convertFileToBase64(profilePicture);
+            mockDataWithPhoto.profile.photo = base64Photo;
+            console.log('✅ Profile picture converted to base64 for mock data');
+          } catch (error) {
+            console.error('❌ Error converting profile picture to base64:', error);
+            // Fall back to preview URL if conversion fails
+            if (profilePicturePreview) {
+              mockDataWithPhoto.profile.photo = profilePicturePreview;
+            }
           }
         } else if (profilePicturePreview) {
           // Use preview URL for mock data if no file to upload
@@ -503,25 +540,67 @@ const PdfSummary = ({ pdfText, fileName, profilePicture, profilePicturePreview }
           skills: [],
           preferredQualifications: []
         };
+
+         // ADD THE BASE64 CONVERSION CODE HERE FOR TAILORED
+        if (profilePicture && generatedResumeData && generatedResumeData.profile) {
+            try {
+                const base64Photo = await convertFileToBase64(profilePicture);
+                generatedResumeData.profile.photo = base64Photo;
+            } catch (error) {
+                console.error('❌ Error converting profile picture to base64:', error);
+                if (profilePicturePreview) {
+                    generatedResumeData.profile.photo = profilePicturePreview;
+                }
+            }
+        } else if (profilePicturePreview && generatedResumeData) {
+            if (!generatedResumeData.profile) {
+                generatedResumeData.profile = {};
+            }
+            generatedResumeData.profile.photo = profilePicturePreview;
+        }
     } else {
         console.log('📄 Generating standard resume...');
         generatedResumeData = await generateResumeJSON(pdfText, null);
+        if (profilePicture && generatedResumeData && generatedResumeData.profile) {
+            try {
+                const base64Photo = await convertFileToBase64(profilePicture);
+                generatedResumeData.profile.photo = base64Photo;
+            } catch (error) {
+                console.error('❌ Error converting profile picture to base64:', error);
+                if (profilePicturePreview) {
+                    generatedResumeData.profile.photo = profilePicturePreview;
+                }
+            }
+        } else if (profilePicturePreview && generatedResumeData) {
+            if (!generatedResumeData.profile) {
+                generatedResumeData.profile = {};
+            }
+            generatedResumeData.profile.photo = profilePicturePreview;
+        }
     }
     
-    // Make sure generatedResumeData.profile exists before setting photo property
-    if (profilePicture && generatedResumeData && generatedResumeData.profile) {
-        const uploadedUrl = await uploadProfilePicture(profilePicture);
-        if (uploadedUrl) {
-            generatedResumeData.profile.photo = uploadedUrl;
-        }
-    } else if (profilePicturePreview && generatedResumeData) {
-        // Create profile object if it doesn't exist
-        if (!generatedResumeData.profile) {
-            generatedResumeData.profile = {};
-        }
-        // Use preview URL if available
-        generatedResumeData.profile.photo = profilePicturePreview;
-    }
+    // // Make sure generatedResumeData.profile exists before setting photo property
+    // if (profilePicture && generatedResumeData && generatedResumeData.profile) {
+    //     // const uploadedUrl = await uploadProfilePicture(profilePicture);
+    //     try{
+    //         const base64Photo = await convertFileToBase64(profilePicture);
+    //         generatedResumeData.profile.photo = base64Photo;
+    //     } catch (error) {
+    //         console.error('❌ Error converting profile picture to base64:', error);
+    //         // Fall back to preview URL if conversion fails
+    //         if (profilePicturePreview) {
+    //             generatedResumeData.profile.photo = profilePicturePreview;
+    //         }
+    //     }
+       
+    // } else if (profilePicturePreview && generatedResumeData) {
+    //     // Create profile object if it doesn't exist
+    //     if (!generatedResumeData.profile) {
+    //         generatedResumeData.profile = {};
+    //     }
+    //     // Use preview URL if available
+    //     generatedResumeData.profile.photo = profilePicturePreview;
+    // }
         console.log('🎯 Setting resume data and showing template...');
         setResumeData(generatedResumeData);
         setShowResumeTemplate(true);
@@ -571,6 +650,7 @@ const PdfSummary = ({ pdfText, fileName, profilePicture, profilePicturePreview }
         if (tenderResponseData) {
           setShowTenderResponse(true);
           setShowResumeTemplate(false);
+          setShowProposalSummary(false);
         }
       };
 
