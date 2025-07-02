@@ -74,7 +74,7 @@ const PageHeader = ({ resumeData }) => (
         // paddingRight: '1.5rem'
       }}>
         <img 
-          src="/assets/images/SecondPageDecorationRight.jpeg" 
+          src="/assets/images/DecorationTopRightWord.jpeg" 
           alt="Second Page Decoration Right" 
           style={{ 
             height: '137px',
