@@ -1,12 +1,726 @@
 
-
-
+import {
+    AlignmentType,
+    BorderStyle,
+    Document,
+    ImageRun,
+    Packer,
+    Paragraph,
+    Table,
+    TableCell,
+    TableRow,
+    TextRun,
+    WidthType
+} from 'docx';
+import { saveAs } from 'file-saver';
 import { useRef, useState } from 'react';
 import generatePDF from 'react-to-pdf';
 import TenderResponseNew from './TenderResponseNew';
 import TenderResponseWordCompatible from './TenderResponseWordCompatible';
 
-const TenderResponseWrapperWithWord = ({ 
+// Helper function to convert image to base64 (for embedding)
+const imageToBase64 = async (imagePath) => {
+    try {
+      const response = await fetch(imagePath);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch image: ${response.status}`);
+      }
+      const blob = await response.blob();
+      
+      // Validate that it's actually an image
+      if (!blob.type.startsWith('image/')) {
+        throw new Error(`Invalid image type: ${blob.type}`);
+      }
+      
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const result = reader.result;
+          if (result && typeof result === 'string') {
+            resolve(result);
+          } else {
+            reject(new Error('Failed to read image as base64'));
+          }
+        };
+        reader.onerror = () => reject(new Error('FileReader error'));
+        reader.readAsDataURL(blob);
+      });
+    } catch (error) {
+      console.warn('Could not load image:', imagePath, error.message);
+      return null;
+    }
+  };
+
+  const getImageData = (base64String) => {
+    if (!base64String || typeof base64String !== 'string') {
+      return null;
+    }
+    
+    try {
+      const parts = base64String.split(',');
+      if (parts.length !== 2) {
+        throw new Error('Invalid base64 format');
+      }
+      
+      const header = parts[0];
+      const data = parts[1];
+      
+      // Determine image type from header
+      let type = 'png'; // default
+      if (header.includes('jpeg') || header.includes('jpg')) {
+        type = 'jpg';
+      } else if (header.includes('png')) {
+        type = 'png';
+      } else if (header.includes('gif')) {
+        type = 'gif';
+      }
+      
+      return { data, type };
+    } catch (error) {
+      console.warn('Failed to parse base64 image data:', error.message);
+      return null;
+    }
+  };
+
+// Custom hook for tender response docx generation
+const useTenderResponseDocx = () => {
+  const generateTenderResponseDocx = async (tenderData, detectedSector = 'Government') => {
+    try {
+      console.log('🚀 Starting tender response docx generation with data:', tenderData);
+      
+      // Extract data from tenderData (matching your existing structure)
+      const candidateName = tenderData.candidateDetails?.name || 'Candidate Name';
+      const applicationTitle = tenderData.candidateDetails?.proposedRole || 'Application Response';
+      const responseFormat = tenderData.candidateDetails?.responseFormat || '';
+      
+      // Sector-specific styling and headers (EXACTLY matching WordCompatible version)
+      const sectorColors = {
+        'ICT': '4ECDC4',
+        'Defence': '2C3E50',
+        'Maritime': '0077BE',
+        'Finance': '27AE60',
+        'Health': 'E74C3C',
+        'Education': '9B59B6',
+        'Infrastructure': 'F39C12',
+        'Environment': '16A085',
+        'Legal': '34495E',
+        'Government': '4ECDC4' // Default
+      };
+
+      const sectorHeaders = {
+        'ICT': 'ICT Criteria Statement',
+        'Defence': 'Defence Criteria Statement',
+        'Maritime': 'Maritime Criteria Statement',
+        'Finance': 'Finance Criteria Statement',
+        'Health': 'Health Criteria Statement',
+        'Education': 'Education Criteria Statement',
+        'Infrastructure': 'Infrastructure Criteria Statement',
+        'Environment': 'Environment Criteria Statement',
+        'Legal': 'Legal Criteria Statement',
+        'Government': 'Government Criteria Statement'
+      };
+
+      const headerColor = sectorColors[detectedSector] || sectorColors['Government'];
+      const headerText = sectorHeaders[detectedSector] || sectorHeaders['Government'];
+      
+      // Load images
+      const pappspmLogoBase64 = await imageToBase64('/PappspmLogo.jpeg');
+      const smeLogoBase64 = await imageToBase64('/assets/images/SMELogo.jpeg');
+      const bannerImageBase64 = await imageToBase64('/assets/images/BannerTenderResponse.jpg');
+      
+      // Create document sections
+      const documentChildren = [];
+      
+      // 1. LOGO SECTION (matching your table layout exactly)
+      if (pappspmLogoBase64 || smeLogoBase64) {
+              const logoTable = new Table({
+                width: { size: 100, type: WidthType.PERCENTAGE },
+                borders: {
+                  top: { style: BorderStyle.NONE, size: 0 },
+                  bottom: { style: BorderStyle.NONE, size: 0 },
+                  left: { style: BorderStyle.NONE, size: 0 },
+                  right: { style: BorderStyle.NONE, size: 0 },
+                  insideHorizontal: { style: BorderStyle.NONE, size: 0 },
+                  insideVertical: { style: BorderStyle.NONE, size: 0 }, 
+                },
+                rows: [
+                  new TableRow({
+                    children: [
+                      new TableCell({
+                        width: { size: 20, type: WidthType.PERCENTAGE },
+                        children: [
+                          new Paragraph({
+                            children: (() => {
+                              const logoData = getImageData(pappspmLogoBase64);
+                              return logoData ? [
+                                new ImageRun({
+                                  data: logoData.data,
+                                  transformation: {
+                                    width: 145,
+                                    height: 130,
+                                  },
+                                  type: logoData.type,
+                                })
+                              ] : [
+                                new TextRun({
+                                  text: "[PappsPM Logo]",
+                                  italics: true,
+                                  color: "666666",
+                                })
+                              ];
+                            })(),
+                            alignment: AlignmentType.LEFT,
+                          }),
+                        ],
+                      }),
+                      new TableCell({
+                        width: { size: 80, type: WidthType.PERCENTAGE },
+                        children: [
+                          new Paragraph({
+                            children: (() => {
+                              const logoData = getImageData(smeLogoBase64);
+                              return logoData ? [
+                                new ImageRun({
+                                  data: logoData.data,
+                                  transformation: {
+                                    width: 175,
+                                    height: 130,
+                                  },
+                                  type: logoData.type,
+                                })
+                              ] : [
+                                new TextRun({
+                                  text: "[SME Logo]",
+                                  italics: true,
+                                  color: "666666",
+                                })
+                              ];
+                            })(),
+                            alignment: AlignmentType.LEFT,
+                          }),
+                        ],
+                      }),
+                    ],
+                  }),
+                ],
+              });
+              documentChildren.push(logoTable);
+            }
+      
+      // 2. SECTOR HEADER (matching your colored header exactly)
+      const headerTable = new Table({
+        width: { size: 100, type: WidthType.PERCENTAGE }, 
+        borders: {
+          top: { style: BorderStyle.NONE, size: 0 },
+          bottom: { style: BorderStyle.NONE, size: 0 },
+          left: { style: BorderStyle.NONE, size: 0 },
+          right: { style: BorderStyle.NONE, size: 0 },
+          insideHorizontal: { style: BorderStyle.NONE, size: 0 },
+          insideVertical: { style: BorderStyle.NONE, size: 0 },
+        },
+        rows: [
+          new TableRow({
+            children: [
+              new TableCell({
+                width: { size: 100, type: WidthType.PERCENTAGE },
+                shading: {
+                  fill: "4ECDC4", // Background color
+                },
+                margins: {
+                  top: 150,
+                  bottom: 150,
+                  left: 300,
+                  right: 300,
+                },
+                children: [
+                  new Paragraph({
+                    alignment: AlignmentType.CENTER,
+                    children: [
+                      new TextRun({
+                        text: headerText,
+                        bold: true,
+                        size: 40,
+                        color: "000000",
+                      }),
+                    ],
+                  }),
+                ],
+              }),
+            ],
+          }),
+        ],
+      });
+      documentChildren.push(
+        new Paragraph({
+          children: [],
+          alignment: AlignmentType.LEFT,
+        })
+      );
+      documentChildren.push(headerTable);
+      
+      // 3. BANNER IMAGE (with exact spacing)
+      if (bannerImageBase64) {
+             const bannerData = getImageData(bannerImageBase64);
+             if (bannerData) {
+               documentChildren.push(
+                 new Paragraph({
+                   children: [
+                     new ImageRun({
+                       data: bannerData.data,
+                       transformation: {
+                         width: 647, // Matching your banner width
+                         height: 300, // Matching your banner height
+                       },
+                       type: bannerData.type,
+                     })
+                   ],
+                   alignment: AlignmentType.LEFT,
+                   spacing: { before: 200, after: 200 },
+                 })
+               );
+             } else {
+               // Banner placeholder if data is invalid
+               documentChildren.push(
+                 new Paragraph({
+                   children: [
+                     new TextRun({
+                       text: "[Professional Banner Image - Invalid Data]",
+                       italics: true,
+                       color: "666666",
+                     }),
+                   ],
+                   alignment: AlignmentType.CENTER,
+                   spacing: { before: 200, after: 200 },
+                 })
+               );
+             }
+           } else {
+             // Banner placeholder
+             documentChildren.push(
+               new Paragraph({
+                 children: [
+                   new TextRun({
+                     text: "[Professional Banner Image]",
+                     italics: true,
+                     color: "666666",
+                   }),
+                 ],
+                 alignment: AlignmentType.CENTER,
+                 spacing: { before: 200, after: 200 },
+               })
+             );
+           }
+           
+      
+      // 4. CANDIDATE HEADER (matching exact spacing and font sizes)
+      documentChildren.push(
+        new Paragraph({
+          children: [
+            new TextRun({
+              text: candidateName,
+              bold: true,
+              size: 28, // 20pt = 40 half-points
+              color: "000000",
+            }),
+          ],
+          alignment: AlignmentType.CENTER,
+          spacing: { before: 180, after: 100 },
+        })
+      );
+      
+      documentChildren.push(
+        new Paragraph({
+          children: [
+            new TextRun({
+              text: applicationTitle,
+              bold: true,
+              size: 28, // 20pt = 40 half-points
+              color: "000000",
+            }),
+          ],
+          alignment: AlignmentType.CENTER,
+          spacing: { before: 100, after: 280 },
+        })
+      );
+
+      // Response format (if exists) - matching exact styling
+      if (responseFormat) {
+        documentChildren.push(
+          new Paragraph({
+            children: [
+              new TextRun({
+                text: responseFormat,
+                italics: true,
+                size: 24, // 12px font size
+                color: "666666",
+                font: "Arial",
+              }),
+            ],
+            alignment: AlignmentType.CENTER,
+            spacing: { 
+              before: 5 * 20, // 5px margin in twips
+              after: 24 * 20  // 24px marginBottom
+            },
+          })
+        );
+      }
+      
+      // 5. MAIN CRITERIA TABLE
+      const mainTableRows = [];
+      
+      // Table Header (matching exact styling)
+      mainTableRows.push(
+        new TableRow({
+          children: [
+            new TableCell({
+              width: { size: 25, type: WidthType.PERCENTAGE },
+              children: [
+                new Paragraph({
+                  children: [
+                    new TextRun({
+                      text: "Criteria",
+                      bold: true,
+                      size: 24, // 12px font size
+                      font: "Arial",
+                    }),
+                  ],
+                  alignment: AlignmentType.LEFT,
+                }),
+              ],
+              shading: { fill: "f0f0f0" }, // Exact background color
+              margins: { 
+                top: 12 * 20, 
+                bottom: 12 * 20, 
+                left: 12 * 20, 
+                right: 12 * 20 
+              }, // 12px padding in twips
+            }),
+            new TableCell({
+              width: { size: 75, type: WidthType.PERCENTAGE },
+              children: [
+                new Paragraph({
+                  children: [
+                    new TextRun({
+                      text: "Candidate response",
+                      bold: true,
+                      size: 24, // 12px font size
+                      font: "Arial",
+                    }),
+                  ],
+                  alignment: AlignmentType.LEFT,
+                }),
+              ],
+              shading: { fill: "f0f0f0" }, // Exact background color
+              margins: { 
+                top: 12 * 20, 
+                bottom: 12 * 20, 
+                left: 12 * 20, 
+                right: 12 * 20 
+              }, // 12px padding in twips
+            }),
+          ],
+        })
+      );
+
+      // Helper function to render criteria rows (matching exact styling)
+      const renderCriteriaRows = (criteriaArray, sectionType) => {
+        if (!criteriaArray || criteriaArray.length === 0) {
+          return [
+            new TableRow({
+              children: [
+                new TableCell({
+                  columnSpan: 2,
+                  children: [
+                    new Paragraph({
+                      children: [
+                        new TextRun({
+                          text: `No ${sectionType} criteria available`,
+                          italics: true,
+                          size: 24, // 12px font size
+                          font: "Arial",
+                        }),
+                      ],
+                      alignment: AlignmentType.CENTER,
+                    }),
+                  ],
+                  margins: { 
+                    top: 12 * 20, 
+                    bottom: 12 * 20, 
+                    left: 12 * 20, 
+                    right: 12 * 20 
+                  }, // 12px padding in twips
+                }),
+              ],
+            })
+          ];
+        }
+
+        return criteriaArray.map((item, index) => {
+          const criteriaTitle = item.criteriaTitle || item.criteria || item.requirement || `${sectionType} Requirement ${index + 1}`;
+          
+          return new TableRow({
+            children: [
+              new TableCell({
+                width: { size: 25, type: WidthType.PERCENTAGE },
+                children: [
+                  new Paragraph({
+                    children: [
+                      new TextRun({
+                        text: criteriaTitle,
+                        bold: true,
+                        size: 24, // 12px font size
+                        font: "Arial",
+                      }),
+                    ],
+                    alignment: AlignmentType.LEFT,
+                  }),
+                ],
+                shading: { fill: "f9f9f9" }, // Exact background color
+                margins: { 
+                  top: 12 * 20, 
+                  bottom: 12 * 20, 
+                  left: 12 * 20, 
+                  right: 12 * 20 
+                }, // 12px padding in twips
+                verticalAlign: "top",
+              }),
+              new TableCell({
+                width: { size: 75, type: WidthType.PERCENTAGE },
+                children: [
+                  new Paragraph({
+                    children: [
+                      new TextRun({
+                        text: item.response || 'No response provided',
+                        size: 24, // 12px font size
+                        font: "Arial",
+                      }),
+                    ],
+                    alignment: AlignmentType.LEFT,
+                  }),
+                ],
+                margins: { 
+                  top: 12 * 20, 
+                  bottom: 12 * 20, 
+                  left: 12 * 20, 
+                  right: 12 * 20 
+                }, // 12px padding in twips
+                verticalAlign: "top",
+              }),
+            ],
+          });
+        });
+      };
+
+      // Essential Section Header (matching exact styling)
+      mainTableRows.push(
+        new TableRow({
+          children: [
+            new TableCell({
+              columnSpan: 2,
+              children: [
+                new Paragraph({
+                  children: [
+                    new TextRun({
+                      text: "Essential",
+                      bold: true,
+                      size: 24, // 12px font size
+                      font: "Arial",
+                    }),
+                  ],
+                  alignment: AlignmentType.LEFT,
+                }),
+              ],
+              shading: { fill: "e0e0e0" }, // Exact background color
+              margins: { 
+                top: 12 * 20, 
+                bottom: 12 * 20, 
+                left: 12 * 20, 
+                right: 12 * 20 
+              }, // 12px padding in twips
+            }),
+          ],
+        })
+      );
+
+      // Essential Criteria Rows
+      const essentialRows = renderCriteriaRows(tenderData.essentialCriteria, 'essential');
+      mainTableRows.push(...essentialRows);
+
+      // Desirable Section (if exists) - matching exact styling
+      if (tenderData.desirableCriteria && tenderData.desirableCriteria.length > 0) {
+        mainTableRows.push(
+          new TableRow({
+            children: [
+              new TableCell({
+                columnSpan: 2,
+                children: [
+                  new Paragraph({
+                    children: [
+                      new TextRun({
+                        text: "Desirable",
+                        bold: true,
+                        size: 24, // 12px font size
+                        font: "Arial",
+                      }),
+                    ],
+                    alignment: AlignmentType.LEFT,
+                  }),
+                ],
+                shading: { fill: "e0e0e0" }, // Exact background color
+                margins: { 
+                  top: 12 * 20, 
+                  bottom: 12 * 20, 
+                  left: 12 * 20, 
+                  right: 12 * 20 
+                }, // 12px padding in twips
+              }),
+            ],
+          })
+        );
+
+        const desirableRows = renderCriteriaRows(tenderData.desirableCriteria, 'desirable');
+        mainTableRows.push(...desirableRows);
+      }
+
+      // Additional Information Section (if exists) - matching exact styling
+      if (tenderData.additionalInformation && tenderData.additionalInformation.length > 0) {
+        mainTableRows.push(
+          new TableRow({
+            children: [
+              new TableCell({
+                columnSpan: 2,
+                children: [
+                  new Paragraph({
+                    children: [
+                      new TextRun({
+                        text: "Additional Information",
+                        bold: true,
+                        size: 24, // 12px font size
+                        font: "Arial",
+                      }),
+                    ],
+                    alignment: AlignmentType.LEFT,
+                  }),
+                ],
+                shading: { fill: "e0e0e0" }, // Exact background color
+                margins: { 
+                  top: 12 * 20, 
+                  bottom: 12 * 20, 
+                  left: 12 * 20, 
+                  right: 12 * 20 
+                }, // 12px padding in twips
+              }),
+            ],
+          })
+        );
+
+        const additionalRows = renderCriteriaRows(tenderData.additionalInformation, 'additional');
+        mainTableRows.push(...additionalRows);
+      }
+
+      // Create the main table
+      const mainTable = new Table({
+        width: { size: 100, type: WidthType.PERCENTAGE },
+        borders: {
+          top: { style: BorderStyle.SINGLE, size: 1, color: "000000" },
+          bottom: { style: BorderStyle.SINGLE, size: 1, color: "000000" },
+          left: { style: BorderStyle.SINGLE, size: 1, color: "000000" },
+          right: { style: BorderStyle.SINGLE, size: 1, color: "000000" },
+          insideHorizontal: { style: BorderStyle.SINGLE, size: 1, color: "000000" },
+          insideVertical: { style: BorderStyle.SINGLE, size: 1, color: "000000" },
+        },
+        rows: mainTableRows,
+      });
+
+      documentChildren.push(mainTable);
+      
+      // 6. FOOTER (matching exact styling)
+      documentChildren.push(
+        new Paragraph({
+          children: [
+            new TextRun({
+              text: `Professional ${detectedSector} Sector Tender Response | Generated by PappsPM`,
+              size: 20, // 10px font size  
+              color: "666666",
+              font: "Arial",
+            }),
+          ],
+          alignment: AlignmentType.CENTER,
+          spacing: { before: 20 * 20 }, // 20px marginTop in twips
+        })
+      );
+      
+      // Create the document with exact styling
+      const doc = new Document({
+        styles: {
+          default: {
+            document: {
+              run: {
+                font: "Arial",
+                size: 24,
+              },
+            },
+          },
+        },
+        sections: [{
+          properties: {
+            page: {
+              margin: {
+                top: 1134,    // 0.79 inches
+                right: 1134,  // 0.79 inches  
+                bottom: 1134, // 0.79 inches
+                left: 1134,   // 0.79 inches
+              },
+            },
+          },
+          children: documentChildren,
+        }],
+      });
+      
+      return doc;
+      
+      
+    } catch (error) {
+      console.error('Error generating tender response docx:', error);
+      throw error;
+    }
+  };
+
+  const downloadTenderResponseDocx = async (tenderData, detectedSector = 'Government') => {
+    try {
+      const name = tenderData.candidateDetails?.name || 'Criteria_Statement';
+      const sanitizedName = name
+        .replace(/[^a-zA-Z0-9\s]/g, '')
+        .replace(/\s+/g, '_')
+        .trim();
+      
+      const rfqNumber = tenderData?.rfqAnalysis?.procurementDetails?.rfqNumber;
+      const rfqSuffix = rfqNumber ? `_${rfqNumber}` : '';
+      const filename = `${sanitizedName}_${detectedSector}_Criteria_Statement${rfqSuffix}.docx`;
+      
+      console.log('📄 Generating true tender response .docx document...');
+      
+      // Generate the document
+      const doc = await generateTenderResponseDocx(tenderData, detectedSector);
+      
+      // Pack and save
+      const blob = await Packer.toBlob(doc);
+      saveAs(blob, filename);
+      
+      console.log(`✅ True tender response .docx document generated successfully! No folders will be created when edited.`);
+    } catch (error) {
+      console.error('❌ Error generating tender response .docx document:', error);
+      throw error;
+    }
+  };
+
+  return {
+    generateTenderResponseDocx,
+    downloadTenderResponseDocx
+  };
+};
+
+const TenderResponseWrapper = ({ 
   tenderData, 
   candidateName, 
   onBackToResume, 
@@ -14,17 +728,48 @@ const TenderResponseWrapperWithWord = ({
   onRegenerateTenderResponse = null,
   isRegenerating = false,
   detectedSector = 'Government',
-    // NEW: Proposal summary props
-    onGenerateProposalSummary = null,
-    isGeneratingProposal = false,
-    hasProposalSummary = false,
-    onBackToProposalSummary = null
+  // Proposal summary props
+  onGenerateProposalSummary = null,
+  isGeneratingProposal = false,
+  hasProposalSummary = false,
+  onBackToProposalSummary = null
 }) => {
   const [isPdfLoading, setIsPdfLoading] = useState(false);
   const [isWordLoading, setIsWordLoading] = useState(false);
   const [validationResults, setValidationResults] = useState(null);
+  const [currentDetectedSector, setCurrentDetectedSector] = useState(detectedSector);
   const tenderRef = useRef();
   const wordTenderRef = useRef();
+  
+  // Use the docx hook
+  const { downloadTenderResponseDocx } = useTenderResponseDocx();
+
+  // Detect sector from tender data (matching TenderResponseWordCompatible logic)
+  useState(() => {
+    if (tenderData) {
+      const proposedRole = tenderData.candidateDetails?.proposedRole || '';
+      const allText = JSON.stringify(tenderData).toLowerCase();
+      
+      const sectorKeywords = {
+        'ICT': ['ict', 'it', 'information technology', 'digital', 'software', 'systems', 'technology', 'business analyst'],
+        'Defence': ['defence', 'defense', 'military', 'security', 'army', 'navy', 'air force'],
+        'Maritime': ['maritime', 'marine', 'vessel', 'ship', 'port', 'navigation', 'safety authority'],
+        'Finance': ['finance', 'financial', 'accounting', 'treasury', 'budget', 'fiscal'],
+        'Health': ['health', 'medical', 'healthcare', 'hospital', 'clinical', 'patient'],
+        'Education': ['education', 'school', 'university', 'teaching', 'academic'],
+        'Infrastructure': ['infrastructure', 'construction', 'engineering', 'transport'],
+        'Environment': ['environment', 'sustainability', 'climate', 'conservation'],
+        'Legal': ['legal', 'law', 'judicial', 'court', 'legislation', 'compliance']
+      };
+
+      for (const [sector, keywords] of Object.entries(sectorKeywords)) {
+        if (keywords.some(keyword => allText.includes(keyword))) {
+          setCurrentDetectedSector(sector);
+          return;
+        }
+      }
+    }
+  }, [tenderData]);
 
   // Enhanced validation for dynamic tender responses
   const validateTenderData = (data) => {
@@ -98,10 +843,9 @@ const TenderResponseWrapperWithWord = ({
         .replace(/\s+/g, '_')
         .trim();
       
-      // Enhanced filename with RFQ info if available
       const rfqNumber = tenderData?.rfqAnalysis?.procurementDetails?.rfqNumber;
       const rfqSuffix = rfqNumber ? `_${rfqNumber}` : '';
-      const filename = `${sanitizedName}_${detectedSector}_Criteria_Statement${rfqSuffix}.pdf`;
+      const filename = `${sanitizedName}_${currentDetectedSector}_Criteria_Statement${rfqSuffix}.pdf`;
       
       const options = {
         filename: filename,
@@ -129,7 +873,7 @@ const TenderResponseWrapperWithWord = ({
       await new Promise(resolve => setTimeout(resolve, 200));
       await generatePDF(tenderRef, options);
       
-      console.log(`${detectedSector} Criteria Statement PDF generated successfully!`);
+      console.log(`${currentDetectedSector} Criteria Statement PDF generated successfully!`);
     } catch (error) {
       console.error('Error generating PDF:', error);
       alert('There was an error generating the PDF. Please try again.');
@@ -138,140 +882,13 @@ const TenderResponseWrapperWithWord = ({
     }
   };
 
-  // Handle Word download with enhanced metadata
-  const handleDownloadWord = async () => {
+  // NEW: Handle Word download using docx library (NO FOLDERS CREATED)
+  const handleDownloadWordDocx = async () => {
     setIsWordLoading(true);
     
     try {
-      const name = candidateName || tenderData?.candidateDetails?.name || 'Criteria_Statement';
-      const sanitizedName = name
-        .replace(/[^a-zA-Z0-9\s]/g, '')
-        .replace(/\s+/g, '_')
-        .trim();
-      
-      // Enhanced filename with RFQ info
-      const rfqNumber = tenderData?.rfqAnalysis?.procurementDetails?.rfqNumber;
-      const rfqSuffix = rfqNumber ? `_${rfqNumber}` : '';
-      const filename = `${sanitizedName}_${detectedSector}_Criteria_Statement${rfqSuffix}.doc`;
-      
-      // Clone the HTML content to avoid modifying the original DOM
-      const contentDiv = wordTenderRef.current.cloneNode(true);
-      
-      // Find all images in the content
-      const images = contentDiv.querySelectorAll('img');
-      
-      // Convert each image to base64
-      await Promise.all(Array.from(images).map(async (img) => {
-        if (img.src.startsWith('data:')) return;
-        
-        try {
-          const response = await fetch(img.src);
-          const blob = await response.blob();
-          
-          return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-              img.src = reader.result;
-              resolve();
-            };
-            reader.onerror = reject;
-            reader.readAsDataURL(blob);
-          });
-        } catch (err) {
-          console.warn('Failed to convert image to base64:', err);
-        }
-      }));
-      
-      const htmlContent = contentDiv.innerHTML;
-      
-      // Enhanced Word-compatible HTML with metadata
-      const wordHtml = `
-        <html xmlns:o='urn:schemas-microsoft-com:office:office' 
-              xmlns:w='urn:schemas-microsoft-com:office:word' 
-              xmlns='http://www.w3.org/TR/REC-html40'>
-        <head>
-          <meta charset='utf-8'>
-          <title>${detectedSector} Criteria Statement - ${name}</title>
-          <meta name="description" content="Government tender criteria statement generated by PappsPM">
-          <meta name="keywords" content="${detectedSector}, tender, criteria, government, RFQ">
-          <meta name="author" content="PappsPM">
-          <!--[if gte mso 9]>
-          <xml>
-            <w:WordDocument>
-              <w:View>Print</w:View>
-              <w:Zoom>90</w:Zoom>
-              <w:DoNotPromptForConvert/>
-              <w:DoNotShowInsertionsAndDeletions/>
-            </w:WordDocument>
-          </xml>
-          <![endif]-->
-          <style>
-            @page {
-              margin: 1in;
-            }
-            body {
-              font-family: Arial, sans-serif;
-              font-size: 12pt;
-              line-height: 1.3;
-            }
-            table {
-              border-collapse: collapse;
-              width: 100%;
-            }
-            td, th {
-              border: 1px solid black;
-              padding: 8px;
-              vertical-align: top;
-            }
-            .header {
-              text-align: center;
-              font-weight: bold;
-              font-size: 18pt;
-              margin-bottom: 12pt;
-            }
-            .candidate-name {
-              text-align: center;
-              font-weight: bold;
-              font-size: 14pt;
-              margin: 12pt 0;
-            }
-            .section-header {
-              background-color: #e0e0e0;
-              font-weight: bold;
-              text-align: left;
-            }
-            .criteria-cell {
-              background-color: #f9f9f9;
-              font-weight: bold;
-              width: 25%;
-            }
-            img {
-              max-width: 100%;
-              height: auto;
-            }
-          </style>
-        </head>
-        <body>
-          ${htmlContent}
-        </body>
-        </html>
-      `;
-      
-      const blob = new Blob(['\ufeff', wordHtml], {
-        type: 'application/msword'
-      });
-      
-      const link = document.createElement('a');
-      link.href = window.URL.createObjectURL(blob);
-      link.download = filename;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(link.href);
-      
-      console.log(`${detectedSector} Criteria Statement Word document generated successfully!`);
+      await downloadTenderResponseDocx(tenderData, currentDetectedSector);
     } catch (error) {
-      console.error('Error generating Word document:', error);
       alert('There was an error generating the Word document. Please try again.');
     } finally {
       setIsWordLoading(false);
@@ -279,7 +896,7 @@ const TenderResponseWrapperWithWord = ({
   };
 
   const handleRegenerateClick = () => {
-    const sectorText = detectedSector === 'Government' ? 'Criteria Statement' : `${detectedSector} Criteria Statement`;
+    const sectorText = currentDetectedSector === 'Government' ? 'Criteria Statement' : `${currentDetectedSector} Criteria Statement`;
     
     if (window.confirm(`Are you sure you want to generate a new ${sectorText}? This will replace the current one.`)) {
       if (onRegenerateTenderResponse) {
@@ -290,16 +907,14 @@ const TenderResponseWrapperWithWord = ({
     }
   };
 
-    // NEW: Handle generate proposal summary click
-    const handleGenerateProposalSummaryClick = () => {
-        const sectorText = detectedSector === 'Government' ? 'Proposal Summary' : `${detectedSector} Proposal Summary`;
-        
-        if (onGenerateProposalSummary) {
-          onGenerateProposalSummary();
-        } else {
-          console.warn('No proposal summary handler provided');
-        }
-      };
+  // Handle generate proposal summary click
+  const handleGenerateProposalSummaryClick = () => {
+    if (onGenerateProposalSummary) {
+      onGenerateProposalSummary();
+    } else {
+      console.warn('No proposal summary handler provided');
+    }
+  };
 
   if (!tenderData) {
     return (
@@ -340,7 +955,7 @@ const TenderResponseWrapperWithWord = ({
             <div className="w-16 h-16 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto"></div>
           </div>
           <h2 className="text-2xl font-bold text-gray-800 mb-2">
-            Regenerating {detectedSector} Criteria Statement
+            Regenerating {currentDetectedSector} Criteria Statement
           </h2>
           <p className="text-gray-600 mb-4">
             Please wait while we generate a new response based on your tailored resume...
@@ -405,9 +1020,9 @@ const TenderResponseWrapperWithWord = ({
           )}
         </button>
 
-        {/* Download Word Button */}
+        {/* NEW: Download Word (.docx) Button - NO FOLDERS */}
         <button
-          onClick={handleDownloadWord}
+          onClick={handleDownloadWordDocx}
           disabled={isWordLoading || isRegenerating}
           className={`px-6 py-3 rounded-lg font-medium flex items-center gap-2 transition-colors duration-200 ${
             isWordLoading || isRegenerating
@@ -428,8 +1043,8 @@ const TenderResponseWrapperWithWord = ({
           )}
         </button>
 
-           {/* NEW: Generate Proposal Summary Button */}
-           {onGenerateProposalSummary && (
+        {/* Generate Proposal Summary Button */}
+        {onGenerateProposalSummary && (
           <button
             onClick={handleGenerateProposalSummaryClick}
             disabled={isGeneratingProposal || isRegenerating}
@@ -476,8 +1091,7 @@ const TenderResponseWrapperWithWord = ({
           )}
         </button>
 
-        
-        {/* NEW: Back to Proposal Summary Button */}
+        {/* Back to Proposal Summary Button */}
         {hasProposalSummary && onBackToProposalSummary && (
           <button
             onClick={onBackToProposalSummary}
@@ -501,10 +1115,10 @@ const TenderResponseWrapperWithWord = ({
         <div className="flex items-center justify-between flex-wrap gap-4">
           <div>
             <h3 className="font-semibold text-blue-900 mb-1">
-              📋 {detectedSector} Criteria Statement Generated
+              📋 {currentDetectedSector} Criteria Statement Generated
             </h3>
             <p className="text-blue-700 text-sm">
-              Professional tender response for: <strong>{tenderData.candidateDetails?.proposedRole || `${detectedSector} Government Role`}</strong>
+              Professional tender response for: <strong>{tenderData.candidateDetails?.proposedRole || `${currentDetectedSector} Government Role`}</strong>
             </p>
             {validationResults && (
               <div className="text-xs mt-2">
@@ -523,8 +1137,10 @@ const TenderResponseWrapperWithWord = ({
             <p className="text-blue-600 text-xs mt-1">
               ✨ <strong>Enhanced:</strong> Dynamic criteria extraction and response generation!
             </p>
-               {/* NEW: Proposal summary status */}
-               {hasProposalSummary && (
+            <p className="text-green-600 text-xs mt-1">
+              🚀 <strong>NEW:</strong> Word documents generated using true .docx format - no companion folders created when editing!
+            </p>
+            {hasProposalSummary && (
               <p className="text-purple-600 text-xs mt-1">
                 📑 <strong>Proposal Summary Available:</strong> Narrative format ready for download!
               </p>
@@ -546,32 +1162,32 @@ const TenderResponseWrapperWithWord = ({
         </div>
       </div>
       
-    {/* NEW: Next Steps Info Banner */}
-    {onGenerateProposalSummary && !hasProposalSummary && (
-            <div style={{
-            maxWidth: '1012.8000488px',
-            margin: '0 auto 1rem auto',
-            padding: '1rem',
-            backgroundColor: '#f3f4f6',
-            border: '1px solid #d1d5db',
-            borderRadius: '0.5rem'
-            }}>
-            <div className="flex items-start gap-3">
-                <div className="text-purple-600 text-2xl">📋</div>
-                <div>
-                <h4 className="font-semibold text-gray-900 mb-1">Next Step: Generate Proposal Summary</h4>
-                <p className="text-gray-700 text-sm mb-2">
-                    Transform your criteria statement into a compelling 200-250 word narrative proposal summary.
-                </p>
-                <div className="text-xs text-gray-600">
-                    <span className="inline-block mr-4">✓ Same professional formatting</span>
-                    <span className="inline-block mr-4">✓ Flowing paragraph style</span>
-                    <span className="inline-block">✓ PDF & Word download ready</span>
-                </div>
-                </div>
+      {/* Next Steps Info Banner */}
+      {onGenerateProposalSummary && !hasProposalSummary && (
+        <div style={{
+          maxWidth: '1012.8000488px',
+          margin: '0 auto 1rem auto',
+          padding: '1rem',
+          backgroundColor: '#f3f4f6',
+          border: '1px solid #d1d5db',
+          borderRadius: '0.5rem'
+        }}>
+          <div className="flex items-start gap-3">
+            <div className="text-purple-600 text-2xl">📋</div>
+            <div>
+              <h4 className="font-semibold text-gray-900 mb-1">Next Step: Generate Proposal Summary</h4>
+              <p className="text-gray-700 text-sm mb-2">
+                Transform your criteria statement into a compelling 200-250 word narrative proposal summary.
+              </p>
+              <div className="text-xs text-gray-600">
+                <span className="inline-block mr-4">✓ Same professional formatting</span>
+                <span className="inline-block mr-4">✓ Flowing paragraph style</span>
+                <span className="inline-block">✓ PDF & Word download ready</span>
+              </div>
             </div>
-            </div>
-        )}
+          </div>
+        </div>
+      )}
 
       {/* Display tender response for PDF generation */}
       <div style={{
@@ -587,7 +1203,7 @@ const TenderResponseWrapperWithWord = ({
         </div>
       </div>
 
-      {/* Hidden Word-compatible version for Word document generation */}
+      {/* Hidden Word-compatible version for legacy Word document generation */}
       <div style={{ 
         position: 'absolute', 
         left: '-9999px', 
@@ -602,4 +1218,4 @@ const TenderResponseWrapperWithWord = ({
   );
 };
 
-export default TenderResponseWrapperWithWord;
+export default TenderResponseWrapper;

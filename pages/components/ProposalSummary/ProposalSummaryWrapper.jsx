@@ -21,15 +21,63 @@ import ProposalSummaryWordCompatible from './ProposalSummaryWordCompatible';
 const imageToBase64 = async (imagePath) => {
   try {
     const response = await fetch(imagePath);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch image: ${response.status}`);
+    }
     const blob = await response.blob();
+    
+    // Validate that it's actually an image
+    if (!blob.type.startsWith('image/')) {
+      throw new Error(`Invalid image type: ${blob.type}`);
+    }
+    
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
-      reader.onloadend = () => resolve(reader.result);
-      reader.onerror = reject;
+      reader.onloadend = () => {
+        const result = reader.result;
+        if (result && typeof result === 'string') {
+          resolve(result);
+        } else {
+          reject(new Error('Failed to read image as base64'));
+        }
+      };
+      reader.onerror = () => reject(new Error('FileReader error'));
       reader.readAsDataURL(blob);
     });
   } catch (error) {
-    console.warn('Could not load image:', imagePath);
+    console.warn('Could not load image:', imagePath, error.message);
+    return null;
+  }
+};
+
+// Helper function to safely extract base64 data and determine format
+const getImageData = (base64String) => {
+  if (!base64String || typeof base64String !== 'string') {
+    return null;
+  }
+  
+  try {
+    const parts = base64String.split(',');
+    if (parts.length !== 2) {
+      throw new Error('Invalid base64 format');
+    }
+    
+    const header = parts[0];
+    const data = parts[1];
+    
+    // Determine image type from header
+    let type = 'png'; // default
+    if (header.includes('jpeg') || header.includes('jpg')) {
+      type = 'jpg';
+    } else if (header.includes('png')) {
+      type = 'png';
+    } else if (header.includes('gif')) {
+      type = 'gif';
+    }
+    
+    return { data, type };
+  } catch (error) {
+    console.warn('Failed to parse base64 image data:', error.message);
     return null;
   }
 };
@@ -62,10 +110,28 @@ const useProposalSummaryDocx = () => {
 
       const headerText = sectorHeaders[detectedSector] || sectorHeaders['Government'];
       
-      // Load images (you'll need to adjust paths to your actual image locations)
-      const pappspmLogoBase64 = await imageToBase64('/PappspmLogo.jpeg');
-      const smeLogoBase64 = await imageToBase64('/assets/images/SMELogo.jpeg');
-      const bannerImageBase64 = await imageToBase64('/assets/images/BannerTenderResponse.jpg');
+      // Load images with better error handling
+      let pappspmLogoBase64 = null;
+      let smeLogoBase64 = null;
+      let bannerImageBase64 = null;
+      
+      try {
+        pappspmLogoBase64 = await imageToBase64('/PappspmLogo.jpeg');
+      } catch (error) {
+        console.warn('Failed to load PappsPM logo:', error.message);
+      }
+      
+      try {
+        smeLogoBase64 = await imageToBase64('/assets/images/SMELogo.jpeg');
+      } catch (error) {
+        console.warn('Failed to load SME logo:', error.message);
+      }
+      
+      try {
+        bannerImageBase64 = await imageToBase64('/assets/images/BannerTenderResponse.jpg');
+      } catch (error) {
+        console.warn('Failed to load banner image:', error.message);
+      }
       
       // Create document sections
       const documentChildren = [];
@@ -79,8 +145,8 @@ const useProposalSummaryDocx = () => {
             bottom: { style: BorderStyle.NONE, size: 0 },
             left: { style: BorderStyle.NONE, size: 0 },
             right: { style: BorderStyle.NONE, size: 0 },
-            insideHorizontal: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
-            insideVertical: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" }, 
+            insideHorizontal: { style: BorderStyle.NONE, size: 0 },
+            insideVertical: { style: BorderStyle.NONE, size: 0 }, 
           },
           rows: [
             new TableRow({
@@ -89,49 +155,55 @@ const useProposalSummaryDocx = () => {
                   width: { size: 20, type: WidthType.PERCENTAGE },
                   children: [
                     new Paragraph({
-                      children: pappspmLogoBase64 ? [
-                        new ImageRun({
-                          data: pappspmLogoBase64.split(',')[1], // Remove data:image prefix
-                          transformation: {
-                            width: 145,
-                            height: 130,
-                          },
-                        })
-                      ] : [
-                        new TextRun({
-                          text: "[PappsPM Logo]",
-                          italics: true,
-                          color: "666666",
-                        })
-                      ],
+                      children: (() => {
+                        const logoData = getImageData(pappspmLogoBase64);
+                        return logoData ? [
+                          new ImageRun({
+                            data: logoData.data,
+                            transformation: {
+                              width: 145,
+                              height: 130,
+                            },
+                            type: logoData.type,
+                          })
+                        ] : [
+                          new TextRun({
+                            text: "[PappsPM Logo]",
+                            italics: true,
+                            color: "666666",
+                          })
+                        ];
+                      })(),
                       alignment: AlignmentType.LEFT,
                     }),
                   ],
-                
                 }),
                 new TableCell({
                   width: { size: 80, type: WidthType.PERCENTAGE },
                   children: [
                     new Paragraph({
-                      children: smeLogoBase64 ? [
-                        new ImageRun({
-                          data: smeLogoBase64.split(',')[1],
-                          transformation: {
-                            width: 175,
-                            height: 130,
-                          },
-                        })
-                      ] : [
-                        new TextRun({
-                          text: "[SME Logo]",
-                          italics: true,
-                          color: "666666",
-                        })
-                      ],
+                      children: (() => {
+                        const logoData = getImageData(smeLogoBase64);
+                        return logoData ? [
+                          new ImageRun({
+                            data: logoData.data,
+                            transformation: {
+                              width: 175,
+                              height: 130,
+                            },
+                            type: logoData.type,
+                          })
+                        ] : [
+                          new TextRun({
+                            text: "[SME Logo]",
+                            italics: true,
+                            color: "666666",
+                          })
+                        ];
+                      })(),
                       alignment: AlignmentType.LEFT,
                     }),
                   ],
-                
                 }),
               ],
             }),
@@ -142,14 +214,14 @@ const useProposalSummaryDocx = () => {
       
       // 2. SECTOR HEADER (matching your colored header)
       const headerTable = new Table({
-        width: { size: 9700, type: WidthType.DXA }, 
+        width: { size: 100, type: WidthType.PERCENTAGE }, 
         borders: {
-          top: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
-          bottom: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
-          left: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
-          right: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
-          insideHorizontal: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
-          insideVertical: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+          top: { style: BorderStyle.NONE, size: 0 },
+          bottom: { style: BorderStyle.NONE, size: 0 },
+          left: { style: BorderStyle.NONE, size: 0 },
+          right: { style: BorderStyle.NONE, size: 0 },
+          insideHorizontal: { style: BorderStyle.NONE, size: 0 },
+          insideVertical: { style: BorderStyle.NONE, size: 0 },
         },
         rows: [
           new TableRow({
@@ -160,7 +232,7 @@ const useProposalSummaryDocx = () => {
                   fill: "4ECDC4", // Background color
                 },
                 margins: {
-                  top: 150, // 300 twips = 0.21 inch ≈ 0.5cm
+                  top: 150,
                   bottom: 150,
                   left: 300,
                   right: 300,
@@ -172,7 +244,7 @@ const useProposalSummaryDocx = () => {
                       new TextRun({
                         text: headerText,
                         bold: true,
-                        size: 40, // 24pt = 48 half-points
+                        size: 40,
                         color: "000000",
                       }),
                     ],
@@ -193,21 +265,40 @@ const useProposalSummaryDocx = () => {
       
       // 3. BANNER IMAGE (matching your banner section)
       if (bannerImageBase64) {
-        documentChildren.push(
-          new Paragraph({
-            children: [
-              new ImageRun({
-                data: bannerImageBase64.split(',')[1],
-                transformation: {
-                  width: 647, // Matching your banner width
-                  height: 300, // Matching your banner height
-                },
-              })
-            ],
-            alignment: AlignmentType.LEFT,
-            spacing: { before: 200, after: 200 },
-          })
-        );
+        const bannerData = getImageData(bannerImageBase64);
+        if (bannerData) {
+          documentChildren.push(
+            new Paragraph({
+              children: [
+                new ImageRun({
+                  data: bannerData.data,
+                  transformation: {
+                    width: 642, // Matching your banner width
+                    height: 300, // Matching your banner height
+                  },
+                  type: bannerData.type,
+                })
+              ],
+              alignment: AlignmentType.LEFT,
+              spacing: { before: 200, after: 200 },
+            })
+          );
+        } else {
+          // Banner placeholder if data is invalid
+          documentChildren.push(
+            new Paragraph({
+              children: [
+                new TextRun({
+                  text: "[Professional Banner Image - Invalid Data]",
+                  italics: true,
+                  color: "666666",
+                }),
+              ],
+              alignment: AlignmentType.CENTER,
+              spacing: { before: 200, after: 200 },
+            })
+          );
+        }
       } else {
         // Banner placeholder
         documentChildren.push(
@@ -257,7 +348,7 @@ const useProposalSummaryDocx = () => {
       );
       
       // 5. PROPOSAL SUMMARY SECTION (matching your main content)
-      if (proposalSummaryContent) {
+      if (proposalSummaryContent && proposalSummaryContent.trim()) {
         // Section header
         documentChildren.push(
           new Paragraph({
@@ -265,8 +356,8 @@ const useProposalSummaryDocx = () => {
               new TextRun({
                 text: "Proposal Summary",
                 bold: true,
-                size: 28, // 14pt = 28 half-points
-                color: "1e40af", // Your blue color
+                size: 28,
+                color: "1e40af",
               }),
             ],
             spacing: { before: 280, after: 300 },
@@ -274,52 +365,48 @@ const useProposalSummaryDocx = () => {
         );
         
         // Content paragraphs (matching your paragraph structure)
-        const paragraphs = proposalSummaryContent.split('\n\n');
+        const paragraphs = proposalSummaryContent.split('\n\n').filter(p => p.trim());
         paragraphs.forEach((paragraph, index) => {
-          if (paragraph.trim()) {
-            documentChildren.push(
-              new Paragraph({
-                children: [
-                  new TextRun({
-                    text: paragraph.trim(),
-                    size: 24,
-                    color: "000000",
-                  }),
-                ],
-                alignment: AlignmentType.JUSTIFIED,
-                spacing: { 
-                  after: index < paragraphs.length - 1 ? 300 : 0,
-                  line: 276, // 1.4 line spacing (276 = 1.4 * 196)
-                },
-              })
-            );
-          }
+          documentChildren.push(
+            new Paragraph({
+              children: [
+                new TextRun({
+                  text: paragraph.trim(),
+                  size: 24,
+                  color: "000000",
+                }),
+              ],
+              alignment: AlignmentType.JUSTIFIED,
+              spacing: { 
+                after: index < paragraphs.length - 1 ? 300 : 0,
+                line: 276, // 1.4 line spacing (276 = 1.4 * 196)
+              },
+            })
+          );
         });
       }
       
       // 6. VALUE PROPOSITION SECTION (if available, matching your conditional rendering)
-      if (valuePropositionContent) {
-        const valueParagraphs = valuePropositionContent.split('\n\n');
+      if (valuePropositionContent && valuePropositionContent.trim()) {
+        const valueParagraphs = valuePropositionContent.split('\n\n').filter(p => p.trim());
         valueParagraphs.forEach((paragraph, index) => {
-          if (paragraph.trim()) {
-            documentChildren.push(
-              new Paragraph({
-                children: [
-                  new TextRun({
-                    text: paragraph.trim(),
-                    size: 24,
-                    color: "000000",
-                  }),
-                ],
-                alignment: AlignmentType.JUSTIFIED,
-                spacing: { 
-                  before: index === 0 ? 400 : 0,
-                  after: index < valueParagraphs.length - 1 ? 300 : 0,
-                  line: 276, // 1.4 line spacing
-                },
-              })
-            );
-          }
+          documentChildren.push(
+            new Paragraph({
+              children: [
+                new TextRun({
+                  text: paragraph.trim(),
+                  size: 24,
+                  color: "000000",
+                }),
+              ],
+              alignment: AlignmentType.JUSTIFIED,
+              spacing: { 
+                before: index === 0 ? 400 : 0,
+                after: index < valueParagraphs.length - 1 ? 300 : 0,
+                line: 276, // 1.4 line spacing
+              },
+            })
+          );
         });
       }
       
@@ -338,13 +425,29 @@ const useProposalSummaryDocx = () => {
         })
       );
       
+      // Ensure we have at least some content
+      if (documentChildren.length === 0) {
+        documentChildren.push(
+          new Paragraph({
+            children: [
+              new TextRun({
+                text: "No content available for proposal summary.",
+                size: 24,
+                color: "000000",
+              }),
+            ],
+            alignment: AlignmentType.CENTER,
+          })
+        );
+      }
 
-    const doc = new Document({
+      const doc = new Document({
         styles: {
           default: {
             document: {
               run: {
                 font: "Arial",
+                size: 24,
               },
             },
           },
@@ -353,10 +456,10 @@ const useProposalSummaryDocx = () => {
           properties: {
             page: {
               margin: {
-                top: 1134,
-                right: 1134,
-                bottom: 1134,
-                left: 1134,
+                top: 1134,    // 0.79 inches
+                right: 1134,  // 0.79 inches  
+                bottom: 1134, // 0.79 inches
+                left: 1134,   // 0.79 inches
               },
             },
           },
@@ -374,11 +477,20 @@ const useProposalSummaryDocx = () => {
 
   const downloadProposalSummaryDocx = async (proposalData, detectedSector = 'Government') => {
     try {
+      // Validate input data
+      if (!proposalData) {
+        throw new Error('No proposal data provided');
+      }
+
       const name = proposalData.candidateDetails?.name || 'Proposal_Summary';
       const sanitizedName = name
         .replace(/[^a-zA-Z0-9\s]/g, '')
         .replace(/\s+/g, '_')
         .trim();
+      
+      if (!sanitizedName) {
+        throw new Error('Invalid candidate name');
+      }
       
       const filename = `${sanitizedName}_${detectedSector}_Proposal_Summary.docx`;
       
@@ -387,14 +499,25 @@ const useProposalSummaryDocx = () => {
       // Generate the document
       const doc = await generateProposalSummaryDocx(proposalData, detectedSector);
       
+      if (!doc) {
+        throw new Error('Failed to generate document');
+      }
+      
       // Pack and save
       const blob = await Packer.toBlob(doc);
+      
+      if (!blob || blob.size === 0) {
+        throw new Error('Generated document is empty');
+      }
+      
       saveAs(blob, filename);
       
-      console.log(`✅ True .docx document generated successfully! No folders will be created when edited.`);
+      console.log(`✅ True .docx document generated successfully! Size: ${blob.size} bytes`);
+      console.log(`✅ No folders will be created when edited.`);
+      
     } catch (error) {
       console.error('❌ Error generating .docx document:', error);
-      throw error;
+      throw new Error(`Failed to generate Word document: ${error.message}`);
     }
   };
 
@@ -537,7 +660,22 @@ const ProposalSummaryWrapper = ({
     try {
       await downloadProposalSummaryDocx(proposalData, detectedSector);
     } catch (error) {
-      alert('There was an error generating the Word document. Please try again.');
+      console.error('Word document generation failed:', error);
+      
+      // Provide more specific error messages
+      let errorMessage = 'There was an error generating the Word document. Please try again.';
+      
+      if (error.message.includes('No proposal data')) {
+        errorMessage = 'No proposal data available. Please generate a proposal summary first.';
+      } else if (error.message.includes('Invalid candidate name')) {
+        errorMessage = 'Invalid candidate name. Please check the proposal data.';
+      } else if (error.message.includes('Failed to load image')) {
+        errorMessage = 'Warning: Some images could not be loaded, but the document was generated with placeholders.';
+      } else if (error.message.includes('Generated document is empty')) {
+        errorMessage = 'The generated document appears to be empty. Please check the proposal content.';
+      }
+      
+      alert(errorMessage);
     } finally {
       setIsWordLoading(false);
     }
