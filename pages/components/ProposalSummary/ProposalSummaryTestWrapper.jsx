@@ -86,7 +86,7 @@ const useProposalSummaryDocx = () => {
             new TableRow({
               children: [
                 new TableCell({
-                  width: { size: 20, type: WidthType.PERCENTAGE },
+                  width: { size: 10, type: WidthType.PERCENTAGE },
                   children: [
                     new Paragraph({
                       children: pappspmLogoBase64 ? [
@@ -913,3 +913,4 @@ const ProposalSummaryWrapper = ({
 };
 
 export default ProposalSummaryWrapper;
+
