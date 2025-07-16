@@ -1,5 +1,3 @@
-
-
 const SecondPageWord = ({ resumeData, experienceLayout, getExperiencePages, scaleFactor, wordPageWidth, wordPageHeight }) => {
     // If no experience pages, don't render anything
     if (!experienceLayout || experienceLayout !== 'paginated' || !getExperiencePages || getExperiencePages.length === 0) {
@@ -377,75 +375,6 @@ const SecondPageWord = ({ resumeData, experienceLayout, getExperiencePages, scal
                 </tbody>
               </table>
             </div>
-  
-            {/* Bottom Decorations Row - Added to second page */}
-            {/* <div style={{
-              height: `${Math.round(40 * scaleFactor)}px`,
-              flexShrink: 0
-            }}>
-              <table style={{
-                width: '100%',
-                height: '100%',
-                borderCollapse: 'collapse',
-                border: 'none',
-                // backgroundColor:'green',
-                margin: 0,
-                padding: 0
-              }}>
-                <colgroup>
-                  <col style={{ width: '50%' }} />
-                  <col style={{ width: '50%' }} />
-                </colgroup>
-                <tbody>
-                  <tr>
-            
-                    <td style={{
-                      padding: 0,
-                      border: 'none',
-                      verticalAlign: 'bottom',
-                      textAlign: 'left',
-                      
-                      height: `${Math.round(40 * scaleFactor)}px`
-                    }}>
-                      <img
-                        src="/assets/images/DecorationLeftSecondPage.jpeg"
-                        alt="Decoration Left Second Page"
-                        width={150}
-                        style={{
-                          height: `${Math.round(30 * scaleFactor)}px`,
-                          objectFit: 'contain',
-                          display: 'inline-block',
-                          margin: 0,
-                          padding: 0
-                        }}
-                      />
-                    </td>
-                
-                    <td style={{
-                      padding: 0,
-                      border: 'none',
-                      verticalAlign: 'bottom',
-                      textAlign: 'right',
-                      backgroundColor: '#ffffff',
-                      height: `${Math.round(40 * scaleFactor)}px`
-                    }}>
-                      <img
-                        src="/assets/images/DecorationRight.jpeg"
-                        alt="Decoration Right"
-                        width={150}
-                        style={{
-                          height: `${Math.round(30 * scaleFactor)}px`,
-                          objectFit: 'contain',
-                          display: 'inline-block',
-                          margin: 0,
-                          padding: 0
-                        }}
-                      />
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div> */}
           </div>
         ))}
       </>

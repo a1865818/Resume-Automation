@@ -216,6 +216,7 @@ JSON SCHEMA - Optimized for government tender evaluation:
 - If the experience has no responsibilities, do not add that position to the fullExperience section.
 - Skills: Combine technical and regulatory/compliance skills strategically
 - Format consistently for professional government submission standards
+- If no referees are provided, return an empty array[] for the fields like "title", "name", "email", "phone". Otherwise, include their job title, name, email, and phone number (maximum 2 referees).
 
 CANDIDATE'S RESUME:
 ${resumeText}
@@ -502,30 +503,30 @@ Return ONLY the JSON object, no additional text or formatting.`;
         : [],
       experience: Array.isArray(response.experience)
         ? response.experience.map((exp) => ({
-            title: exp.title || "Position",
-            period: exp.period || "Date not specified",
-            responsibilities: Array.isArray(exp.responsibilities)
-              ? exp.responsibilities
-              : [],
-          }))
+          title: exp.title || "Position",
+          period: exp.period || "Date not specified",
+          responsibilities: Array.isArray(exp.responsibilities)
+            ? exp.responsibilities
+            : [],
+        }))
         : [],
       fullExperience: Array.isArray(response.fullExperience)
         ? response.fullExperience.map((exp) => ({
-            title: exp.title || "Position",
-            period: exp.period || "Date not specified",
-            responsibilities: Array.isArray(exp.responsibilities)
-              ? exp.responsibilities
-              : [],
-          }))
+          title: exp.title || "Position",
+          period: exp.period || "Date not specified",
+          responsibilities: Array.isArray(exp.responsibilities)
+            ? exp.responsibilities
+            : [],
+        }))
         : [],
       referees:
         Array.isArray(response.referees) && response.referees.length > 0
           ? response.referees.map((ref) => ({
-              name: ref?.name,
-              title: ref?.title,
-              email: ref?.email,
-              phone: ref?.phone,
-            }))
+            name: ref?.name,
+            title: ref?.title,
+            email: ref?.email,
+            phone: ref?.phone,
+          }))
           : null,
     };
   } catch (error) {
@@ -691,9 +692,8 @@ export async function generateTenderResponse(
     }
     ],
      "desirableCriteria": [
-        ${
-          hasDesirableCriteria
-            ? `
+        ${hasDesirableCriteria
+      ? `
         {
         "criteriaTitle": "Summary",
         "criteriaDescription": "Overall summary of the candidate's qualifications relevant to the desirable criteria",
@@ -706,41 +706,38 @@ export async function generateTenderResponse(
         }
         // Repeat for each desirable criterion from RFQ analysis
         `
-            : `
+      : `
         // CRITICAL: If RFQ analysis shows NO desirable criteria, return EMPTY ARRAY []
         // DO NOT CREATE desirable criteria if none exist in the RFQ analysis
         `
-        }
+    }
     ],
     "additionalInformation": [
       {
-        "criteria": "Security Clearance Status${
-          detectedSector === "Defence"
-            ? " (Essential for Defence roles)"
-            : detectedSector === "ICT"
-            ? " (Often required for government ICT)"
-            : " (If applicable)"
-        }",
-        "response": "Clear statement about current clearance level and ability to obtain/maintain required clearance${
-          detectedSector === "Defence"
-            ? ", including any special defence clearances"
-            : ""
-        }"
+        "criteria": "Security Clearance Status${detectedSector === "Defence"
+      ? " (Essential for Defence roles)"
+      : detectedSector === "ICT"
+        ? " (Often required for government ICT)"
+        : " (If applicable)"
+    }",
+        "response": "Clear statement about current clearance level and ability to obtain/maintain required clearance${detectedSector === "Defence"
+      ? ", including any special defence clearances"
+      : ""
+    }"
       },
       {
         "criteria": "Availability and Start Date",
         "response": "Specific availability information and earliest possible start date for this ${detectedSector} role"
       },
       {
-        "criteria": "Previous Experience with ${
-          detectedSector === "Defence"
-            ? "Defence/Military Projects"
-            : detectedSector === "ICT"
-            ? "Government/Defence ICT Projects"
-            : detectedSector === "Finance"
-            ? "Government/Public Sector Finance"
-            : `Government/${detectedSector} Projects`
-        }",
+        "criteria": "Previous Experience with ${detectedSector === "Defence"
+      ? "Defence/Military Projects"
+      : detectedSector === "ICT"
+        ? "Government/Defence ICT Projects"
+        : detectedSector === "Finance"
+          ? "Government/Public Sector Finance"
+          : `Government/${detectedSector} Projects`
+    }",
         "response": "Details of any previous ${sectorTerminology} work with government or relevant organizations, including duration and nature of projects"
       }
     ]
@@ -798,9 +795,8 @@ export async function generateTenderResponse(
   - All content must be truthful and based on actual resume information
   - Use exact project names, companies, and roles from the resume
   - Include specific years of experience and quantifiable metrics
-  - Reference security clearance accurately as stated in resume (especially important for ${
-    detectedSector === "Defence" ? "Defence roles" : "government roles"
-  })
+  - Reference security clearance accurately as stated in resume (especially important for ${detectedSector === "Defence" ? "Defence roles" : "government roles"
+    })
   - Maintain professional government tender standards
   - Every response must demonstrate specific competency for the role
   - Adapt examples to highlight ${detectedSector} sector relevance
@@ -1196,19 +1192,19 @@ export function formatForTenderTemplate(rawTenderData) {
     // Enhanced desirable criteria handling - ensure empty array if no criteria
     desirableCriteria:
       rawTenderData.desirableCriteria &&
-      Array.isArray(rawTenderData.desirableCriteria) &&
-      rawTenderData.desirableCriteria.length > 0
+        Array.isArray(rawTenderData.desirableCriteria) &&
+        rawTenderData.desirableCriteria.length > 0
         ? rawTenderData.desirableCriteria.map((criteria) => ({
-            criteriaTitle:
-              criteria.criteriaTitle ||
-              criteria.title ||
-              criteria.criteria ||
-              criteria.requirement ||
-              "",
-            criteriaDescription:
-              criteria.criteriaDescription || criteria.description || "",
-            response: criteria.response,
-          }))
+          criteriaTitle:
+            criteria.criteriaTitle ||
+            criteria.title ||
+            criteria.criteria ||
+            criteria.requirement ||
+            "",
+          criteriaDescription:
+            criteria.criteriaDescription || criteria.description || "",
+          response: criteria.response,
+        }))
         : [], // Explicitly return empty array if no desirable criteria
     additionalInformation:
       rawTenderData.additionalInformation?.map((info) => ({
