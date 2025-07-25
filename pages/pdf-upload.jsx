@@ -17,10 +17,32 @@ export default function PdfUpload() {
   const [profilePictureError, setProfilePictureError] = useState("");
 
   const handleFileUpload = async (event) => {
-    const file = event.target.files[0];
-    if (!file) return;
+    let file = null;
+    let extractedText = null;
 
-    // Check if the file is a PDF
+    // If event.target.files exists, it's a real file input event (PDF)
+    if (event.target && event.target.files && event.target.files[0]) {
+      file = event.target.files[0];
+    }
+    // If event.target.value exists, it's a synthetic event from Word extraction
+    else if (event.target && event.target.value && event.target.file) {
+      file = event.target.file;
+      extractedText = event.target.value;
+    } else {
+      setError("No file selected or invalid upload event.");
+      return;
+    }
+
+    // If we already have extracted text (Word), just set it
+    if (extractedText) {
+      setFileName(file.name);
+      setPdfText(extractedText);
+      setError("");
+      setIsLoading(false);
+      return;
+    }
+
+    // Otherwise, process as PDF (your existing logic)
     if (file.type !== "application/pdf") {
       setError("Please upload a PDF file");
       return;
@@ -34,15 +56,11 @@ export default function PdfUpload() {
     try {
       // Read the file as ArrayBuffer
       const arrayBuffer = await file.arrayBuffer();
-      
       // Use pdf.js to parse the PDF and extract text
       const pdfjsLib = window.pdfjsLib;
-      // Set workerSrc to cdn
       pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
-      
       const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
       const pdf = await loadingTask.promise;
-      
       // Extract text from all pages
       let extractedText = "";
       for (let i = 1; i <= pdf.numPages; i++) {
@@ -51,7 +69,6 @@ export default function PdfUpload() {
         const pageText = textContent.items.map(item => item.str).join(" ");
         extractedText += `Page ${i}:\n${pageText}\n\n`;
       }
-      
       setPdfText(extractedText);
     } catch (err) {
       console.error('Error processing PDF:', err);

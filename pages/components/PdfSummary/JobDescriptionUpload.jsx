@@ -1,5 +1,6 @@
 // components/pdfSummary/JobDescriptionUpload.js
 import { useRef, useState } from 'react';
+import { extractWordContent } from '../../utils/wordUtils';
 const JobDescriptionUpload = ({
     jobDescription,
     jobFileName,
@@ -24,7 +25,7 @@ const JobDescriptionUpload = ({
         'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
       ];
   
-      if (![...allowedTypes, ...docTypes].includes(file.type)) {
+      if (![...allowedTypes, ...docTypes].includes(file.type) && !file.name.match(/\.(pdf|txt|doc|docx)$/i)) {
         onJobFileUpload(null, '', 'Unsupported file type. Use PDF, DOC, DOCX, or TXT.');
         return;
       }
@@ -37,7 +38,7 @@ const JobDescriptionUpload = ({
       try {
         let extractedText = '';
   
-        if (file.type === 'application/pdf') {
+        if (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) {
           const arrayBuffer = await file.arrayBuffer();
           const pdfjsLib = window?.pdfjsLib;
   
@@ -55,8 +56,26 @@ const JobDescriptionUpload = ({
             const textContent = await page.getTextContent();
             extractedText += textContent.items.map(item => item.str).join(' ') + '\n\n';
           }
-        } else if (file.type === 'text/plain') {
+        } else if (file.type === 'text/plain' || file.name.toLowerCase().endsWith('.txt')) {
           extractedText = await file.text();
+        } else if (
+          file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' ||
+          file.name.toLowerCase().endsWith('.docx')
+        ) {
+          // Only .docx is supported
+          const result = await extractWordContent(file);
+          if (result.success) {
+            extractedText = result.text;
+          } else {
+            onJobFileUpload(null, '', result.error || 'Failed to extract text from Word document.');
+            return;
+          }
+        } else if (
+          file.type === 'application/msword' ||
+          file.name.toLowerCase().endsWith('.doc')
+        ) {
+          onJobFileUpload(null, '', 'Traditional .doc files are not supported. Please upload a .docx, PDF, or TXT file.');
+          return;
         } else {
           onJobFileUpload(null, '', 'Please convert DOC/DOCX files to PDF or TXT for best results.');
           return;

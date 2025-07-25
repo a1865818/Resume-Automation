@@ -147,23 +147,29 @@ const getImageData = (base64String) => {
 };
 
 // Helper function to create properly formatted ImageRun
-const createImageRun = (imageData, transformation) => {
+const createImageRun = (imageData, transformation, floatingOptions = null) => {
   if (!imageData || !imageData.data) {
     console.warn("createImageRun: Invalid image data");
     return null;
   }
 
   try {
-    // Add validation logging
     console.log(
       `🖼️ Creating ImageRun: ${imageData.type}, data length: ${imageData.data.length}`
     );
 
-    const imageRun = new ImageRun({
+    const imageRunConfig = {
       data: Buffer.from(imageData.data, "base64"),
       transformation: transformation,
       type: imageData.type === "jpg" ? "jpg" : "png",
-    });
+    };
+
+    // Add floating properties if provided
+    if (floatingOptions) {
+      imageRunConfig.floating = floatingOptions;
+    }
+
+    const imageRun = new ImageRun(imageRunConfig);
 
     console.log(`✅ ImageRun created successfully for ${imageData.type} image`);
     return imageRun;
@@ -302,13 +308,51 @@ const useResumeDocx = () => {
                     : null;
 
                   if (imageData) {
-                    const imageRun = createImageRun(imageData, {
-                      width: Math.round(320 * scaleFactor),
-                      height: Math.round(400 * scaleFactor),
-                    });
+                    const floatingOptions = {
+                      horizontalPosition: {
+                        // relative: "column", // Relative to table column
+                        // relative: "cell",
+                        // align: "left",
+                        offset: 0, // 500,000 twips = 34.7 cm
+                      },
+                      verticalPosition: {
+                        relative: "paragraph", // Relative to the current paragraph
+                        // align: "top",
+                        offset: -170000, // 100,000 twips = ~7 cm
+                      },
+                      allowOverlap: false,
+                      lockAnchor: true,
+                      behindText: false,
+                      layoutInCell: true,
+                      wrap: {
+                        type: "square",
+                        side: "bothSides",
+                      },
+                    };
+
+                    const imageRun = createImageRun(
+                      imageData,
+                      {
+                        width: Math.round(311 * scaleFactor),
+                        height: Math.round(385 * scaleFactor),
+                      },
+                      floatingOptions // Pass floating options as third parameter
+                    );
 
                     if (imageRun) {
-                      leftChildren.push(createImageParagraph(imageRun));
+                      leftChildren.push(
+                        new Paragraph({
+                          children: [imageRun],
+                          spacing: { before: 0, after: 0 },
+                        }),
+                        new Paragraph({
+                          children: [new TextRun({ text: "" })],
+                          spacing: {
+                            before: 0,
+                            after: Math.round(250 * scaleFactor * 20), // Roughly image height
+                          },
+                        })
+                      );
                     }
                   }
                 }
@@ -443,6 +487,49 @@ const useResumeDocx = () => {
                         }),
                       ])
                 );
+
+                // if (decorationLeftBase64) {
+                //   const imageData = getImageData(decorationLeftBase64);
+                //   if (imageData) {
+                //     const floatingOptions = {
+                //       horizontalPosition: {
+                //         relative: "column",
+                //         // align: "left",
+                //         offset: 0,
+                //       },
+                //       verticalPosition: {
+                //         relative: "column",
+                //         // align: "bottom",
+                //         offset: 0,
+                //       },
+                //       allowOverlap: false,
+                //       lockAnchor: true,
+                //       behindText: false,
+                //       layoutInCell: true,
+                //       wrap: {
+                //         type: "square",
+                //         side: "bothSides",
+                //       },
+                //     };
+                //     const imageRun = createImageRun(
+                //       imageData,
+                //       {
+                //         width: Math.round(270 * scaleFactor),
+                //         height: Math.round(150 * scaleFactor),
+                //       },
+                //       floatingOptions
+                //     );
+                //     if (imageRun) {
+                //       leftChildren.push(
+                //         new Paragraph({
+                //           children: [imageRun],
+                //           alignment: AlignmentType.LEFT,
+                //           spacing: { before: Math.round(12 * scaleFactor * 20) },
+                //         })
+                //       );
+                //     }
+                //   }
+                // }
 
                 return new TableCell({
                   rowSpan: 2,
@@ -819,6 +906,83 @@ const useResumeDocx = () => {
 
       documentChildren.push(mainTable);
 
+      // Decoration Table (same columns as mainTable, no margin/padding)
+      const decorationTable = new Table({
+        width: { size: 100, type: WidthType.PERCENTAGE },
+        borders: {
+          top: { style: BorderStyle.NONE },
+          bottom: { style: BorderStyle.NONE },
+          left: { style: BorderStyle.NONE },
+          right: { style: BorderStyle.NONE },
+          insideHorizontal: { style: BorderStyle.NONE },
+          insideVertical: { style: BorderStyle.NONE },
+        },
+        rows: [
+          new TableRow({
+            children: [
+              // LEFT COLUMN - decorationLeft
+              new TableCell({
+                width: { size: 22, type: WidthType.PERCENTAGE },
+                shading: { fill: "000000" },
+                children: decorationLeftBase64
+                  ? [
+                      (() => {
+                        const imageData = getImageData(decorationLeftBase64);
+                        if (imageData) {
+                          const imageRun = createImageRun(imageData, {
+                            width: Math.round(270 * scaleFactor),
+                            height: Math.round(150 * scaleFactor),
+                          });
+                          if (imageRun) {
+                            return new Paragraph({
+                              children: [imageRun],
+                              alignment: AlignmentType.LEFT,
+                            });
+                          }
+                        }
+                        return new Paragraph({ children: [] });
+                      })(),
+                    ]
+                  : [new Paragraph({ children: [] })],
+                verticalAlign: VerticalAlign.BOTTOM,
+              }),
+              // MIDDLE COLUMN - empty
+              new TableCell({
+                width: { size: 28, type: WidthType.PERCENTAGE },
+                shading: { fill: "9E9E9E" },
+                children: [new Paragraph({ children: [] })],
+              }),
+              // RIGHT COLUMN - decorationRight
+              new TableCell({
+                width: { size: 50, type: WidthType.PERCENTAGE },
+                children: decorationRightBase64
+                  ? [
+                      (() => {
+                        const imageData = getImageData(decorationRightBase64);
+                        if (imageData) {
+                          const imageRun = createImageRun(imageData, {
+                            width: Math.round(250 * scaleFactor),
+                            height: Math.round(135 * scaleFactor),
+                          });
+                          if (imageRun) {
+                            return new Paragraph({
+                              children: [imageRun],
+                              alignment: AlignmentType.RIGHT,
+                            });
+                          }
+                        }
+                        return new Paragraph({ children: [] });
+                      })(),
+                    ]
+                  : [new Paragraph({ children: [] })],
+                verticalAlign: VerticalAlign.BOTTOM,
+              }),
+            ],
+          }),
+        ],
+      });
+      documentChildren.push(decorationTable);
+
       // Validate document structure before creating Document
       validateDocumentStructure(documentChildren);
 
@@ -1119,7 +1283,7 @@ const useResumeDocx = () => {
                     margins: {
                       top: Math.round(12 * scaleFactor * 20),
                       bottom: Math.round(12 * scaleFactor * 20),
-                      left: Math.round(6 * scaleFactor * 20), // Reduced left margin
+                      left: Math.round(12 * scaleFactor * 20), // Reduced left margin
                       right: Math.round(12 * scaleFactor * 20),
                     },
                     verticalAlign: VerticalAlign.TOP,
@@ -1282,13 +1446,51 @@ const useResumeDocx = () => {
                     : null;
 
                   if (imageData) {
-                    const imageRun = createImageRun(imageData, {
-                      width: Math.round(320 * scaleFactor),
-                      height: Math.round(400 * scaleFactor),
-                    });
+                    const floatingOptions = {
+                      horizontalPosition: {
+                        // relative: "column", // Relative to table column
+                        // relative: "cell",
+                        // align: "left",
+                        offset: 0, // 500,000 twips = 34.7 cm
+                      },
+                      verticalPosition: {
+                        relative: "paragraph", // Relative to the current paragraph
+                        // align: "top",
+                        offset: -170000, // 100,000 twips = ~7 cm
+                      },
+                      allowOverlap: false,
+                      lockAnchor: true,
+                      behindText: false,
+                      layoutInCell: true,
+                      wrap: {
+                        type: "square",
+                        side: "bothSides",
+                      },
+                    };
+
+                    const imageRun = createImageRun(
+                      imageData,
+                      {
+                        width: Math.round(311 * scaleFactor),
+                        height: Math.round(385 * scaleFactor),
+                      },
+                      floatingOptions // Pass floating options as third parameter
+                    );
 
                     if (imageRun) {
-                      leftChildren.push(createImageParagraph(imageRun));
+                      leftChildren.push(
+                        new Paragraph({
+                          children: [imageRun],
+                          spacing: { before: 0, after: 0 },
+                        }),
+                        new Paragraph({
+                          children: [new TextRun({ text: "" })],
+                          spacing: {
+                            before: 0,
+                            after: Math.round(250 * scaleFactor * 20), // Roughly image height
+                          },
+                        })
+                      );
                     }
                   }
                 }
@@ -1531,7 +1733,7 @@ const useResumeDocx = () => {
                                     new Paragraph({
                                       children: [
                                         new TextRun({
-                                          text: referee.title,
+                                          text: referee.title || "",
                                           bold: true,
                                           size: Math.round(
                                             10.5 * scaleFactor * 2
@@ -1547,7 +1749,7 @@ const useResumeDocx = () => {
                                     new Paragraph({
                                       children: [
                                         new TextRun({
-                                          text: `N: ${referee.name}`,
+                                          text: `N: ${referee.name} `,
                                           size: Math.round(
                                             10.5 * scaleFactor * 2
                                           ),
@@ -1775,6 +1977,83 @@ const useResumeDocx = () => {
 
       documentChildren.push(mainTable);
 
+      // Decoration Table (same columns as mainTable, no margin/padding)
+      const decorationTable = new Table({
+        width: { size: 100, type: WidthType.PERCENTAGE },
+        borders: {
+          top: { style: BorderStyle.NONE },
+          bottom: { style: BorderStyle.NONE },
+          left: { style: BorderStyle.NONE },
+          right: { style: BorderStyle.NONE },
+          insideHorizontal: { style: BorderStyle.NONE },
+          insideVertical: { style: BorderStyle.NONE },
+        },
+        rows: [
+          new TableRow({
+            children: [
+              // LEFT COLUMN - decorationLeft
+              new TableCell({
+                width: { size: 22, type: WidthType.PERCENTAGE },
+                shading: { fill: "000000" },
+                children: decorationLeftBase64
+                  ? [
+                      (() => {
+                        const imageData = getImageData(decorationLeftBase64);
+                        if (imageData) {
+                          const imageRun = createImageRun(imageData, {
+                            width: Math.round(270 * scaleFactor),
+                            height: Math.round(150 * scaleFactor),
+                          });
+                          if (imageRun) {
+                            return new Paragraph({
+                              children: [imageRun],
+                              alignment: AlignmentType.LEFT,
+                            });
+                          }
+                        }
+                        return new Paragraph({ children: [] });
+                      })(),
+                    ]
+                  : [new Paragraph({ children: [] })],
+                verticalAlign: VerticalAlign.BOTTOM,
+              }),
+              // MIDDLE COLUMN - empty
+              new TableCell({
+                width: { size: 28, type: WidthType.PERCENTAGE },
+                shading: { fill: "9E9E9E" },
+                children: [new Paragraph({ children: [] })],
+              }),
+              // RIGHT COLUMN - decorationRight
+              new TableCell({
+                width: { size: 50, type: WidthType.PERCENTAGE },
+                children: decorationRightBase64
+                  ? [
+                      (() => {
+                        const imageData = getImageData(decorationRightBase64);
+                        if (imageData) {
+                          const imageRun = createImageRun(imageData, {
+                            width: Math.round(250 * scaleFactor),
+                            height: Math.round(135 * scaleFactor),
+                          });
+                          if (imageRun) {
+                            return new Paragraph({
+                              children: [imageRun],
+                              alignment: AlignmentType.RIGHT,
+                            });
+                          }
+                        }
+                        return new Paragraph({ children: [] });
+                      })(),
+                    ]
+                  : [new Paragraph({ children: [] })],
+                verticalAlign: VerticalAlign.BOTTOM,
+              }),
+            ],
+          }),
+        ],
+      });
+      documentChildren.push(decorationTable);
+
       // Validate document structure before creating Document
       validateDocumentStructure(documentChildren);
 
@@ -1978,7 +2257,7 @@ const useResumeDocx = () => {
                                           imageData,
                                           {
                                             width: Math.round(
-                                              230 * scaleFactor
+                                              232 * scaleFactor
                                             ),
                                             height: Math.round(
                                               125 * scaleFactor
@@ -2093,6 +2372,7 @@ const useResumeDocx = () => {
                     width: { size: 49.75, type: WidthType.PERCENTAGE }, // Slightly less than 50% to account for line
                     children: [
                       ...renderExperienceItems(rightColumnItems),
+
                       // Add empty paragraph if no content to ensure column structure
                       ...(rightColumnItems.length === 0
                         ? [
@@ -2105,7 +2385,7 @@ const useResumeDocx = () => {
                     margins: {
                       top: Math.round(12 * scaleFactor * 20),
                       bottom: Math.round(12 * scaleFactor * 20),
-                      left: Math.round(6 * scaleFactor * 20), // Reduced left margin
+                      left: Math.round(12 * scaleFactor * 20), // Reduced left margin
                       right: Math.round(12 * scaleFactor * 20),
                     },
                     verticalAlign: VerticalAlign.TOP,
