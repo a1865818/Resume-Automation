@@ -21,11 +21,6 @@ const Navbar = () => {
                   PDF Tool
                 </span>
               </Link>
-              <Link href="/saved-resumes">
-                <span className="text-gray-700 hover:text-indigo-600 cursor-pointer px-3 py-2 text-sm font-medium">
-                  Saved Resumes
-                </span>
-              </Link>
             </div>
           </div>
 

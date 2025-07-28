@@ -19,10 +19,7 @@ const PdfSummary = ({ pdfText, fileName, profilePicture, profilePicturePreview }
     const [useMockData, setUseMockData] = useState(false);
     const [showResumeTemplate, setShowResumeTemplate] = useState(false);
     
-    // Add new states for save functionality
-    const [isSaving, setIsSaving] = useState(false);
-    const [saveMessage, setSaveMessage] = useState('');
-    const [isSaved, setIsSaved] = useState(false);
+
   
     // State for uploaded profile picture URL
     const [uploadedProfilePictureUrl, setUploadedProfilePictureUrl] = useState('');
@@ -211,43 +208,7 @@ const PdfSummary = ({ pdfText, fileName, profilePicture, profilePicturePreview }
       }
     };
   
-    // Add save template function
-    const saveTemplateToHistory = async (resumeData, originalFileName) => {
-      try {
-        setIsSaving(true);
-        setSaveMessage('');
-        console.log('Saving resume template to history...');
-        
-        const response = await fetch('/api/saveResume', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            resumeData: resumeData,
-            originalFileName: originalFileName
-          })
-        });
-  
-        if (response.ok) {
-          const result = await response.json();
-          console.log('Resume template saved to history successfully:', result);
-          setSaveMessage('✅ Resume template saved to history successfully!');
-          setIsSaved(true);
-          return result;
-        } else {
-          console.error('Failed to save resume template:', response.status);
-          setSaveMessage('❌ Failed to save resume template. Please try again.');
-        }
-      } catch (error) {
-        console.error('Error saving resume template to history:', error);
-        setSaveMessage('❌ Error saving resume template. Please try again.');
-      } finally {
-        setIsSaving(false);
-        // Clear message after 5 seconds
-        setTimeout(() => setSaveMessage(''), 5000);
-      }
-    };
+
 
     // Quick Word download function for SaveBanner
     const handleQuickDownloadWord = async () => {
@@ -267,20 +228,11 @@ const PdfSummary = ({ pdfText, fileName, profilePicture, profilePicturePreview }
         // when it's rendered with Word download capability
         console.log('Quick Word download initiated for:', sanitizedName);
         
-        // Show a message that the full download options are available below
-        setSaveMessage('📄 For Word download, please use the "Download Word" button in the control panel below.');
-        
-        // Clear message after 3 seconds
-        setTimeout(() => {
-          if (saveMessage.includes('Word download')) {
-            setSaveMessage('');
-          }
-        }, 3000);
+        // For now, just show a message that download options are available below
+        console.log('Word download options available in the control panel below');
         
       } catch (error) {
         console.error('Error with quick Word download:', error);
-        setSaveMessage('❌ Word download error. Please use the download options below.');
-        setTimeout(() => setSaveMessage(''), 3000);
       } finally {
         setIsWordLoading(false);
       }
@@ -448,9 +400,6 @@ const PdfSummary = ({ pdfText, fileName, profilePicture, profilePicturePreview }
 
     
     const handleGenerateResume = async () => {
-      // Reset save states when generating new resume
-      setIsSaved(false);
-      setSaveMessage('');
       
 
       const convertFileToBase64 = (file) => {
@@ -625,8 +574,7 @@ const PdfSummary = ({ pdfText, fileName, profilePicture, profilePicturePreview }
       if (!useMockData) {
         setResumeData(null);
         setShowResumeTemplate(false);
-        setIsSaved(false);
-        setSaveMessage('');
+
       }
     };
   
@@ -635,8 +583,6 @@ const PdfSummary = ({ pdfText, fileName, profilePicture, profilePicturePreview }
       setShowTenderResponse(false);
       setResumeData(null);
       setTenderResponseData(null);
-      setIsSaved(false);
-      setSaveMessage('');
       setTenderError('');
     };
 
@@ -744,12 +690,8 @@ if (showResumeTemplate && resumeData) {
     <div>
       <SaveBanner
         uploadedProfilePictureUrl={uploadedProfilePictureUrl}
-        isSaved={isSaved}
-        isSaving={isSaving}
-        saveMessage={saveMessage}
         isJobTailored={generationMode === 'tailored'}
         showTenderOption={generationMode === 'tailored' && jobDescription && jobDescription.trim().length > 50}
-        onSave={() => saveTemplateToHistory(resumeData, fileName)}
         onGenerateTenderResponse={handleGenerateTenderResponse}
         isGeneratingTender={isGeneratingTender}
         // Updated props for tender response navigation
@@ -759,9 +701,9 @@ if (showResumeTemplate && resumeData) {
         // New props for Word download
         onDownloadWord={handleQuickDownloadWord}
         isWordLoading={isWordLoading}
-           // NEW: Props for proposal summary
-           hasProposalSummary={!!proposalSummaryData}
-           onBackToProposalSummary={handleBackToProposalSummary}
+        // NEW: Props for proposal summary
+        hasProposalSummary={!!proposalSummaryData}
+        onBackToProposalSummary={handleBackToProposalSummary}
       />
       {tenderError && (
         <div className="mx-4 mb-4">

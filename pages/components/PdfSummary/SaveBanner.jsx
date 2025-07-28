@@ -1,12 +1,8 @@
 
 const SaveBanner = ({ 
     uploadedProfilePictureUrl, 
-    isSaved, 
-    isSaving, 
-    saveMessage, 
     isJobTailored, 
     showTenderOption,
-    onSave, 
     onGenerateTenderResponse, 
     isGeneratingTender,
     // Existing props for tender response navigation
@@ -69,51 +65,10 @@ const SaveBanner = ({
   
     return (
       <div className="bg-white border-b border-gray-200 p-4 space-y-4">
-        {/* Status Messages */}
-        {saveMessage && (
-          <div className={`p-3 rounded-lg ${
-            saveMessage.includes('✅') 
-              ? 'bg-green-50 border border-green-200 text-green-800' 
-              : 'bg-red-50 border border-red-200 text-red-800'
-          }`}>
-            {saveMessage}
-          </div>
-        )}
-  
         {/* Action Buttons Row */}
         <div className="flex flex-wrap gap-3 items-center justify-between">
-          {/* Left side - Save, Download, and Tender buttons */}
+          {/* Left side - Tender buttons */}
           <div className="flex flex-wrap gap-3">
-            {/* Save Resume Button */}
-            <button
-              onClick={onSave}
-              disabled={isSaving || isSaved}
-              className={`px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200 ${
-                isSaved 
-                  ? 'bg-green-100 text-green-800 border border-green-300 cursor-not-allowed' 
-                  : isSaving
-                  ? 'bg-gray-100 text-gray-600 border border-gray-300 cursor-not-allowed'
-                  : 'bg-blue-600 text-white hover:bg-blue-700 border border-blue-600 hover:border-blue-700'
-              }`}
-            >
-              {isSaving ? (
-                <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
-                  Saving...
-                </div>
-              ) : isSaved ? (
-                <div className="flex items-center gap-2">
-                  <span>✅</span>
-                  Saved to History
-                </div>
-              ) : (
-                <div className="flex items-center gap-2">
-                  <span>💾</span>
-                  Save Resume
-                </div>
-              )}
-            </button>
-
             {/* Generate Tender Response Button */}
             {showTenderOption && (
               <button
