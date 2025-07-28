@@ -10,19 +10,17 @@ import { useResumeMeasurement } from '../hooks/useResumeMeasurement';
 
 
 // Import Word-compatible components
-import ResumeWordCompatible from './ResumeTemplate/ResumeWordCompatible';
-import ResumeWordCompatibleDefault from './ResumeTemplate/ResumeWordCompatibleDefault';
+import ResumeWordCompatible from './/ResumeWordCompatible';
+import ResumeWordCompatibleDefault from './ResumeWordCompatibleDefault';
 
-import BackButton from './ResumeTemplate/BackButton';
-import ControlButtons from './ResumeTemplate/ControlButtons';
-import DimensionsDisplay from './ResumeTemplate/DimensionsDisplay';
-import ExperienceLayoutControls from './ResumeTemplate/ExperienceLayoutControls';
-import ExperiencePage from './ResumeTemplate/ExperiencePage';
-import FirstPage from './ResumeTemplate/FirstPage';
-
-
-import HiddenMeasurementArea from './ResumeTemplate/HiddenMeasurementArea';
-import PdfSettingsModal from './ResumeTemplate/PdfSettingsModal';
+import BackButton from '../ResumeTemplate/BackButton';
+import ControlButtons from '../ResumeTemplate/ControlButtons';
+import DimensionsDisplay from '../ResumeTemplate/DimensionsDisplay';
+import ExperienceLayoutControls from '../ResumeTemplate/ExperienceLayoutControls';
+import ExperiencePage from '../ResumeTemplate/ExperiencePage';
+import FirstPage from '../ResumeTemplate/FirstPage';
+import HiddenMeasurementArea from '../ResumeTemplate/HiddenMeasurementArea';
+import PdfSettingsModal from '../ResumeTemplate/PdfSettingsModal';
 
 const ResumeTemplate = ({ resumeData, onBackToSummary, viewMode = 'generate' }) => {
     

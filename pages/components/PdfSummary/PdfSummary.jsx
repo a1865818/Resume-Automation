@@ -1,16 +1,19 @@
 import config from '@/configs';
 import Avatar from "@/public/image.jpeg";
 import { useMemo, useState } from 'react';
-import { detectSector, generateProposalSummary, generateResumeJSON, generateTailoredResumeJSON, generateTenderResponse } from '../api/geminiApi';
-import ErrorMessage from './PdfSummary/ErrorMessage';
-import GeneratorControls from './PdfSummary/GeneratorControls';
-import JobDescriptionUpload from './PdfSummary/JobDescriptionUpload';
-import LoadingState from './PdfSummary/LoadingState';
-import ProfilePictureStatus from './PdfSummary/ProfilePictureStatus';
-import SaveBanner from './PdfSummary/SaveBanner';
-import ProposalSummaryWrapper from './ProposalSummary/ProposalSummaryWrapper';
-import ResumeTemplate from './ResumeTemplate';
-import TenderResponseWrapper from './TenderResponse/TenderResponseWrapper';
+import { detectSector, generateProposalSummary, generateResumeJSON, generateTailoredResumeJSON, generateTenderResponse } from '@/pages/api/geminiApi';
+
+import ErrorMessage from './ErrorMessage';
+import GeneratorControls from './GeneratorControls';
+import JobDescriptionUpload from './JobDescriptionUpload';
+import LoadingState from './LoadingState';
+import ProfilePictureStatus from './ProfilePictureStatus';
+import SaveBanner from './SaveBanner';
+
+import ProposalSummaryWrapper from '../ProposalSummary/ProposalSummaryWrapper';
+
+import ResumeTemplate from '../ResumeTemplate';
+import TenderResponseWrapper from '../TenderResponse/TenderResponseWrapper';
 
 const PdfSummary = ({ pdfText, fileName, profilePicture, profilePicturePreview }) => {
     const [resumeData, setResumeData] = useState(null);
@@ -676,46 +679,46 @@ const PdfSummary = ({ pdfText, fileName, profilePicture, profilePicturePreview }
         );
       }
 
-if (showResumeTemplate && resumeData) {
-    console.log('🖼️ Rendering resume template with data:', { 
-      hasResumeData: !!resumeData, 
-      showResumeTemplate,
-      generationMode,
-      hasJobDescription: !!jobDescription,
-      hasTenderResponse: !!tenderResponseData,
-      detectedSector
-    });
-       
-  return (
-    <div>
-      <SaveBanner
-        uploadedProfilePictureUrl={uploadedProfilePictureUrl}
-        isJobTailored={generationMode === 'tailored'}
-        showTenderOption={generationMode === 'tailored' && jobDescription && jobDescription.trim().length > 50}
-        onGenerateTenderResponse={handleGenerateTenderResponse}
-        isGeneratingTender={isGeneratingTender}
-        // Updated props for tender response navigation
-        hasTenderResponse={!!tenderResponseData}
-        onBackToTenderResponse={handleBackToTenderResponse}
-        detectedSector={detectedSector}
-        // New props for Word download
-        onDownloadWord={handleQuickDownloadWord}
-        isWordLoading={isWordLoading}
-        // NEW: Props for proposal summary
-        hasProposalSummary={!!proposalSummaryData}
-        onBackToProposalSummary={handleBackToProposalSummary}
-      />
-      {tenderError && (
-        <div className="mx-4 mb-4">
-          <ErrorMessage error={tenderError} />
-        </div>
-      )}
-      <ResumeTemplate resumeData={resumeData} onBackToSummary={handleBackToSummary} />
-    </div>
-  );
-}
+      if (showResumeTemplate && resumeData) {
+        console.log('🖼️ Rendering resume template with data:', { 
+          hasResumeData: !!resumeData, 
+          showResumeTemplate,
+          generationMode,
+          hasJobDescription: !!jobDescription,
+          hasTenderResponse: !!tenderResponseData,
+          detectedSector
+        });
+           
+        return (
+          <div>
+            <SaveBanner
+              uploadedProfilePictureUrl={uploadedProfilePictureUrl}
+              isJobTailored={generationMode === 'tailored'}
+              showTenderOption={generationMode === 'tailored' && jobDescription && jobDescription.trim().length > 50}
+              onGenerateTenderResponse={handleGenerateTenderResponse}
+              isGeneratingTender={isGeneratingTender}
+              // Updated props for tender response navigation
+              hasTenderResponse={!!tenderResponseData}
+              onBackToTenderResponse={handleBackToTenderResponse}
+              detectedSector={detectedSector}
+              // New props for Word download
+              onDownloadWord={handleQuickDownloadWord}
+              isWordLoading={isWordLoading}
+              // NEW: Props for proposal summary
+              hasProposalSummary={!!proposalSummaryData}
+              onBackToProposalSummary={handleBackToProposalSummary}
+            />
+            {tenderError && (
+              <div className="mx-4 mb-4">
+                <ErrorMessage error={tenderError} />
+              </div>
+            )}
+            <ResumeTemplate resumeData={resumeData} onBackToSummary={handleBackToSummary} />
+          </div>
+        );
+      }
     
-    return (
+      return (
       <div className="w-full px-4 py-8">
         <div className="max-w-6xl mx-auto space-y-6">
           <div className="bg-white rounded-lg shadow-md p-6">

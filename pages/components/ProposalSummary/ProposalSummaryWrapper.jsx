@@ -908,7 +908,7 @@ const ProposalSummaryWrapper = ({
         </div>
       </div>
 
-      {/* Hidden Word-compatible version for legacy Word document generation */}
+      {/* Hidden Word-compatible version for  Word document generation */}
       <div style={{ 
         position: 'absolute', 
         left: '-9999px', 

@@ -53,11 +53,8 @@ export default function Home() {
                     <span className="relative z-10">Start Creating Now</span>
                     <div className="absolute inset-0 bg-gradient-to-r from-blue-700 to-purple-700 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   </button>
-
-
                 </div>
               </div>
-
               {/* Stats */}
               <div
                 className={`grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto transition-all duration-1000 delay-300 ${isVisible

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Layout from "./components/Layout";
-import PdfSummary from "./components/PdfSummary";
+import PdfSummary from "./components/PdfSummary/PdfSummary";
 import HeroSection from "./components/pdfUpload/HeroSection";
 import LoadingSection from "./components/pdfUpload/LoadingSection";
 import UploadSection from "./components/pdfUpload/UploadSection";
