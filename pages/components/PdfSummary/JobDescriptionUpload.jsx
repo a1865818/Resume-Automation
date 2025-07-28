@@ -1,6 +1,7 @@
 // components/pdfSummary/JobDescriptionUpload.js
 import { useRef, useState } from 'react';
 import { extractWordContent } from '../../utils/wordUtils';
+import { extractTextFromPDF } from '../../utils/pdfUtils';
 const JobDescriptionUpload = ({
     jobDescription,
     jobFileName,
@@ -14,6 +15,8 @@ const JobDescriptionUpload = ({
   }) => {
     const [isExpanded, setIsExpanded] = useState(false);
     const fileInputRef = useRef(null);
+    const [ocrProgress, setOcrProgress] = useState(null);
+    const [isOCRProcessing, setIsOCRProcessing] = useState(false);
   
     const handleFileUpload = async (event) => {
       const file = event.target.files[0];
@@ -39,22 +42,31 @@ const JobDescriptionUpload = ({
         let extractedText = '';
   
         if (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) {
-          const arrayBuffer = await file.arrayBuffer();
-          const pdfjsLib = window?.pdfjsLib;
-  
-          if (!pdfjsLib) {
-            throw new Error('PDF.js is not loaded. Please refresh the page.');
-          }
-  
-          pdfjsLib.GlobalWorkerOptions.workerSrc =
-            'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
-  
-          const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-  
-          for (let i = 1; i <= pdf.numPages; i++) {
-            const page = await pdf.getPage(i);
-            const textContent = await page.getTextContent();
-            extractedText += textContent.items.map(item => item.str).join(' ') + '\n\n';
+          try {
+            setOcrProgress(null);
+            setIsOCRProcessing(false);
+            
+            // Use the enhanced extractTextFromPDF function with OCR support
+            extractedText = await extractTextFromPDF(file, {
+              useOCR: true,
+              verbose: true,
+              progressCallback: (progress) => {
+                console.log(`Processing page ${progress.current}/${progress.total} - ${progress.stage}`);
+                setOcrProgress(progress);
+                if (progress.stage === 'ocr') {
+                  setIsOCRProcessing(true);
+                }
+              }
+            });
+            
+            setOcrProgress(null);
+            setIsOCRProcessing(false);
+          } catch (pdfError) {
+            console.error('PDF processing error:', pdfError);
+            setOcrProgress(null);
+            setIsOCRProcessing(false);
+            onJobFileUpload(null, '', 'Error processing PDF. Please try again or paste the description manually.');
+            return;
           }
         } else if (file.type === 'text/plain' || file.name.toLowerCase().endsWith('.txt')) {
           extractedText = await file.text();
@@ -225,6 +237,24 @@ const JobDescriptionUpload = ({
                   )}
                 </div>
   
+                {/* OCR Progress Indicator */}
+                {isOCRProcessing && ocrProgress && (
+                  <div className="bg-green-50 border border-green-200 rounded-lg p-3 text-xs text-green-700">
+                    <h4 className="font-semibold mb-2">OCR Processing:</h4>
+                    <div className="flex justify-between text-xs mb-1">
+                      <span>Page {ocrProgress.current} of {ocrProgress.total}</span>
+                      <span>{Math.round((ocrProgress.current / ocrProgress.total) * 100)}%</span>
+                    </div>
+                    <div className="w-full bg-green-200 rounded-full h-1">
+                      <div 
+                        className="bg-green-500 h-1 rounded-full transition-all duration-300"
+                        style={{ width: `${(ocrProgress.current / ocrProgress.total) * 100}%` }}
+                      ></div>
+                    </div>
+                    <p className="mt-1">Extracting text from image-based content...</p>
+                  </div>
+                )}
+                
                 {/* Tips */}
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-xs text-blue-700">
                   <h4 className="font-semibold mb-2">How Tailoring Works:</h4>

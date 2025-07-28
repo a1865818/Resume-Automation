@@ -34,6 +34,7 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-to-pdf": "^2.0.0",
+    "tesseract.js": "^6.0.1",
     "uuid": "^11.1.0"
   },
   "devDependencies": {

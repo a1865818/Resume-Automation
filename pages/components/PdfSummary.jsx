@@ -825,9 +825,11 @@ if (showResumeTemplate && resumeData) {
             
             {isGenerating && (
               <LoadingState
-                profilePicturePreview={profilePicturePreview}
-                generationMode={generationMode}
-                jobDescription={jobDescription}
+                message={generationMode === 'tailored' && jobDescription && jobDescription.trim().length > 50
+                  ? '🎯 Generating job-tailored resume with advanced matching...'
+                  : '📄 Generating professional resume with Gemini AI...'
+                }
+                isOCR={false}
               />
             )}
             

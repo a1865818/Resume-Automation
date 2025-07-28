@@ -4,6 +4,7 @@ import PdfSummaryTable from "./components/ResumeTest/PdfSummaryTable";
 import HeroSection from "./components/pdfUpload/HeroSection";
 import LoadingSection from "./components/pdfUpload/LoadingSection";
 import UploadSection from "./components/pdfUpload/UploadSection";
+import { extractTextFromPDF } from "./utils/pdfUtils";
 
 export default function PdfUpload() {
   const [pdfText, setPdfText] = useState("");
@@ -15,6 +16,10 @@ export default function PdfUpload() {
   const [profilePicture, setProfilePicture] = useState(null);
   const [profilePicturePreview, setProfilePicturePreview] = useState("");
   const [profilePictureError, setProfilePictureError] = useState("");
+  
+  // New states for OCR progress
+  const [ocrProgress, setOcrProgress] = useState(null);
+  const [isOCRProcessing, setIsOCRProcessing] = useState(false);
 
   const handleFileUpload = async (event) => {
     const file = event.target.files[0];
@@ -30,27 +35,22 @@ export default function PdfUpload() {
     setIsLoading(true);
     setError("");
     setPdfText("");
+    setOcrProgress(null);
+    setIsOCRProcessing(false);
 
     try {
-      // Read the file as ArrayBuffer
-      const arrayBuffer = await file.arrayBuffer();
-      
-      // Use pdf.js to parse the PDF and extract text
-      const pdfjsLib = window.pdfjsLib;
-      // Set workerSrc to cdn
-      pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
-      
-      const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
-      const pdf = await loadingTask.promise;
-      
-      // Extract text from all pages
-      let extractedText = "";
-      for (let i = 1; i <= pdf.numPages; i++) {
-        const page = await pdf.getPage(i);
-        const textContent = await page.getTextContent();
-        const pageText = textContent.items.map(item => item.str).join(" ");
-        extractedText += `Page ${i}:\n${pageText}\n\n`;
-      }
+      // Use the enhanced extractTextFromPDF function with OCR support
+      const extractedText = await extractTextFromPDF(file, {
+        useOCR: true,
+        verbose: true,
+        progressCallback: (progress) => {
+          console.log(`Processing page ${progress.current}/${progress.total} - ${progress.stage}`);
+          setOcrProgress(progress);
+          if (progress.stage === 'ocr') {
+            setIsOCRProcessing(true);
+          }
+        }
+      });
       
       setPdfText(extractedText);
     } catch (err) {
@@ -58,6 +58,8 @@ export default function PdfUpload() {
       setError("Error processing PDF. Please try again with a different file.");
     } finally {
       setIsLoading(false);
+      setIsOCRProcessing(false);
+      setOcrProgress(null);
     }
   };
 
@@ -112,9 +114,11 @@ export default function PdfUpload() {
         onFileUpload={handleFileUpload}
         onProfilePictureUpload={handleProfilePictureUpload}
         onRemoveProfilePicture={removeProfilePicture}
+        ocrProgress={ocrProgress}
+        isOCRProcessing={isOCRProcessing}
       />
 
-      {isLoading && <LoadingSection />}
+      {isLoading && <LoadingSection progress={ocrProgress} isOCR={isOCRProcessing} />}
 
       {/* PdfSummaryTable Component - Only show when PDF is processed */}
       {pdfText && (

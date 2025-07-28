@@ -9,7 +9,9 @@ const UploadSection = ({
   profilePictureError,
   onFileUpload,
   onProfilePictureUpload,
-  onRemoveProfilePicture
+  onRemoveProfilePicture,
+  ocrProgress = null,
+  isOCRProcessing = false
 }) => {
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -18,6 +20,8 @@ const UploadSection = ({
           fileName={fileName}
           error={error}
           onFileUpload={onFileUpload}
+          ocrProgress={ocrProgress}
+          isOCRProcessing={isOCRProcessing}
         />
 
         <ProfilePictureUploadCard
