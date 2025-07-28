@@ -1,7 +1,7 @@
 import config from '@/configs';
+import { detectSector, generateProposalSummary, generateResumeJSON, generateTailoredResumeJSON, generateTenderResponse } from '@/pages/api/geminiApi';
 import Avatar from "@/public/image.jpeg";
 import { useMemo, useState } from 'react';
-import { detectSector, generateProposalSummary, generateResumeJSON, generateTailoredResumeJSON, generateTenderResponse } from '@/pages/api/geminiApi';
 
 import ErrorMessage from './ErrorMessage';
 import GeneratorControls from './GeneratorControls';
@@ -21,8 +21,6 @@ const PdfSummary = ({ pdfText, fileName, profilePicture, profilePicturePreview }
     const [error, setError] = useState('');
     const [useMockData, setUseMockData] = useState(false);
     const [showResumeTemplate, setShowResumeTemplate] = useState(false);
-    
-
   
     // State for uploaded profile picture URL
     const [uploadedProfilePictureUrl, setUploadedProfilePictureUrl] = useState('');
@@ -414,27 +412,6 @@ const PdfSummary = ({ pdfText, fileName, profilePicture, profilePicturePreview }
         });
       };
     
-
-      // If using mock data, just set it and show template
-    //   if (useMockData) {
-    //     let mockDataWithPhoto = { ...mockResumeData };
-        
-    //     // Upload profile picture if provided
-    //     if (profilePicture) {
-    //       const uploadedUrl = await uploadProfilePicture(profilePicture);
-    //       if (uploadedUrl) {
-    //         mockDataWithPhoto.profile.photo = uploadedUrl;
-    //       }
-    //     } else if (profilePicturePreview) {
-    //       // Use preview URL for mock data if no file to upload
-    //       mockDataWithPhoto.profile.photo = profilePicturePreview;
-    //     }
-        
-    //     setResumeData(mockDataWithPhoto);
-    //     setShowResumeTemplate(true);
-    //     return;
-    //   }
-
     if (useMockData) {
         let mockDataWithPhoto = { ...mockResumeData };
         
@@ -530,29 +507,7 @@ const PdfSummary = ({ pdfText, fileName, profilePicture, profilePicturePreview }
             generatedResumeData.profile.photo = profilePicturePreview;
         }
     }
-    
-    // // Make sure generatedResumeData.profile exists before setting photo property
-    // if (profilePicture && generatedResumeData && generatedResumeData.profile) {
-    //     // const uploadedUrl = await uploadProfilePicture(profilePicture);
-    //     try{
-    //         const base64Photo = await convertFileToBase64(profilePicture);
-    //         generatedResumeData.profile.photo = base64Photo;
-    //     } catch (error) {
-    //         console.error('❌ Error converting profile picture to base64:', error);
-    //         // Fall back to preview URL if conversion fails
-    //         if (profilePicturePreview) {
-    //             generatedResumeData.profile.photo = profilePicturePreview;
-    //         }
-    //     }
-       
-    // } else if (profilePicturePreview && generatedResumeData) {
-    //     // Create profile object if it doesn't exist
-    //     if (!generatedResumeData.profile) {
-    //         generatedResumeData.profile = {};
-    //     }
-    //     // Use preview URL if available
-    //     generatedResumeData.profile.photo = profilePicturePreview;
-    // }
+
         console.log('🎯 Setting resume data and showing template...');
         setResumeData(generatedResumeData);
         setShowResumeTemplate(true);

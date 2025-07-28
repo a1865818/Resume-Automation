@@ -208,29 +208,6 @@ const ResumeTemplate = ({ resumeData, onBackToSummary, viewMode = 'generate' }) 
           }
         `}</style>
 
-        {/* Hidden Word-compatible version for legacy HTML-based Word generation
-        <div style={{ position: 'absolute', left: '-9999px', top: '-9999px' }}>
-          <div ref={wordResumeRef}>
-            {templateType === 'sme-gateway' ? (
-              <ResumeWordCompatible
-                resumeData={resumeData}
-                mainExperience={mainExperience}
-                experienceLayout={experienceLayout}
-                getExperiencePages={getExperiencePages}
-                pageHeight={pageHeight}
-              />
-            ) : (
-              <ResumeWordCompatibleDefault
-                resumeData={resumeData}
-                mainExperience={mainExperience}
-                experienceLayout={experienceLayout}
-                getExperiencePages={getExperiencePages}
-                pageHeight={pageHeight}
-              />
-            )}
-          </div>
-        </div> */}
-        
         {/* Control Buttons */}
         {!isHistoryView && (
           <>
@@ -339,30 +316,6 @@ const ResumeTemplate = ({ resumeData, onBackToSummary, viewMode = 'generate' }) 
             />
           ))}
         </div>
-
-        {/* Word-Compatible Resume Content (for legacy HTML-based Word generation)
-        <div id="resume-word-content" style={{ 
-          display: downloadFormat === 'word' ? 'block' : 'none',
-          width: '100%'
-        }}>
-          {templateType === 'sme-gateway' ? (
-            <ResumeWordCompatible
-              resumeData={resumeData}
-              mainExperience={mainExperience}
-              experienceLayout={experienceLayout}
-              getExperiencePages={getExperiencePages}
-              pageHeight={pageHeight}
-            />
-          ) : (
-            <ResumeWordCompatibleDefault
-              resumeData={resumeData}
-              mainExperience={mainExperience}
-              experienceLayout={experienceLayout}
-              getExperiencePages={getExperiencePages}
-              pageHeight={pageHeight}
-            />
-          )}
-        </div> */}
 
         <HiddenMeasurementArea
           experienceLayout={experienceLayout}

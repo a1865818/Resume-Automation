@@ -4,12 +4,12 @@ import { Margin, Resolution } from "react-to-pdf";
 export const usePdfSettings = (resumeDimensions) => {
   const [pdfSettings, setPdfSettings] = useState({
     method: "save",
-    resolution: Resolution.HIGH,
-    format: "A4",
+    resolution: Resolution.NORMAL,
+    format: "custom",
     orientation: "landscape",
     margin: Margin.NONE,
     mimeType: "image/jpeg",
-    qualityRatio: 0.92,
+    qualityRatio: 1,
     compress: true,
     useCORS: true,
     customWidth: 0,
@@ -22,15 +22,6 @@ export const usePdfSettings = (resumeDimensions) => {
       [key]: value,
     }));
   };
-
-  //   // Update PDF settings when dimensions change
-  //   const updateDimensions = (width, height) => {
-  //     setPdfSettings((prev) => ({
-  //       ...prev,
-  //       customWidth: width,
-  //       customHeight: height,
-  //     }));
-  //   };
 
   return {
     pdfSettings,
