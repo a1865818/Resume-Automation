@@ -64,7 +64,7 @@ const SaveBanner = ({
     };
   
     return (
-      <div className="bg-white border-b border-gray-200 p-4 space-y-4">
+      <div className="bg-white border-b border-gray-200 p-4 space-y-4 max-w-[1512px] flex flex-col  mx-auto">
         {/* Action Buttons Row */}
         <div className="flex flex-wrap gap-3 items-center justify-between">
           {/* Left side - Tender buttons */}
