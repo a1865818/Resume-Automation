@@ -51,6 +51,7 @@ const PdfSummary = ({ pdfText, fileName, profilePicture, profilePicturePreview }
     const [isGeneratingProposal, setIsGeneratingProposal] = useState(false);
     const [isRegeneratingProposal, setIsRegeneratingProposal] = useState(false);
     const [proposalError, setProposalError] = useState('');
+    const [templateType, setTemplateType] = useState('criteria-statement');
     
 
     
@@ -610,6 +611,7 @@ const PdfSummary = ({ pdfText, fileName, profilePicture, profilePicturePreview }
             onRegenerateProposalSummary={handleRegenerateProposalSummary}
             isRegenerating={isRegeneratingProposal}
             detectedSector={detectedSector}
+            templateType={templateType}
           />
         );
       }
@@ -620,7 +622,7 @@ const PdfSummary = ({ pdfText, fileName, profilePicture, profilePicturePreview }
             tenderData={tenderResponseData}
             candidateName={resumeData?.profile?.name || 'Candidate'}
             onBackToResume={handleBackToResume}
-            templateType="criteria-statement"
+            templateType={templateType}
             // New props for regeneration
             onRegenerateTenderResponse={handleRegenerateTenderResponse}
             isRegenerating={isRegeneratingTender}
@@ -668,7 +670,12 @@ const PdfSummary = ({ pdfText, fileName, profilePicture, profilePicturePreview }
                 <ErrorMessage error={tenderError} />
               </div>
             )}
-            <ResumeTemplate resumeData={resumeData} onBackToSummary={handleBackToSummary} />
+            <ResumeTemplate 
+              resumeData={resumeData} 
+              onBackToSummary={handleBackToSummary}
+              onTemplateTypeChange={setTemplateType}
+              initialTemplateType={templateType}
+            />
           </div>
         );
       }

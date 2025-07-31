@@ -49,6 +49,22 @@ const TemplateToggle = ({ templateType, setTemplateType }) => {
           <input 
             type="radio" 
             name="templateType" 
+            value="consunet"
+            checked={templateType === 'consunet'}
+            onChange={(e) => setTemplateType(e.target.value)}
+          />
+          <span style={{ fontSize: '14px' }}>Consunet</span>
+        </label>
+        
+        <label style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          gap: '5px', 
+          cursor: 'pointer' 
+        }}>
+          <input 
+            type="radio" 
+            name="templateType" 
             value="default"
             checked={templateType === 'default'}
             onChange={(e) => setTemplateType(e.target.value)}
@@ -69,6 +85,8 @@ const TemplateToggle = ({ templateType, setTemplateType }) => {
       }}>
         {templateType === 'sme-gateway' 
           ? '🏢 SME Gateway branding with dual logos'
+          : templateType === 'consunet'
+          ? '🏢 Consunet branding with dual logos'
           : '🎯 Clean design with Papps logo only'
         }
       </div>

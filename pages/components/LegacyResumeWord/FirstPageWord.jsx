@@ -696,8 +696,8 @@ const FirstPageWord = ({ resumeData, mainExperience, scaleFactor, wordPageWidth,
             <img
               // height={Math.round(60 * scaleFactor)}
               height={60}
-              src="/assets/images/SMELogo.jpeg" 
-              alt="SME Gateway"
+              src="/ConsunetLogo.jpeg" 
+              alt="Consunet"
               style={{
                 objectFit: 'contain',
                 border: 'none'

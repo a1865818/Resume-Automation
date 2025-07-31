@@ -117,6 +117,32 @@ const ProfileSection = ({ resumeData, templateType = 'sme-gateway' }) => {
                         <PappsLogo />
                     </div>
                 </div>
+            ) : templateType === 'consunet' ? (
+                // Consunet Template - Two logos
+                <div style={{
+                    position: 'absolute',
+                    top: 0,
+                    right: 0,
+                    zIndex: 10,
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    gap: '0.5rem'
+                }}>
+                    {/* Consunet Logo on the left */}
+                    <div style={{
+                        marginTop: '0.5rem'
+                    }}>
+                        <img src="/ConsunetLogo.jpeg" alt="Consunet Logo" style={{ height: '80px' }} />
+                    </div>
+                    
+                    {/* Papps Logo on the right - made smaller */}
+                    <div style={{
+                        transform: 'scale(0.8)',
+                        transformOrigin: 'top right'
+                    }}>
+                        <PappsLogo />
+                    </div>
+                </div>
             ) : (
                 // Default Template - Only Papps logo, centered
                 <div style={{

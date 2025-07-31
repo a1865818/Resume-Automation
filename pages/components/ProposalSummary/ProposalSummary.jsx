@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-const ProposalSummary = ({ proposalData }) => {
+const ProposalSummary = ({ proposalData, templateType = 'criteria-statement' }) => {
   const [detectedSector, setDetectedSector] = useState('Government');
 
   // Detect sector from proposal data
@@ -102,7 +102,7 @@ const ProposalSummary = ({ proposalData }) => {
           }}>
           </div>
           
-          {/* SME Logo */}
+          {/* Logo based on template type */}
           <div style={{
             height: '170px',
             display: 'inline-block',
@@ -110,8 +110,8 @@ const ProposalSummary = ({ proposalData }) => {
             marginTop: '18.5px',
           }}>
             <img 
-              src="/assets/images/SMELogo.jpeg" 
-              alt="SME Logo" 
+              src={templateType === 'consunet' ? "/ConsunetLogo.jpeg" : "/assets/images/SMELogo.jpeg"}
+              alt={templateType === 'consunet' ? "Consunet Logo" : "SME Logo"}
               style={{ 
                 height: '170px',
                 maxWidth: '300px',

@@ -2576,6 +2576,1183 @@ const useResumeDocx = () => {
       throw error;
     }
   };
+  const generateConsunetDocx = async (
+    resumeData,
+    mainExperience,
+    getExperiencePages
+  ) => {
+    try {
+      console.log("🚀 Starting SME Gateway resume docx generation...");
+
+      // Load images
+      const pappspmLogoBase64 = await imageToBase64("/PappspmLogo.jpeg");
+      const consunetLogoBase64 = await imageToBase64("/ConsunetLogo.jpeg");
+      const decorationLeftBase64 = await imageToBase64(
+        "/assets/images/DecorationLeft.jpeg"
+      );
+      const decorationRightBase64 = await imageToBase64(
+        "/assets/images/DecorationRight.jpeg"
+      );
+
+      const documentChildren = [];
+
+      // Calculate scaling for landscape A4 (matching your scaleFactor)
+      const scaleFactor = 0.74; // 1123 / 1512.8
+
+      // Main table structure for the three-column layout (now with two rows for split backgrounds)
+      const mainTable = new Table({
+        width: { size: 100, type: WidthType.PERCENTAGE },
+        borders: {
+          top: { style: BorderStyle.NONE },
+          bottom: { style: BorderStyle.NONE },
+          left: { style: BorderStyle.NONE },
+          right: { style: BorderStyle.NONE },
+          insideHorizontal: { style: BorderStyle.NONE },
+          insideVertical: { style: BorderStyle.NONE },
+        },
+        rows: [
+          // First row: Profile Photo (left, no padding), Profile (middle, light gray), Referees/Experience (right)
+          new TableRow({
+            children: [
+              // LEFT COLUMN - Profile Photo + Details (Black background, spans two rows)
+              (() => {
+                // Build children starting with photo (if present)
+                const leftChildren = [];
+
+                if (resumeData.profile.photo) {
+                  const imageData = resumeData.profile.photo.includes("data:")
+                    ? getImageData(resumeData.profile.photo)
+                    : null;
+
+                  if (imageData) {
+                    const floatingOptions = {
+                      horizontalPosition: {
+                        // relative: "column", // Relative to table column
+                        // relative: "cell",
+                        // align: "left",
+                        offset: 0, // 500,000 twips = 34.7 cm
+                      },
+                      verticalPosition: {
+                        relative: "paragraph", // Relative to the current paragraph
+                        // align: "top",
+                        offset: -170000, // 100,000 twips = ~7 cm
+                      },
+                      allowOverlap: false,
+                      lockAnchor: true,
+                      behindText: false,
+                      layoutInCell: true,
+                      wrap: {
+                        type: "square",
+                        side: "bothSides",
+                      },
+                    };
+
+                    const imageRun = createImageRun(
+                      imageData,
+                      {
+                        width: Math.round(311 * scaleFactor),
+                        height: Math.round(385 * scaleFactor),
+                      },
+                      floatingOptions // Pass floating options as third parameter
+                    );
+
+                    if (imageRun) {
+                      leftChildren.push(
+                        new Paragraph({
+                          children: [imageRun],
+                          spacing: { before: 0, after: 0 },
+                        }),
+                        new Paragraph({
+                          children: [new TextRun({ text: "" })],
+                          spacing: {
+                            before: 0,
+                            after: Math.round(250 * scaleFactor * 20), // Roughly image height
+                          },
+                        })
+                      );
+                    }
+                  }
+                }
+
+                // Add Profile details directly under the image
+                leftChildren.push(
+                  new Paragraph({
+                    children: [
+                      new TextRun({
+                        text: resumeData.profile.name,
+                        bold: true,
+                        size: Math.round(30 * scaleFactor * 2),
+                        color: "FFFFFF",
+                        font: "Montserrat",
+                      }),
+                    ],
+                    spacing: {
+                      before: Math.round(12 * scaleFactor * 20),
+                      after: Math.round(4 * scaleFactor * 20),
+                    },
+                  }),
+                  new Paragraph({
+                    children: [
+                      new TextRun({
+                        text: resumeData.profile.title,
+                        bold: true,
+                        size: Math.round(12 * scaleFactor * 2),
+                        color: "FFFFFF",
+                        font: "Montserrat",
+                      }),
+                    ],
+                    spacing: { after: Math.round(4 * scaleFactor * 20) },
+                  }),
+                  new Paragraph({
+                    children: [
+                      new TextRun({
+                        text: resumeData.profile.location,
+                        size: Math.round(11 * scaleFactor * 2),
+                        color: "D1D5DB",
+                        font: "Montserrat",
+                        allCaps: true,
+                      }),
+                    ],
+                    spacing: { after: Math.round(12 * scaleFactor * 20) },
+                  }),
+
+                  // SECURITY CLEARANCE
+                  new Paragraph({
+                    children: [
+                      new TextRun({
+                        text: "SECURITY CLEARANCE",
+                        bold: true,
+                        size: Math.round(15 * scaleFactor * 2),
+                        color: "FFFFFF",
+                        font: "Montserrat",
+                      }),
+                    ],
+                    spacing: {
+                      before: Math.round(12 * scaleFactor * 20),
+                      after: Math.round(6 * scaleFactor * 20),
+                    },
+                  }),
+                  createWhiteBulletParagraph(
+                    resumeData.profile.clearance &&
+                      resumeData.profile.clearance !== "NONE"
+                      ? resumeData.profile.clearance
+                      : "Able to obtain security clearance.",
+                    {
+                      size: Math.round(10.5 * scaleFactor * 2),
+                      color: "FFFFFF",
+                      font: "Montserrat",
+                      spacing: { after: Math.round(16 * scaleFactor * 20) },
+                    }
+                  ),
+
+                  // QUALIFICATIONS
+                  new Paragraph({
+                    children: [
+                      new TextRun({
+                        text: "QUALIFICATIONS",
+                        bold: true,
+                        size: Math.round(15 * scaleFactor * 2),
+                        color: "FFFFFF",
+                        font: "Montserrat",
+                      }),
+                    ],
+                    spacing: {
+                      before: Math.round(12 * scaleFactor * 20),
+                      after: Math.round(6 * scaleFactor * 20),
+                    },
+                  }),
+                  ...resumeData.qualifications.map((qual) =>
+                    createWhiteBulletParagraph(qual, {
+                      size: Math.round(10.5 * scaleFactor * 2),
+                      color: "FFFFFF",
+                      font: "Montserrat",
+                      spacing: { after: Math.round(4 * scaleFactor * 20) },
+                    })
+                  ),
+
+                  // AFFILIATIONS
+                  new Paragraph({
+                    children: [
+                      new TextRun({
+                        text: "AFFILIATIONS",
+                        bold: true,
+                        size: Math.round(15 * scaleFactor * 2),
+                        color: "FFFFFF",
+                        font: "Montserrat",
+                      }),
+                    ],
+                    spacing: {
+                      before: Math.round(12 * scaleFactor * 20),
+                      after: Math.round(6 * scaleFactor * 20),
+                    },
+                  }),
+                  ...(resumeData.affiliations &&
+                    resumeData.affiliations.length > 0
+                    ? resumeData.affiliations.map((aff) =>
+                      createWhiteBulletParagraph(aff, {
+                        size: Math.round(10.5 * scaleFactor * 2),
+                        color: "FFFFFF",
+                        font: "Montserrat",
+                        spacing: { after: Math.round(4 * scaleFactor * 20) },
+                      })
+                    )
+                    : [
+                      createWhiteBulletParagraph("No information given", {
+                        size: Math.round(10.5 * scaleFactor * 2),
+                        color: "FFFFFF",
+                        font: "Montserrat",
+                      }),
+                    ])
+                );
+
+                // if (decorationLeftBase64) {
+                //   const imageData = getImageData(decorationLeftBase64);
+                //   if (imageData) {
+                //     const floatingOptions = {
+                //       horizontalPosition: {
+                //         relative: "column",
+                //         // align: "left",
+                //         offset: 0,
+                //       },
+                //       verticalPosition: {
+                //         relative: "column",
+                //         // align: "bottom",
+                //         offset: 0,
+                //       },
+                //       allowOverlap: false,
+                //       lockAnchor: true,
+                //       behindText: false,
+                //       layoutInCell: true,
+                //       wrap: {
+                //         type: "square",
+                //         side: "bothSides",
+                //       },
+                //     };
+                //     const imageRun = createImageRun(
+                //       imageData,
+                //       {
+                //         width: Math.round(270 * scaleFactor),
+                //         height: Math.round(150 * scaleFactor),
+                //       },
+                //       floatingOptions
+                //     );
+                //     if (imageRun) {
+                //       leftChildren.push(
+                //         new Paragraph({
+                //           children: [imageRun],
+                //           alignment: AlignmentType.LEFT,
+                //           spacing: { before: Math.round(12 * scaleFactor * 20) },
+                //         })
+                //       );
+                //     }
+                //   }
+                // }
+
+                return new TableCell({
+                  rowSpan: 2,
+                  width: { size: 22, type: WidthType.PERCENTAGE },
+                  shading: { fill: "000000" },
+                  margins: {
+                    top: 0,
+                    bottom: Math.round(18 * scaleFactor * 20),
+                    left: Math.round(18 * scaleFactor * 20),
+                    right: Math.round(18 * scaleFactor * 20),
+                  },
+                  children: leftChildren,
+                  verticalAlign: VerticalAlign.TOP,
+                });
+              })(),
+              // MIDDLE COLUMN - Profile Section (Light gray)
+              new TableCell({
+                width: { size: 28, type: WidthType.PERCENTAGE },
+                children: [
+                  new Paragraph({
+                    children: [
+                      new TextRun({
+                        text: "PROFILE",
+                        bold: true,
+                        size: Math.round(15 * scaleFactor * 2),
+                        color: "1E293B",
+                        font: "Montserrat",
+                      }),
+                    ],
+                    spacing: {
+                      before: 0,
+                      after: Math.round(9 * scaleFactor * 20),
+                    },
+                  }),
+                  new Paragraph({
+                    children: [
+                      new TextRun({
+                        text: resumeData.profile.description,
+                        size: Math.round(10.5 * scaleFactor * 2),
+                        color: "374151",
+                        font: "Montserrat",
+                      }),
+                    ],
+                    alignment: AlignmentType.JUSTIFIED,
+                    spacing: {
+                      after: Math.round(9 * scaleFactor * 20),
+                    },
+                  }),
+                  new Paragraph({
+                    children: [
+                      new TextRun({
+                        text: resumeData.profile.description2,
+                        size: Math.round(10.5 * scaleFactor * 2),
+                        color: "374151",
+                        font: "Montserrat",
+                      }),
+                    ],
+                    alignment: AlignmentType.JUSTIFIED,
+                  }),
+                ],
+                shading: { fill: "EDEDED" },
+                margins: {
+                  top: 0,
+                  bottom: 0,
+                  left: Math.round(18 * scaleFactor * 20),
+                  right: Math.round(18 * scaleFactor * 20),
+                },
+                verticalAlign: VerticalAlign.TOP,
+              }),
+              // RIGHT COLUMN - Referees & Experience (White background, rowSpan: 2)
+              new TableCell({
+                width: { size: 50, type: WidthType.PERCENTAGE },
+                rowSpan: 2,
+                children: [
+                  // Referees and Logos Section
+                  new Table({
+                    width: { size: 100, type: WidthType.PERCENTAGE },
+                    borders: {
+                      top: { style: BorderStyle.NONE },
+                      bottom: { style: BorderStyle.NONE },
+                      left: { style: BorderStyle.NONE },
+                      right: { style: BorderStyle.NONE },
+                      insideHorizontal: { style: BorderStyle.NONE },
+                      insideVertical: { style: BorderStyle.NONE },
+                    },
+                    rows: [
+                      new TableRow({
+                        children: [
+                          // Referees
+                          new TableCell({
+                            width: { size: 60, type: WidthType.PERCENTAGE },
+                            children: [
+                              new Paragraph({
+                                children: [
+                                  new TextRun({
+                                    text: "REFEREES",
+                                    bold: true,
+                                    size: Math.round(15 * scaleFactor * 2),
+                                    color: "1E293B",
+                                    font: "Montserrat",
+                                  }),
+                                ],
+                                spacing: {
+                                  after: Math.round(9 * scaleFactor * 20),
+                                },
+                              }),
+
+                              ...(resumeData.referees &&
+                                resumeData.referees.length > 0
+                                ? resumeData.referees.flatMap((referee) => [
+                                  new Paragraph({
+                                    children: [
+                                      new TextRun({
+                                        text: referee.title,
+                                        bold: true,
+                                        size: Math.round(
+                                          10.5 * scaleFactor * 2
+                                        ),
+                                        color: "1E293B",
+                                        font: "Montserrat",
+                                      }),
+                                    ],
+                                    spacing: {
+                                      after: Math.round(3 * scaleFactor * 20),
+                                    },
+                                  }),
+                                  new Paragraph({
+                                    children: [
+                                      new TextRun({
+                                        text: `N: ${referee.name}`,
+                                        size: Math.round(
+                                          10.5 * scaleFactor * 2
+                                        ),
+                                        color: "374151",
+                                        font: "Montserrat",
+                                      }),
+                                    ],
+                                    spacing: {
+                                      after: Math.round(3 * scaleFactor * 20),
+                                    },
+                                  }),
+                                  new Paragraph({
+                                    children: [
+                                      new TextRun({
+                                        text: `E: ${referee.email}`,
+                                        size: Math.round(
+                                          10.5 * scaleFactor * 2
+                                        ),
+                                        color: "374151",
+                                        font: "Montserrat",
+                                      }),
+                                    ],
+                                    spacing: {
+                                      after: Math.round(3 * scaleFactor * 20),
+                                    },
+                                  }),
+                                  new Paragraph({
+                                    children: [
+                                      new TextRun({
+                                        text: `M: ${referee.phone}`,
+                                        size: Math.round(
+                                          10.5 * scaleFactor * 2
+                                        ),
+                                        color: "374151",
+                                        font: "Montserrat",
+                                      }),
+                                    ],
+                                    spacing: {
+                                      after: Math.round(
+                                        12 * scaleFactor * 20
+                                      ),
+                                    },
+                                  }),
+                                ])
+                                : [
+                                  new Paragraph({
+                                    children: [
+                                      new TextRun({
+                                        text: "Available upon request",
+                                        italics: true,
+                                        size: Math.round(
+                                          10.5 * scaleFactor * 2
+                                        ),
+                                        color: "374151",
+                                        font: "Montserrat",
+                                      }),
+                                    ],
+                                  }),
+                                ]),
+                            ],
+                            borders: {
+                              top: { style: BorderStyle.NONE },
+                              bottom: { style: BorderStyle.NONE },
+                              left: { style: BorderStyle.NONE },
+                              right: { style: BorderStyle.NONE },
+                            },
+                          }),
+
+                          // Logos (SME + PappsPM) - align horizontally
+                          new TableCell({
+                            width: { size: 40, type: WidthType.PERCENTAGE },
+                            children: (() => {
+                              const logoRuns = [];
+                              if (consunetLogoBase64) {
+                                const smeData = getImageData(consunetLogoBase64);
+                                if (smeData) {
+                                  const smeRun = createImageRun(smeData, {
+                                    width: 80,
+                                    height: 60,
+                                  });
+                                  if (smeRun) logoRuns.push(smeRun);
+                                }
+                              }
+                              if (pappspmLogoBase64) {
+                                const pappsData =
+                                  getImageData(pappspmLogoBase64);
+                                if (pappsData) {
+                                  const pappsRun = createImageRun(pappsData, {
+                                    width: 70,
+                                    height: 60,
+                                  });
+                                  if (pappsRun) {
+                                    logoRuns.push(pappsRun);
+                                  }
+                                }
+                              }
+                              return logoRuns.length
+                                ? [
+                                  new Paragraph({
+                                    children: logoRuns,
+                                    alignment: AlignmentType.RIGHT,
+                                    spacing: {
+                                      after: Math.round(
+                                        10 * scaleFactor * 20
+                                      ),
+                                    },
+                                  }),
+                                ]
+                                : [];
+                            })(),
+                            borders: {
+                              top: { style: BorderStyle.NONE },
+                              bottom: { style: BorderStyle.NONE },
+                              left: { style: BorderStyle.NONE },
+                              right: { style: BorderStyle.NONE },
+                            },
+                          }),
+                        ],
+                      }),
+                    ],
+                  }),
+
+                  // Experience Section
+                  new Paragraph({
+                    children: [
+                      new TextRun({
+                        text: "RELEVANT EXPERIENCE",
+                        bold: true,
+                        size: Math.round(15 * scaleFactor * 2),
+                        color: "1E293B",
+                        font: "Montserrat",
+                      }),
+                    ],
+                    spacing: {
+                      before: Math.round(18 * scaleFactor * 20),
+                      after: Math.round(6 * scaleFactor * 20),
+                    },
+                  }),
+
+                  ...mainExperience.flatMap((exp) => [
+                    new Paragraph({
+                      children: [
+                        new TextRun({
+                          text: exp.title,
+                          bold: true,
+                          size: Math.round(10.5 * scaleFactor * 2),
+                          color: "1E293B",
+                          font: "Montserrat",
+                        }),
+                      ],
+                      spacing: {
+                        before: Math.round(9 * scaleFactor * 20),
+                        after: Math.round(3 * scaleFactor * 20),
+                      },
+                    }),
+
+                    ...(exp.period
+                      ? [
+                        new Paragraph({
+                          children: [
+                            new TextRun({
+                              text: exp.period,
+                              size: Math.round(10.5 * scaleFactor * 2),
+                              color: "4B5563",
+                              font: "Montserrat",
+                            }),
+                          ],
+                          spacing: {
+                            after: Math.round(9 * scaleFactor * 20),
+                          },
+                        }),
+                      ]
+                      : []),
+
+                    ...(exp.responsibilities
+                      ? exp.responsibilities.map((resp) =>
+                        createBulletParagraph(resp, {
+                          size: Math.round(10.5 * scaleFactor * 2),
+                          color: "000000",
+                          font: "Montserrat",
+                          alignment: AlignmentType.JUSTIFIED,
+                          spacing: {
+                            after: Math.round(4 * scaleFactor * 20),
+                          },
+                        })
+                      )
+                      : []),
+                  ]),
+                ],
+                margins: {
+                  top: Math.round(18 * scaleFactor * 20),
+                  bottom: Math.round(18 * scaleFactor * 20),
+                  left: Math.round(18 * scaleFactor * 20),
+                  right: Math.round(18 * scaleFactor * 20),
+                },
+              }),
+            ],
+          }),
+          // Second row: only Middle Skills cell (left & right columns are spanned)
+          new TableRow({
+            children: [
+              // MIDDLE COLUMN - Skills Section (Dark gray)
+              new TableCell({
+                width: { size: 33, type: WidthType.PERCENTAGE },
+                children: [
+                  new Paragraph({
+                    children: [
+                      new TextRun({
+                        text: "SKILLS",
+                        bold: true,
+                        size: Math.round(15 * scaleFactor * 2),
+                        color: "FFFFFF",
+                        font: "Montserrat",
+                      }),
+                    ],
+                    spacing: {
+                      before: Math.round(18 * scaleFactor * 20),
+                      after: Math.round(9 * scaleFactor * 20),
+                    },
+                  }),
+                  ...resumeData.skills.map((skill) =>
+                    createWhiteBulletParagraph(skill, {
+                      size: Math.round(10.5 * scaleFactor * 2),
+                      color: "FFFFFF",
+                      font: "Montserrat",
+                      spacing: {
+                        after: Math.round(4 * scaleFactor * 20),
+                      },
+                    })
+                  ),
+                ],
+                shading: { fill: "9E9E9E" },
+                margins: {
+                  top: 0,
+                  bottom: 0,
+                  left: Math.round(18 * scaleFactor * 20),
+                  right: Math.round(18 * scaleFactor * 20),
+                },
+              }),
+            ],
+          }),
+        ],
+      });
+
+      documentChildren.push(mainTable);
+
+      // Decoration Table (same columns as mainTable, no margin/padding)
+      const decorationTable = new Table({
+        width: { size: 100, type: WidthType.PERCENTAGE },
+        borders: {
+          top: { style: BorderStyle.NONE },
+          bottom: { style: BorderStyle.NONE },
+          left: { style: BorderStyle.NONE },
+          right: { style: BorderStyle.NONE },
+          insideHorizontal: { style: BorderStyle.NONE },
+          insideVertical: { style: BorderStyle.NONE },
+        },
+        rows: [
+          new TableRow({
+            children: [
+              // LEFT COLUMN - decorationLeft
+              new TableCell({
+                width: { size: 22, type: WidthType.PERCENTAGE },
+                shading: { fill: "000000" },
+                children: decorationLeftBase64
+                  ? [
+                    (() => {
+                      const imageData = getImageData(decorationLeftBase64);
+                      if (imageData) {
+                        const imageRun = createImageRun(imageData, {
+                          width: Math.round(270 * scaleFactor),
+                          height: Math.round(150 * scaleFactor),
+                        });
+                        if (imageRun) {
+                          return new Paragraph({
+                            children: [imageRun],
+                            alignment: AlignmentType.LEFT,
+                          });
+                        }
+                      }
+                      return new Paragraph({ children: [] });
+                    })(),
+                  ]
+                  : [new Paragraph({ children: [] })],
+                verticalAlign: VerticalAlign.BOTTOM,
+              }),
+              // MIDDLE COLUMN - empty
+              new TableCell({
+                width: { size: 28, type: WidthType.PERCENTAGE },
+                shading: { fill: "9E9E9E" },
+                children: [new Paragraph({ children: [] })],
+              }),
+              // RIGHT COLUMN - decorationRight
+              new TableCell({
+                width: { size: 50, type: WidthType.PERCENTAGE },
+                children: decorationRightBase64
+                  ? [
+                    (() => {
+                      const imageData = getImageData(decorationRightBase64);
+                      if (imageData) {
+                        const imageRun = createImageRun(imageData, {
+                          width: Math.round(250 * scaleFactor),
+                          height: Math.round(135 * scaleFactor),
+                        });
+                        if (imageRun) {
+                          return new Paragraph({
+                            children: [imageRun],
+                            alignment: AlignmentType.RIGHT,
+                          });
+                        }
+                      }
+                      return new Paragraph({ children: [] });
+                    })(),
+                  ]
+                  : [new Paragraph({ children: [] })],
+                verticalAlign: VerticalAlign.BOTTOM,
+              }),
+            ],
+          }),
+        ],
+      });
+      documentChildren.push(decorationTable);
+
+      // Validate document structure before creating Document
+      validateDocumentStructure(documentChildren);
+
+      // ADDITIONAL EXPERIENCE PAGES (with unified table structure)
+      if (getExperiencePages && getExperiencePages.length > 0) {
+        getExperiencePages.forEach((pageData, pageIndex) => {
+          // Page break
+          documentChildren.push(new Paragraph({ pageBreakBefore: true }));
+
+          const leftColumnItems = pageData.filter(
+            (item) => item.column === "left"
+          );
+          const rightColumnItems = pageData.filter(
+            (item) => item.column === "right"
+          );
+
+          console.log(
+            `SME Gateway Page ${pageIndex + 1} - Left column items:`,
+            leftColumnItems.length
+          );
+          console.log(
+            `SME Gateway Page ${pageIndex + 1} - Right column items:`,
+            rightColumnItems.length
+          );
+
+          // Helper function to render experience items
+          const renderExperienceItems = (items) => {
+            return items.flatMap((item) => {
+              if (item.type === "header") {
+                return [
+                  new Paragraph({
+                    children: [
+                      new TextRun({
+                        text: item.content.title,
+                        bold: true,
+                        size: Math.round(11 * scaleFactor * 2),
+                        color: "1E293B",
+                        font: "Montserrat",
+                      }),
+                    ],
+                    spacing: {
+                      before: Math.round(6 * scaleFactor * 20),
+                      after: Math.round(3 * scaleFactor * 20),
+                    },
+                  }),
+                  ...(item.content.company
+                    ? [
+                      new Paragraph({
+                        children: [
+                          new TextRun({
+                            text: item.content.company,
+                            italics: true,
+                            size: Math.round(11 * scaleFactor * 2),
+                            color: "6B7280",
+                            font: "Montserrat",
+                          }),
+                        ],
+                        spacing: {
+                          after: Math.round(1.5 * scaleFactor * 20),
+                        },
+                      }),
+                    ]
+                    : []),
+                  new Paragraph({
+                    children: [
+                      new TextRun({
+                        text: item.content.period,
+                        size: Math.round(11 * scaleFactor * 2),
+                        color: "4B5563",
+                        font: "Montserrat",
+                      }),
+                    ],
+                    spacing: { after: Math.round(9 * scaleFactor * 20) },
+                  }),
+                ];
+              } else if (item.type === "bullet") {
+                return [
+                  createBulletParagraph(item.content.text, {
+                    size: Math.round(11 * scaleFactor * 2),
+                    color: "374151",
+                    font: "Montserrat",
+                    alignment: AlignmentType.JUSTIFIED,
+                    spacing: { after: Math.round(2 * scaleFactor * 20) },
+                  }),
+                ];
+              }
+              return [];
+            });
+          };
+
+          // second page unified table structure
+          const unifiedTable = new Table({
+            width: { size: 100, type: WidthType.PERCENTAGE },
+            borders: {
+              top: { style: BorderStyle.NONE },
+              bottom: { style: BorderStyle.NONE },
+              left: { style: BorderStyle.NONE },
+              right: { style: BorderStyle.NONE },
+              insideHorizontal: { style: BorderStyle.NONE },
+              insideVertical: { style: BorderStyle.NONE },
+            },
+            rows: [
+              // HEADER ROW (spans all columns)
+              new TableRow({
+                children: [
+                  new TableCell({
+                    columnSpan: 3, // Span across all 3 columns
+                    children: [
+                      // Header content in a nested table
+                      new Table({
+                        width: { size: 100, type: WidthType.PERCENTAGE },
+                        borders: {
+                          top: { style: BorderStyle.NONE },
+                          bottom: { style: BorderStyle.NONE },
+                          left: { style: BorderStyle.NONE },
+                          right: { style: BorderStyle.NONE },
+                          insideHorizontal: { style: BorderStyle.NONE },
+                          insideVertical: { style: BorderStyle.NONE },
+                        },
+                        rows: [
+                          new TableRow({
+                            children: [
+                              new TableCell({
+                                width: { size: 10, type: WidthType.PERCENTAGE },
+                                verticalAlign: VerticalAlign.CENTER,
+                                children: pappspmLogoBase64
+                                  ? (() => {
+                                    const imageData =
+                                      getImageData(pappspmLogoBase64);
+                                    if (imageData) {
+                                      const imageRun = createImageRun(
+                                        imageData,
+                                        {
+                                          width: Math.round(
+                                            160 * scaleFactor
+                                          ),
+                                          height: Math.round(
+                                            125 * scaleFactor
+                                          ),
+                                        }
+                                      );
+
+                                      return imageRun
+                                        ? [
+                                          new Paragraph({
+                                            children: [imageRun],
+                                            alignment: AlignmentType.LEFT,
+                                          }),
+                                        ]
+                                        : [];
+                                    }
+                                    return [];
+                                  })()
+                                  : [],
+                                shading: { fill: "000000" },
+                              }),
+                              new TableCell({
+                                width: { size: 80, type: WidthType.PERCENTAGE },
+                                verticalAlign: VerticalAlign.CENTER,
+                                children: [
+                                  new Paragraph({
+                                    children: [
+                                      new TextRun({
+                                        text: resumeData.profile.name,
+                                        bold: true,
+                                        size: Math.round(28 * scaleFactor * 2),
+                                        color: "FFFFFF",
+                                        font: "Montserrat",
+                                      }),
+                                    ],
+                                    alignment: AlignmentType.CENTER,
+                                    spacing: {
+                                      after: Math.round(4 * scaleFactor * 20),
+                                    },
+                                  }),
+                                  new Paragraph({
+                                    children: [
+                                      new TextRun({
+                                        text: resumeData.profile.title,
+                                        size: Math.round(
+                                          15.5 * scaleFactor * 2
+                                        ),
+                                        color: "FFFFFF",
+                                        font: "Montserrat",
+                                      }),
+                                    ],
+                                    alignment: AlignmentType.CENTER,
+                                  }),
+                                ],
+                                shading: { fill: "000000" },
+                              }),
+                              new TableCell({
+                                width: { size: 10, type: WidthType.PERCENTAGE },
+                                verticalAlign: VerticalAlign.CENTER,
+                                children: consunetLogoBase64
+                                  ? (() => {
+                                    const imageData =
+                                      getImageData(consunetLogoBase64);
+                                    if (imageData) {
+                                      const imageRun = createImageRun(
+                                        imageData,
+                                        {
+                                          width: Math.round(
+                                            175 * scaleFactor
+                                          ),
+                                          height: Math.round(
+                                            125 * scaleFactor
+                                          ),
+                                        }
+                                      );
+
+                                      return imageRun
+                                        ? [
+                                          new Paragraph({
+                                            children: [imageRun],
+                                            alignment: AlignmentType.RIGHT,
+                                          }),
+                                        ]
+                                        : [];
+                                    }
+                                    return [];
+                                  })()
+                                  : [],
+                                shading: { fill: "FFFFFF" },
+                              }),
+                            ],
+                          }),
+                        ],
+                      }),
+                    ],
+                    borders: {
+                      top: { style: BorderStyle.NONE },
+                      bottom: { style: BorderStyle.NONE },
+                      left: { style: BorderStyle.NONE },
+                      right: { style: BorderStyle.NONE },
+                    },
+                  }),
+                ],
+              }),
+
+              // CONTENT ROW (3 columns: left content, vertical line, right content)
+              new TableRow({
+                children: [
+                  // LEFT COLUMN
+                  new TableCell({
+                    width: { size: 49.75, type: WidthType.PERCENTAGE }, // Slightly less than 50% to account for line
+                    children: [
+                      ...renderExperienceItems(leftColumnItems),
+                      // Add empty paragraph if no content to ensure column structure
+                      ...(leftColumnItems.length === 0
+                        ? [
+                          new Paragraph({
+                            children: [new TextRun({ text: "" })],
+                          }),
+                        ]
+                        : []),
+                    ],
+                    margins: {
+                      top: Math.round(12 * scaleFactor * 20),
+                      bottom: Math.round(12 * scaleFactor * 20),
+                      left: Math.round(12 * scaleFactor * 20),
+                      right: Math.round(6 * scaleFactor * 20), // Reduced right margin
+                    },
+                    verticalAlign: VerticalAlign.TOP,
+                    borders: {
+                      top: { style: BorderStyle.NONE },
+                      bottom: { style: BorderStyle.NONE },
+                      left: { style: BorderStyle.NONE },
+                      right: { style: BorderStyle.NONE },
+                    },
+                  }),
+                  // VERTICAL LINE COLUMN (separate column, not a border)
+                  new TableCell({
+                    width: { size: 0.2, type: WidthType.PERCENTAGE }, // Very thin column for the line
+                    children: [], // No content, just the line
+                    shading: { fill: "000000" }, // Black background creates the line
+                    borders: {
+                      top: { style: BorderStyle.NONE },
+                      bottom: { style: BorderStyle.NONE },
+                      left: { style: BorderStyle.NONE },
+                      right: { style: BorderStyle.NONE },
+                    },
+                  }),
+                  // RIGHT COLUMN
+                  new TableCell({
+                    width: { size: 49.75, type: WidthType.PERCENTAGE }, // Slightly less than 50% to account for line
+                    children: [
+                      ...renderExperienceItems(rightColumnItems),
+                      // Add empty paragraph if no content to ensure column structure
+                      ...(rightColumnItems.length === 0
+                        ? [
+                          new Paragraph({
+                            children: [new TextRun({ text: "" })],
+                          }),
+                        ]
+                        : []),
+                    ],
+                    margins: {
+                      top: Math.round(12 * scaleFactor * 20),
+                      bottom: Math.round(12 * scaleFactor * 20),
+                      left: Math.round(12 * scaleFactor * 20), // Reduced left margin
+                      right: Math.round(12 * scaleFactor * 20),
+                    },
+                    verticalAlign: VerticalAlign.TOP,
+                    borders: {
+                      top: { style: BorderStyle.NONE },
+                      bottom: { style: BorderStyle.NONE },
+                      left: { style: BorderStyle.NONE },
+                      right: { style: BorderStyle.NONE },
+                    },
+                  }),
+                ],
+              }),
+            ],
+          });
+
+          documentChildren.push(unifiedTable);
+        });
+      }
+
+      // Create the document
+      const doc = new Document({
+        numbering: {
+          config: [
+            {
+              reference: "bullet-numbering",
+              levels: [
+                {
+                  level: 0,
+                  format: LevelFormat.BULLET,
+                  text: "•",
+                  alignment: AlignmentType.LEFT,
+                  style: {
+                    paragraph: {
+                      indent: {
+                        left: convertInchesToTwip(0.25),
+                        hanging: convertInchesToTwip(0.25),
+                      },
+                    },
+                  },
+                },
+              ],
+            },
+            {
+              reference: "white-bullet-numbering",
+              levels: [
+                {
+                  level: 0,
+                  format: LevelFormat.BULLET,
+                  text: "•",
+                  alignment: AlignmentType.LEFT,
+                  style: {
+                    run: {
+                      color: "FFFFFF",
+                      font: "Montserrat",
+                    },
+                    paragraph: {
+                      indent: {
+                        left: convertInchesToTwip(0.25),
+                        hanging: convertInchesToTwip(0.25),
+                      },
+                    },
+                  },
+                },
+              ],
+            },
+          ],
+        },
+        styles: {
+          default: {
+            document: {
+              run: {
+                font: "Montserrat",
+              },
+            },
+          },
+        },
+        sections: [
+          {
+            properties: {
+              page: {
+                size: {
+                  orientation: PageOrientation.LANDSCAPE,
+                  width: 16838, // A4 landscape width in twips
+                  height: 11906, // A4 landscape height in twips
+                },
+                margin: {
+                  top: 567, // 0.4 inch
+                  right: 567,
+                  bottom: 567,
+                  left: 567,
+                },
+              },
+            },
+            children: documentChildren,
+          },
+        ],
+      });
+
+      // Validate document structure
+      validateDocumentStructure(documentChildren);
+
+      return doc;
+    } catch (error) {
+      console.error("Error generating SME Gateway resume docx:", error);
+      throw error;
+    }
+  };
+
+
+
+  // Download function for Consunet template
+  const downloadConsunetDocx = async (
+    resumeData,
+    mainExperience,
+    getExperiencePages
+  ) => {
+    try {
+      console.log(
+        "🔄 STARTING CONSUNET DOCX DOWNLOAD WITH ROBUST IMAGE HANDLING"
+      );
+
+      const candidateName = resumeData.profile?.name || "Resume";
+      const sanitizedName = candidateName
+        .replace(/[^a-zA-Z0-9\s]/g, "")
+        .replace(/\s+/g, "_")
+        .trim();
+
+      const filename = `${sanitizedName}_Consunet_Resume.docx`;
+
+      console.log("📄 Generating Consunet .docx document...");
+      console.log("✅ Using getImageData for all images - NO .split() method");
+
+      // Generate the document
+      const doc = await generateConsunetDocx(
+        resumeData,
+        mainExperience,
+        getExperiencePages
+      );
+
+      // Pack and save
+      const blob = await Packer.toBlob(doc);
+      saveAs(blob, filename);
+
+      console.log(
+        `✅ Consunet .docx document generated successfully! Filename: ${filename}`
+      );
+      console.log("🎉 This document should open WITHOUT Word warnings!");
+    } catch (error) {
+      console.error("❌ Error generating Consunet .docx document:", error);
+      throw error;
+    }
+  };
 
   // Helper function to create bullet paragraph with proper Word numbering
   const createBulletParagraph = (text, options = {}) => {
@@ -2643,6 +3820,8 @@ const useResumeDocx = () => {
     generateDefaultDocx,
     downloadSMEGatewayDocx,
     downloadDefaultDocx,
+    generateConsunetDocx,
+    downloadConsunetDocx,
   };
 };
 

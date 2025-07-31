@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-const TenderResponseWordCompatible = ({ tenderData }) => {
+const TenderResponseWordCompatible = ({ tenderData, templateType = 'criteria-statement' }) => {
   const [detectedSector, setDetectedSector] = useState('Government');
 
   // Detect sector from tender data
@@ -169,8 +169,8 @@ const TenderResponseWordCompatible = ({ tenderData }) => {
               border: 'none'
             }}>
               <img 
-                src="/assets/images/SMELogo.jpeg" 
-                alt="SME Logo" 
+                src={templateType === 'consunet' ? "/ConsunetLogo.jpeg" : "/assets/images/SMELogo.jpeg"}
+                alt={templateType === 'consunet' ? "Consunet Logo" : "SME Logo"}
                 width="175"
                 height="125"
                 style={{ 

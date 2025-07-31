@@ -26,9 +26,22 @@ import FirstPage from './ResumeTemplate/FirstPage';
 import HiddenMeasurementArea from './ResumeTemplate/HiddenMeasurementArea';
 import PdfSettingsModal from './ResumeTemplate/PdfSettingsModal';
 
-const ResumeTemplate = ({ resumeData, onBackToSummary, viewMode = 'generate' }) => {
+const ResumeTemplate = ({ 
+  resumeData, 
+  onBackToSummary, 
+  viewMode = 'generate',
+  onTemplateTypeChange = null,
+  initialTemplateType = 'default'
+}) => {
     
-    const [templateType, setTemplateType] = useState('sme-gateway'); // 'sme-gateway' or 'default'
+    const [templateType, setTemplateType] = useState(initialTemplateType); // 'sme-gateway', 'consunet', or 'default'
+
+    // Update parent component when template type changes
+    useEffect(() => {
+      if (onTemplateTypeChange) {
+        onTemplateTypeChange(templateType);
+      }
+    }, [templateType, onTemplateTypeChange]);
 
     const [isPdfLoading, setIsPdfLoading] = useState(false);
     const [isWordLoading, setIsWordLoading] = useState(false);
@@ -41,7 +54,7 @@ const ResumeTemplate = ({ resumeData, onBackToSummary, viewMode = 'generate' }) 
     const wordResumeRef = useRef(null);
     
     // Use the new docx hook
-    const { downloadSMEGatewayDocx, downloadDefaultDocx } = useResumeDocx();
+    const { downloadSMEGatewayDocx, downloadDefaultDocx, downloadConsunetDocx } = useResumeDocx();
     
     // Determine if this is history view mode
     const isHistoryView = viewMode === 'history';
@@ -149,6 +162,8 @@ const ResumeTemplate = ({ resumeData, onBackToSummary, viewMode = 'generate' }) 
         
         if (templateType === 'sme-gateway') {
           await downloadSMEGatewayDocx(resumeData, mainExperience, getExperiencePages);
+        } else if (templateType === 'consunet') {
+          await downloadConsunetDocx(resumeData, mainExperience, getExperiencePages);
         } else {
           await downloadDefaultDocx(resumeData, mainExperience, getExperiencePages);
         }
@@ -253,7 +268,7 @@ const ResumeTemplate = ({ resumeData, onBackToSummary, viewMode = 'generate' }) 
               <div className="flex items-center justify-between flex-wrap gap-4">
                 <div>
                   <h3 className="font-semibold text-blue-900 mb-1">
-                    📋 {templateType === 'sme-gateway' ? 'SME Gateway' : 'Default'} Resume Template
+                    📋 {templateType === 'sme-gateway' ? 'SME Gateway' : templateType === 'consunet' ? 'Consunet' : 'Default'} Resume Template
                   </h3>
                   <p className="text-blue-700 text-sm">
                     Professional resume for: <strong>{resumeData.profile?.name || 'Candidate'}</strong>
@@ -262,7 +277,7 @@ const ResumeTemplate = ({ resumeData, onBackToSummary, viewMode = 'generate' }) 
                     <span className="text-green-600">
                       ✅ Experience Layout: {experienceLayout} | 
                       Pages: {getExperiencePages.length + 1} | 
-                      Template: {templateType === 'sme-gateway' ? 'SME Gateway (with SME logo)' : 'Default (PappsPM only)'}
+                      Template: {templateType === 'sme-gateway' ? 'SME Gateway (with SME logo)' : templateType === 'consunet' ? 'Consunet (with Consunet logo)' : 'Default (PappsPM only)'}
                     </span>
                   </div>
                   <p className="text-green-600 text-xs mt-1">

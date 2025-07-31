@@ -1,7 +1,7 @@
 
 import { useEffect, useState } from 'react';
 
-const TenderResponse = ({ tenderData }) => {
+const TenderResponse = ({ tenderData, templateType = 'criteria-statement' }) => {
   const [detectedSector, setDetectedSector] = useState('Government');
 
   // Detect sector from tender data
@@ -162,7 +162,7 @@ const TenderResponse = ({ tenderData }) => {
           }}>
           </div>
           
-          {/* SME Logo */}
+          {/* Logo based on template type */}
           <div style={{
             height: '170px',
             display: 'inline-block',
@@ -170,8 +170,8 @@ const TenderResponse = ({ tenderData }) => {
             marginTop: '18.5px',
           }}>
             <img 
-              src="/assets/images/SMELogo.jpeg" 
-              alt="SME Logo" 
+              src={templateType === 'consunet' ? "/ConsunetLogo.jpeg" : "/assets/images/SMELogo.jpeg"}
+              alt={templateType === 'consunet' ? "Consunet Logo" : "SME Logo"}
               style={{ 
                 height: '170px',
                 maxWidth: '300px',

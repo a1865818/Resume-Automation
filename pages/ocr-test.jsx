@@ -1,5 +1,9 @@
 import { useState } from 'react';
-import { testOCRFunctionality, extractTextFromPDF, loadPDFJS } from './utils/pdfUtils';
+import {
+    loadPDFJS,
+    testComprehensiveOCR,
+    testOCRFunctionality
+} from './utils/pdfUtils';
 
 export default function OCRTest() {
   const [testResult, setTestResult] = useState(null);
@@ -8,6 +12,26 @@ export default function OCRTest() {
   const [isProcessingPdf, setIsProcessingPdf] = useState(false);
   const [importTest, setImportTest] = useState(null);
   const [pdfjsTest, setPdfjsTest] = useState(null);
+
+  const [comprehensiveResult, setComprehensiveResult] = useState(null);
+  const [isComprehensiveTesting, setIsComprehensiveTesting] = useState(false);
+  const [copyStatus, setCopyStatus] = useState({});
+
+  // Copy to clipboard function
+  const copyToClipboard = async (text, section) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopyStatus(prev => ({ ...prev, [section]: 'Copied!' }));
+      setTimeout(() => {
+        setCopyStatus(prev => ({ ...prev, [section]: '' }));
+      }, 2000);
+    } catch (err) {
+      setCopyStatus(prev => ({ ...prev, [section]: 'Failed to copy' }));
+      setTimeout(() => {
+        setCopyStatus(prev => ({ ...prev, [section]: '' }));
+      }, 2000);
+    }
+  };
 
   const testImport = async () => {
     try {
@@ -57,7 +81,7 @@ export default function OCRTest() {
     }
   };
 
-  const handlePdfUpload = async (event) => {
+  const handleComprehensiveOCRTest = async (event) => {
     const file = event.target.files[0];
     if (!file) return;
 
@@ -66,30 +90,27 @@ export default function OCRTest() {
       return;
     }
 
-    setIsProcessingPdf(true);
-    setPdfResult(null);
+    setIsComprehensiveTesting(true);
+    setComprehensiveResult(null);
 
     try {
-      const extractedText = await extractTextFromPDF(file, {
-        useOCR: true,
-        verbose: true,
-        progressCallback: (progress) => {
-          console.log(`Processing page ${progress.current}/${progress.total} - ${progress.stage}`);
-        }
-      });
-
-      setPdfResult({
+      console.log("Testing comprehensive OCR...");
+      const results = await testComprehensiveOCR(file);
+      console.log("Comprehensive OCR test results:", results);
+      
+      setComprehensiveResult({
         success: true,
-        text: extractedText,
-        length: extractedText.length
+        results: results,
+        message: 'Comprehensive OCR test completed successfully!'
       });
     } catch (error) {
-      setPdfResult({
+      console.error("Comprehensive OCR test error:", error);
+      setComprehensiveResult({
         success: false,
         error: error.message
       });
     } finally {
-      setIsProcessingPdf(false);
+      setIsComprehensiveTesting(false);
     }
   };
 
@@ -180,66 +201,142 @@ export default function OCRTest() {
           )}
         </div>
 
-        {/* PDF Upload Test Section */}
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-xl font-semibold mb-4">PDF OCR Test</h2>
+
+        {/* Comprehensive OCR Test Section */}
+        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+          <h2 className="text-xl font-semibold mb-4">Comprehensive OCR Test (Recommended for Resume Generation)</h2>
           <p className="text-gray-600 mb-4">
-            Upload a PDF file to test OCR extraction on actual documents.
+            Test comprehensive OCR that combines Tesseract text extraction with Gemini skills detection to provide complete content plus skills. Use the "Combined Text (Full Content + Skills)" as input for standard resume generation.
           </p>
           
           <input
             type="file"
             accept=".pdf"
-            onChange={handlePdfUpload}
-            disabled={isProcessingPdf}
-            className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+            onChange={handleComprehensiveOCRTest}
+            disabled={isComprehensiveTesting}
+            className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
           />
           
-          {isProcessingPdf && (
-            <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-md">
-              <p className="text-blue-800">Processing PDF with OCR...</p>
+          {isComprehensiveTesting && (
+            <div className="mt-4 p-4 bg-indigo-50 border border-indigo-200 rounded-md">
+              <p className="text-indigo-800">Testing comprehensive OCR extraction...</p>
             </div>
           )}
           
-          {pdfResult && (
+          {comprehensiveResult && (
             <div className={`mt-4 p-4 rounded-md ${
-              pdfResult.success ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'
+              comprehensiveResult.success ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'
             }`}>
               <h3 className={`font-semibold mb-2 ${
-                pdfResult.success ? 'text-green-800' : 'text-red-800'
+                comprehensiveResult.success ? 'text-green-800' : 'text-red-800'
               }`}>
-                {pdfResult.success ? 'PDF Processing Successful' : 'PDF Processing Failed'}
+                {comprehensiveResult.success ? 'Comprehensive OCR Results' : 'Comprehensive OCR Failed'}
               </h3>
               
-              {pdfResult.success ? (
-                <div>
-                  <p className="text-green-700 mb-2">
-                    Extracted {pdfResult.length} characters of text
-                  </p>
-                  <div className="bg-gray-100 p-3 rounded-md max-h-64 overflow-y-auto">
-                    <pre className="text-sm text-gray-800 whitespace-pre-wrap">
-                      {pdfResult.text.substring(0, 1000)}
-                      {pdfResult.text.length > 1000 && '...'}
-                    </pre>
+              {comprehensiveResult.success && comprehensiveResult.results && (
+                <div className="space-y-4">
+                  {/* Summary Statistics */}
+                  <div className="bg-indigo-50 p-4 rounded-md">
+                    <h4 className="font-semibold text-indigo-800 mb-3">Processing Summary</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
+                      <div className="bg-white p-3 rounded-md border">
+                        <p className="font-semibold text-gray-700">Total Pages</p>
+                        <p className="text-2xl font-bold text-indigo-600">{comprehensiveResult.results.comprehensive.summary.totalPages}</p>
+                      </div>
+                      <div className="bg-white p-3 rounded-md border">
+                        <p className="font-semibold text-gray-700">Pages with Skills</p>
+                        <p className="text-2xl font-bold text-green-600">{comprehensiveResult.results.comprehensive.summary.pagesWithSkills}</p>
+                      </div>
+                      <div className="bg-white p-3 rounded-md border">
+                        <p className="font-semibold text-gray-700">Full Text Length</p>
+                        <p className="text-2xl font-bold text-blue-600">{comprehensiveResult.results.comprehensive.summary.totalFullTextLength}</p>
+                      </div>
+                      <div className="bg-white p-3 rounded-md border">
+                        <p className="font-semibold text-gray-700">Skills Text Length</p>
+                        <p className="text-2xl font-bold text-purple-600">{comprehensiveResult.results.comprehensive.summary.totalSkillsLength}</p>
+                      </div>
+                    </div>
+                    <div className="mt-3 bg-white p-3 rounded-md border">
+                      <p className="font-semibold text-gray-700">Processing Time</p>
+                      <p className="text-lg font-bold text-orange-600">{comprehensiveResult.results.comprehensive.time}ms</p>
+                    </div>
                   </div>
+
+                  {/* Combined Text Result */}
+                  <div className="bg-gray-50 p-4 rounded-md">
+                    <div className="flex justify-between items-center mb-3">
+                      <h4 className="font-semibold text-gray-800">Combined Text (Full Content + Skills)</h4>
+                      <button
+                        onClick={() => copyToClipboard(comprehensiveResult.results.comprehensive.result.combinedText || '', 'comprehensive')}
+                        className="bg-gray-600 text-white px-3 py-1 rounded text-sm hover:bg-gray-700"
+                      >
+                        {copyStatus.comprehensive || 'Copy'}
+                      </button>
+                    </div>
+                    <div className="bg-white p-3 rounded-md max-h-96 overflow-y-auto border">
+                      <pre className="text-sm text-gray-800 whitespace-pre-wrap font-mono">
+                        {comprehensiveResult.results.comprehensive.result.combinedText || 'No text extracted'}
+                      </pre>
+                    </div>
+                  </div>
+
+                  {/* Full Text Only */}
+                  <div className="bg-blue-50 p-4 rounded-md">
+                    <div className="flex justify-between items-center mb-3">
+                      <h4 className="font-semibold text-blue-800">Full Text Only</h4>
+                      <button
+                        onClick={() => copyToClipboard(comprehensiveResult.results.comprehensive.result.fullText || '', 'fullText')}
+                        className="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700"
+                      >
+                        {copyStatus.fullText || 'Copy'}
+                      </button>
+                    </div>
+                    <div className="bg-white p-3 rounded-md max-h-64 overflow-y-auto border">
+                      <pre className="text-sm text-gray-800 whitespace-pre-wrap font-mono">
+                        {comprehensiveResult.results.comprehensive.result.fullText || 'No text extracted'}
+                      </pre>
+                    </div>
+                  </div>
+
+                  {/* Skills Sections Only */}
+                  {comprehensiveResult.results.comprehensive.summary.pagesWithSkills > 0 && (
+                    <div className="bg-purple-50 p-4 rounded-md">
+                      <div className="flex justify-between items-center mb-3">
+                        <h4 className="font-semibold text-purple-800">Skills Sections Only</h4>
+                        <button
+                          onClick={() => {
+                            const skillsText = comprehensiveResult.results.comprehensive.result.pages
+                              .filter(page => page.hasSkillsSection && page.skillsSection)
+                              .map(page => `Page ${page.pageNumber} Skills:\n${page.skillsSection}`)
+                              .join('\n\n');
+                            copyToClipboard(skillsText, 'skillsOnly');
+                          }}
+                          className="bg-purple-600 text-white px-3 py-1 rounded text-sm hover:bg-purple-700"
+                        >
+                          {copyStatus.skillsOnly || 'Copy'}
+                        </button>
+                      </div>
+                      <div className="bg-white p-3 rounded-md max-h-64 overflow-y-auto border">
+                        <pre className="text-sm text-gray-800 whitespace-pre-wrap font-mono">
+                          {comprehensiveResult.results.comprehensive.result.pages
+                            .filter(page => page.hasSkillsSection && page.skillsSection)
+                            .map(page => `Page ${page.pageNumber} Skills:\n${page.skillsSection}`)
+                            .join('\n\n') || 'No skills sections found'}
+                        </pre>
+                      </div>
+                    </div>
+                  )}
                 </div>
-              ) : (
-                <p className="text-red-700">{pdfResult.error}</p>
+              )}
+              
+              {!comprehensiveResult.success && (
+                <p className="text-red-700">{comprehensiveResult.error}</p>
               )}
             </div>
           )}
         </div>
 
-        {/* Instructions */}
-        <div className="mt-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-          <h3 className="font-semibold text-yellow-800 mb-2">Instructions</h3>
-          <ul className="text-yellow-700 text-sm space-y-1">
-            <li>• Run the basic OCR test first to verify Tesseract.js is working</li>
-            <li>• Upload an image-based PDF to test actual OCR functionality</li>
-            <li>• Check the browser console for detailed logging</li>
-            <li>• OCR works best with clear, high-contrast text</li>
-          </ul>
-        </div>
+
       </div>
     </div>
   );

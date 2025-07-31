@@ -84,7 +84,7 @@ const getImageData = (base64String) => {
 
 // Custom hook for docx generation
 const useProposalSummaryDocx = () => {
-  const generateProposalSummaryDocx = async (proposalData, detectedSector = 'Government') => {
+  const generateProposalSummaryDocx = async (proposalData, detectedSector = 'Government', templateType = 'criteria-statement') => {
     try {
       console.log('🚀 Starting docx generation with proposal data:', proposalData);
       
@@ -113,6 +113,7 @@ const useProposalSummaryDocx = () => {
       // Load images with better error handling
       let pappspmLogoBase64 = null;
       let smeLogoBase64 = null;
+      let consunetLogoBase64 = null;
       let bannerImageBase64 = null;
       
       try {
@@ -125,6 +126,12 @@ const useProposalSummaryDocx = () => {
         smeLogoBase64 = await imageToBase64('/assets/images/SMELogo.jpeg');
       } catch (error) {
         console.warn('Failed to load SME logo:', error.message);
+      }
+      
+      try {
+        consunetLogoBase64 = await imageToBase64('/ConsunetLogo.jpeg');
+      } catch (error) {
+        console.warn('Failed to load Consunet logo:', error.message);
       }
       
       try {
@@ -183,7 +190,8 @@ const useProposalSummaryDocx = () => {
                   children: [
                     new Paragraph({
                       children: (() => {
-                        const logoData = getImageData(smeLogoBase64);
+                        const logoBase64 = templateType === 'consunet' ? consunetLogoBase64 : smeLogoBase64;
+                        const logoData = getImageData(logoBase64);
                         return logoData ? [
                           new ImageRun({
                             data: logoData.data,
@@ -195,7 +203,7 @@ const useProposalSummaryDocx = () => {
                           })
                         ] : [
                           new TextRun({
-                            text: "[SME Logo]",
+                            text: templateType === 'consunet' ? "[Consunet Logo]" : "[SME Logo]",
                             italics: true,
                             color: "666666",
                           })
@@ -475,7 +483,7 @@ const useProposalSummaryDocx = () => {
     }
   };
 
-  const downloadProposalSummaryDocx = async (proposalData, detectedSector = 'Government') => {
+  const downloadProposalSummaryDocx = async (proposalData, detectedSector = 'Government', templateType = 'criteria-statement') => {
     try {
       // Validate input data
       if (!proposalData) {
@@ -497,7 +505,7 @@ const useProposalSummaryDocx = () => {
       console.log('📄 Generating true .docx document...');
       
       // Generate the document
-      const doc = await generateProposalSummaryDocx(proposalData, detectedSector);
+      const doc = await generateProposalSummaryDocx(proposalData, detectedSector, templateType);
       
       if (!doc) {
         throw new Error('Failed to generate document');
@@ -533,7 +541,8 @@ const ProposalSummaryWrapper = ({
   onBackToTenderResponse, 
   onRegenerateProposalSummary = null,
   isRegenerating = false,
-  detectedSector = 'Government'
+  detectedSector = 'Government',
+  templateType = 'criteria-statement'
 }) => {
   const [isPdfLoading, setIsPdfLoading] = useState(false);
   const [isWordLoading, setIsWordLoading] = useState(false);
@@ -658,7 +667,7 @@ const ProposalSummaryWrapper = ({
     setIsWordLoading(true);
     
     try {
-      await downloadProposalSummaryDocx(proposalData, detectedSector);
+      await downloadProposalSummaryDocx(proposalData, detectedSector, templateType);
     } catch (error) {
       console.error('Word document generation failed:', error);
       
@@ -904,7 +913,7 @@ const ProposalSummaryWrapper = ({
         overflow: 'hidden'
       }}>
         <div ref={proposalRef}>
-          <ProposalSummary proposalData={proposalData} />
+          <ProposalSummary proposalData={proposalData} templateType={templateType} />
         </div>
       </div>
 
@@ -916,7 +925,7 @@ const ProposalSummaryWrapper = ({
         width: '1012px'
       }}>
         <div ref={wordProposalRef}>
-          <ProposalSummaryWordCompatible proposalData={proposalData} />
+          <ProposalSummaryWordCompatible proposalData={proposalData} templateType={templateType} />
         </div>
       </div>
     </div>

@@ -161,8 +161,9 @@ JSON SCHEMA - Optimized for government tender evaluation:
     "title": "Professional title using government/RFQ terminology",
     "location": "Candidate's actual location (maintain authenticity)",
     "clearance": "Security clearance level or eligibility status",
-    "description": "180-220 words directly addressing top 3-4 essential criteria with government-focused language and quantified achievements",
-    "description2": "180-220 words showcasing additional essential criteria compliance and competitive advantages for government work"
+    //Using third person view with professional tone and sounds natural.
+    "description": "190-220 words directly addressing top 3-4 essential criteria with government-focused language and quantified achievements",
+    "description2": "190-220 words showcasing additional essential criteria compliance and competitive advantages for government work"
   },
   "contact": {
     "email": "email@example.com or null if not provided",
@@ -194,7 +195,9 @@ JSON SCHEMA - Optimized for government tender evaluation:
       "email": "email@example.com" or return empty array if not provided, 
       "phone": "+61 XXX XXX XXX" or return empty array if not provided
     }
-  ]
+  ],
+  "roleTitle": "Exact job title from RFQ",
+  "rfqNumber": "RFQ/tender reference number",
 }
 
 🚨 CRITICAL TENDER OPTIMIZATION RULES:
@@ -371,9 +374,173 @@ async function makeGeminiRequest(prompt, apiKey, temperature, maxTokens) {
   }
 }
 
+// LEGACY CODE - Standard resume generation (non-tailored)
+
+// /**
+//  * Standard resume generation (non-tailored)
+//  * @param {string} resumeText - The resume text content to analyze
+//  * @param {string} [apiKey] - Optional Google API key for Gemini (overrides config)
+//  * @returns {Promise<Object>} - A promise that resolves to the structured resume data
+//  */
+// export async function generateResumeJSON(resumeText, apiKey = null) {
+//   const effectiveApiKey = apiKey || config.geminiApiKey;
+
+//   if (!effectiveApiKey) {
+//     throw new Error(
+//       "Gemini API key is required. Please provide an API key or set it in your environment variables."
+//     );
+//   }
+
+//   // Trim text if it's too long (Gemini has input limits)
+//   const trimmedText =
+//     resumeText.length > 30000
+//       ? resumeText.substring(0, 30000) + "..."
+//       : resumeText;
+
+//   const standardPrompt = `Please analyze the following resume text and return a JSON object with the structured information that matches this exact schema for a professional resume template:
+
+// {
+//   "profile": {
+//     "name": "Full Name",
+//     "title": "PROFESSIONAL TITLE IN CAPS",
+//     "location": "city",
+//     "clearance": "Security clearance level (e.g., NV1, Baseline) or null if not mentioned",
+//     "description": "First paragraph of professional summary focusing on background, experience, and key strengths",
+//     "description2": "Second paragraph of professional summary focusing on additional experience, skills, and suitability for roles"
+//   },
+//   "contact": {
+//     "email": "email@example.com or null if not provided",
+//     "phone": "+61 XXX XXX XXX or null if not provided",
+//     "linkedin": "LinkedIn profile URL or null if not provided"
+//   },
+//   "qualifications": ["List of degrees, certifications, and professional qualifications"],
+//   "affiliations": ["Professional memberships and associations"],
+//   "skills": ["Key technical and professional skills"],
+//   "keyAchievements": ["Major career achievements and accomplishments with quantifiable results where possible"],
+//   "experience": [
+//   //Return 3 most recent positions.
+//     {
+//       "title": "Job Title - Company (Organization if applicable)",
+//       "period": "Start Date - End Date",
+//       "responsibilities": ["Key responsibility or achievement 1", "Key responsibility or achievement 2"]
+//     }
+//   ],
+//   "fullExperience": [
+//   //REturn all positions provided in the resume text
+//     {
+//       "title": "Job Title - Company (Organization if applicable)",
+//       "period": "Start Date - End Date",
+//       "responsibilities": [
+//         "Detailed responsibility or achievement 1",
+//         "Detailed responsibility or achievement 2",
+//         "Maximum 6-8 detailed responsibilities per position"
+//       ]
+//     }
+//   ],
+//   "referees": [
+//     {
+//       "title": "Job title (Company)" or return empty array if not provided,
+//       "name": "Referee Name" or return empty array if not provided,
+//       "email": "email@example.com" or return empty array if not provided,
+//       "phone": "+61 XXX XXX XXX" or return empty array if not provided
+//     }
+//   ]
+// }
+
+// SPECIAL INSTRUCTIONS:
+// - Extract actual information from the resume text.
+// - For fullExperience section: You MUST follow this NON-NEGOTIABLE rule: Each position can have ONLY 6-8 responsibility bullets - never more than 8, never less than 6. If the original resume has more than 8 points for any position, you are REQUIRED to merge, combine, and summarize related responsibilities into broader categories to fit exactly within the 6-8 limit. Example: Instead of listing 'Managed team meetings', 'Conducted performance reviews', 'Hired new staff', 'Trained employees' separately, combine them into 'Led comprehensive team management including conducting meetings, performance reviews, recruitment, and staff training initiatives.' This consolidation is MANDATORY - there are no exceptions. COUNT your bullets for each position and ensure you never exceed 8. If you generate more than 8 bullets for any position, you have failed the task and must restart that section
+// - If the full experience's responsibilities are not provided, do not add that experience to the fullExperience section.
+// - For profile descriptions, write comprehensive paragraphs (150-200 words each) highlighting background, experience, and suitability
+// - Include quantifiable achievements where mentioned
+// - Format job titles as "Position - Company (Department/Organization)" if applicable
+// - For security clearance: ONLY include if explicitly mentioned. Return null if not mentioned
+// - List qualifications in order of relevance/importance
+// - Include both technical and soft skills (top 8 skills, combining related skills like "Python/Django")
+// - If referees are not provided, return an empty array[] for the fields like "title", "name", "email", "phone". Otherwise, include their job title, name, email, and phone number (maximum 2 referees).
+// - For affiliations, must return professional message ("No information given") if not available, otherwise list concisely
+// - Keep formatting professional and consistent
+
+// Resume text to analyze:
+// ${trimmedText}
+
+// Return ONLY the JSON object, no additional text or formatting.`;
+
+//   try {
+//     const response = await makeGeminiRequest(
+//       standardPrompt,
+//       effectiveApiKey,
+//       0.1,
+//       6048
+//     );
+
+//     // Validate and set defaults for required fields
+//     return {
+//       profile: {
+//         name: response.profile?.name || "Unknown Candidate",
+//         title: response.profile?.title || "PROFESSIONAL",
+//         location: response.profile?.location || "",
+//         clearance: response.profile?.clearance || null,
+//         photo: "/api/placeholder/400/600",
+//         description:
+//           response.profile?.description ||
+//           "Professional with extensive experience in their field.",
+//         description2:
+//           response.profile?.description2 ||
+//           "Skilled professional with a strong background in project management and technical expertise.",
+//       },
+//       contact: {
+//         email: response.contact?.email || null,
+//         phone: response.contact?.phone || null,
+//         linkedin: response.contact?.linkedin || null,
+//       },
+//       qualifications: Array.isArray(response.qualifications)
+//         ? response.qualifications
+//         : [],
+//       affiliations: Array.isArray(response.affiliations)
+//         ? response.affiliations
+//         : [],
+//       skills: Array.isArray(response.skills) ? response.skills : [],
+//       keyAchievements: Array.isArray(response.keyAchievements)
+//         ? response.keyAchievements
+//         : [],
+//       experience: Array.isArray(response.experience)
+//         ? response.experience.map((exp) => ({
+//           title: exp.title || "Position",
+//           period: exp.period || "Date not specified",
+//           responsibilities: Array.isArray(exp.responsibilities)
+//             ? exp.responsibilities
+//             : [],
+//         }))
+//         : [],
+//       fullExperience: Array.isArray(response.fullExperience)
+//         ? response.fullExperience.map((exp) => ({
+//           title: exp.title || "Position",
+//           period: exp.period || "Date not specified",
+//           responsibilities: Array.isArray(exp.responsibilities)
+//             ? exp.responsibilities
+//             : [],
+//         }))
+//         : [],
+//       referees:
+//         Array.isArray(response.referees) && response.referees.length > 0
+//           ? response.referees.map((ref) => ({
+//             name: ref?.name,
+//             title: ref?.title,
+//             email: ref?.email,
+//             phone: ref?.phone,
+//           }))
+//           : null,
+//     };
+//   } catch (error) {
+//     console.error("Error generating standard resume:", error);
+//     throw error;
+//   }
+// }
+
 /**
- * Standard resume generation (non-tailored)
- * @param {string} resumeText - The resume text content to analyze
+ * Standard resume generation (non-tailored) - Direct mapping version
+ * @param {string} resumeText - The resume text content to map
  * @param {string} [apiKey] - Optional Google API key for Gemini (overrides config)
  * @returns {Promise<Object>} - A promise that resolves to the structured resume data
  */
@@ -392,73 +559,83 @@ export async function generateResumeJSON(resumeText, apiKey = null) {
       ? resumeText.substring(0, 30000) + "..."
       : resumeText;
 
-  const standardPrompt = `Please analyze the following resume text and return a JSON object with the structured information that matches this exact schema for a professional resume template:
+  const standardPrompt = `Please extract and map the following resume text into a JSON object with the structured information that matches this exact schema. DO NOT summarize, analyze, or rewrite any content - extract the EXACT text as it appears in the original resume:
 
 {
   "profile": {
+  //Return all the exact text from the original file for the profile section. 
+  //For the description and description2, do not missing any text. Note that the input may have multiple paragraphs. 
+  
     "name": "Full Name",
     "title": "PROFESSIONAL TITLE IN CAPS",
     "location": "city",
     "clearance": "Security clearance level (e.g., NV1, Baseline) or null if not mentioned",
-    "description": "First paragraph of professional summary focusing on background, experience, and key strengths",
-    "description2": "Second paragraph of professional summary focusing on additional experience, skills, and suitability for roles"
+    "description": "First paragraph of professional summary - extract exact text, each description around 150-200 words",
+    "description2": "Second paragraph of professional summary - extract exact text, each description around 150-200 words"
   },
   "contact": {
     "email": "email@example.com or null if not provided",
     "phone": "+61 XXX XXX XXX or null if not provided", 
     "linkedin": "LinkedIn profile URL or null if not provided"
   },
-  "qualifications": ["List of degrees, certifications, and professional qualifications"],
-  "affiliations": ["Professional memberships and associations"],
-  "skills": ["Key technical and professional skills"],
-  "keyAchievements": ["Major career achievements and accomplishments with quantifiable results where possible"],
+  "qualifications": ["List of degrees, certifications, and professional qualifications - exact text"],
+  "affiliations": ["Professional memberships and associations - exact text"],
+  "skills": [
+  //Return all the skills in the original file
+  "Key technical and professional skills - exact text"],
+  "keyAchievements": ["Major career achievements and accomplishments - exact text as listed"],
   "experience": [
-  //Return 3 most recent positions.
+  //Return the exact text from the original file for the relevant experience section (this should be the concise/relevant experience section)
+  //Return all the relevant experience sections in the original file
     {
-      "title": "Job Title - Company (Organization if applicable)",
-      "period": "Start Date - End Date",
-      "responsibilities": ["Key responsibility or achievement 1", "Key responsibility or achievement 2"]
+      "title": "Job Title - Company (Organization if applicable) - exact text",
+      "period": "Start Date - End Date - exact text",
+      "responsibilities": ["Exact responsibility text 1", "Exact responsibility text 2"]
     }
   ],
   "fullExperience": [
-  //REturn all positions provided in the resume text
+  //Return all positions provided in the resume text with exact text (this should be the detailed version of the experience section)
     {
-      "title": "Job Title - Company (Organization if applicable)",
-      "period": "Start Date - End Date",
+      "title": "Job Title - Company (Organization if applicable) - exact text",
+      "period": "Start Date - End Date - exact text",
       "responsibilities": [
-        "Detailed responsibility or achievement 1",
-        "Detailed responsibility or achievement 2",
-        "Maximum 6-8 detailed responsibilities per position"
+        "Exact responsibility text 1 as written in original",
+        "Exact responsibility text 2 as written in original",
+        "Copy ALL responsibility bullets exactly as they appear - do not limit to 6-8"
       ]
     }
   ],
   "referees": [
     {
-      "title": "Job title (Company)" or return empty array if not provided,
-      "name": "Referee Name" or return empty array if not provided, 
-      "email": "email@example.com" or return empty array if not provided,
-      "phone": "+61 XXX XXX XXX" or return empty array if not provided
+      "title": "Job title (Company) - exact text" or return empty array if not provided,
+      "name": "Referee Name - exact text" or return empty array if not provided, 
+      "email": "email@example.com - exact text" or return empty array if not provided,
+      "phone": "+61 XXX XXX XXX - exact text" or return empty array if not provided
     }
   ]
 }
 
-SPECIAL INSTRUCTIONS:
-- Extract actual information from the resume text.
-- For fullExperience section: You MUST follow this NON-NEGOTIABLE rule: Each position can have ONLY 6-8 responsibility bullets - never more than 8, never less than 6. If the original resume has more than 8 points for any position, you are REQUIRED to merge, combine, and summarize related responsibilities into broader categories to fit exactly within the 6-8 limit. Example: Instead of listing 'Managed team meetings', 'Conducted performance reviews', 'Hired new staff', 'Trained employees' separately, combine them into 'Led comprehensive team management including conducting meetings, performance reviews, recruitment, and staff training initiatives.' This consolidation is MANDATORY - there are no exceptions. COUNT your bullets for each position and ensure you never exceed 8. If you generate more than 8 bullets for any position, you have failed the task and must restart that section
-- If the full experience's responsibilities are not provided, do not add that experience to the fullExperience section.
-- For profile descriptions, write comprehensive paragraphs (150-200 words each) highlighting background, experience, and suitability
-- Include quantifiable achievements where mentioned
-- Format job titles as "Position - Company (Department/Organization)" if applicable
-- For security clearance: ONLY include if explicitly mentioned. Return null if not mentioned
-- List qualifications in order of relevance/importance
-- Include both technical and soft skills (top 8 skills, combining related skills like "Python/Django")
-- If referees are not provided, return an empty array[] for the fields like "title", "name", "email", "phone". Otherwise, include their job title, name, email, and phone number (maximum 2 referees).
-- For affiliations, must return professional message ("No information given") if not available, otherwise list concisely
-- Keep formatting professional and consistent
+CRITICAL INSTRUCTIONS - DIRECT MAPPING ONLY:
+- DO NOT analyze, summarize, rewrite, or modify ANY text from the original resume.
+- If the original text from resume has "-" or "+" or "." as the bullet point, neglect those bullets and only extract the text as it is, not the bullet point.
+- Extract and copy the EXACT words, phrases, and sentences as they appear
+- DO NOT combine, merge, or consolidate any bullet points or responsibilities.
+- For relevant experience, copy the exact text from the original resume.
+- DO NOT limit the number of responsibility bullets - include ALL as they appear
+- DO NOT paraphrase or reword anything - use the precise original text
+- If text spans multiple lines or bullets, copy each one exactly as a separate item
+- Maintain original formatting, capitalization, and punctuation where possible
+- If a section is not present in the resume, return null or empty array as specified
+- For profile descriptions: Copy the exact text of any professional summary/objective sections
+- For experience: Copy every single bullet point/responsibility exactly as written
+- For skills: Copy the exact skill names/descriptions as listed
+- For qualifications: Copy degree names, institution names, and dates exactly
+- If referees are not provided, return empty array for the fields. If provided, copy exact details
+- For affiliations: Copy exact organization names and membership details, or return "No information given" if not available
 
+Your job is purely extraction and mapping - you are NOT an editor or summarizer.
 
-
-Resume text to analyze:
+Resume text to extract from:
 ${trimmedText}
 
 Return ONLY the JSON object, no additional text or formatting.`;
@@ -503,30 +680,30 @@ Return ONLY the JSON object, no additional text or formatting.`;
         : [],
       experience: Array.isArray(response.experience)
         ? response.experience.map((exp) => ({
-          title: exp.title || "Position",
-          period: exp.period || "Date not specified",
-          responsibilities: Array.isArray(exp.responsibilities)
-            ? exp.responsibilities
-            : [],
-        }))
+            title: exp.title || "Position",
+            period: exp.period || "Date not specified",
+            responsibilities: Array.isArray(exp.responsibilities)
+              ? exp.responsibilities
+              : [],
+          }))
         : [],
       fullExperience: Array.isArray(response.fullExperience)
         ? response.fullExperience.map((exp) => ({
-          title: exp.title || "Position",
-          period: exp.period || "Date not specified",
-          responsibilities: Array.isArray(exp.responsibilities)
-            ? exp.responsibilities
-            : [],
-        }))
+            title: exp.title || "Position",
+            period: exp.period || "Date not specified",
+            responsibilities: Array.isArray(exp.responsibilities)
+              ? exp.responsibilities
+              : [],
+          }))
         : [],
       referees:
         Array.isArray(response.referees) && response.referees.length > 0
           ? response.referees.map((ref) => ({
-            name: ref?.name,
-            title: ref?.title,
-            email: ref?.email,
-            phone: ref?.phone,
-          }))
+              name: ref?.name,
+              title: ref?.title,
+              email: ref?.email,
+              phone: ref?.phone,
+            }))
           : null,
     };
   } catch (error) {
@@ -692,8 +869,9 @@ export async function generateTenderResponse(
     }
     ],
      "desirableCriteria": [
-        ${hasDesirableCriteria
-      ? `
+        ${
+          hasDesirableCriteria
+            ? `
         {
         "criteriaTitle": "Summary",
         "criteriaDescription": "Overall summary of the candidate's qualifications relevant to the desirable criteria",
@@ -706,41 +884,46 @@ export async function generateTenderResponse(
         }
         // Repeat for each desirable criterion from RFQ analysis
         `
-      : `
+            : `
         // CRITICAL: If RFQ analysis shows NO desirable criteria, return EMPTY ARRAY []
         // DO NOT CREATE desirable criteria if none exist in the RFQ analysis
         `
-    }
+        }
     ],
     "additionalInformation": [
       {
-        "criteria": "Security Clearance Status${detectedSector === "Defence"
-      ? " (Essential for Defence roles)"
-      : detectedSector === "ICT"
-        ? " (Often required for government ICT)"
-        : " (If applicable)"
-    }",
-        "response": "Clear statement about current clearance level and ability to obtain/maintain required clearance${detectedSector === "Defence"
-      ? ", including any special defence clearances"
-      : ""
-    }"
+        "criteria": "Security Clearance Status${
+          detectedSector === "Defence"
+            ? " (Essential for Defence roles)"
+            : detectedSector === "ICT"
+            ? " (Often required for government ICT)"
+            : " (If applicable)"
+        }",
+        "response": "Clear statement about current clearance level and ability to obtain/maintain required clearance${
+          detectedSector === "Defence"
+            ? ", including any special defence clearances"
+            : ""
+        }"
       },
       {
         "criteria": "Availability and Start Date",
         "response": "Specific availability information and earliest possible start date for this ${detectedSector} role"
       },
       {
-        "criteria": "Previous Experience with ${detectedSector === "Defence"
-      ? "Defence/Military Projects"
-      : detectedSector === "ICT"
-        ? "Government/Defence ICT Projects"
-        : detectedSector === "Finance"
-          ? "Government/Public Sector Finance"
-          : `Government/${detectedSector} Projects`
-    }",
+        "criteria": "Previous Experience with ${
+          detectedSector === "Defence"
+            ? "Defence/Military Projects"
+            : detectedSector === "ICT"
+            ? "Government/Defence ICT Projects"
+            : detectedSector === "Finance"
+            ? "Government/Public Sector Finance"
+            : `Government/${detectedSector} Projects`
+        }",
         "response": "Details of any previous ${sectorTerminology} work with government or relevant organizations, including duration and nature of projects"
       }
-    ]
+    ],
+        "roleTitle": "Exact job title from RFQ",
+        "rfqNumber": "RFQ/tender reference number"
   }
   
   🔥 CRITICAL WRITING GUIDELINES:
@@ -795,8 +978,9 @@ export async function generateTenderResponse(
   - All content must be truthful and based on actual resume information
   - Use exact project names, companies, and roles from the resume
   - Include specific years of experience and quantifiable metrics
-  - Reference security clearance accurately as stated in resume (especially important for ${detectedSector === "Defence" ? "Defence roles" : "government roles"
-    })
+  - Reference security clearance accurately as stated in resume (especially important for ${
+    detectedSector === "Defence" ? "Defence roles" : "government roles"
+  })
   - Maintain professional government tender standards
   - Every response must demonstrate specific competency for the role
   - Adapt examples to highlight ${detectedSector} sector relevance
@@ -947,6 +1131,8 @@ export async function generateProposalSummary(
   Create a JSON object with this exact structure:
   
   {
+    "roleTitle": "Exact job title from RFQ",
+    "rfqNumber": "RFQ/tender reference number",
     "candidateDetails": {
       "name": "Candidate's full name from tender response",
       "proposedRole": "Application Response to [specific role/project name from RFQ]",
@@ -1192,19 +1378,19 @@ export function formatForTenderTemplate(rawTenderData) {
     // Enhanced desirable criteria handling - ensure empty array if no criteria
     desirableCriteria:
       rawTenderData.desirableCriteria &&
-        Array.isArray(rawTenderData.desirableCriteria) &&
-        rawTenderData.desirableCriteria.length > 0
+      Array.isArray(rawTenderData.desirableCriteria) &&
+      rawTenderData.desirableCriteria.length > 0
         ? rawTenderData.desirableCriteria.map((criteria) => ({
-          criteriaTitle:
-            criteria.criteriaTitle ||
-            criteria.title ||
-            criteria.criteria ||
-            criteria.requirement ||
-            "",
-          criteriaDescription:
-            criteria.criteriaDescription || criteria.description || "",
-          response: criteria.response,
-        }))
+            criteriaTitle:
+              criteria.criteriaTitle ||
+              criteria.title ||
+              criteria.criteria ||
+              criteria.requirement ||
+              "",
+            criteriaDescription:
+              criteria.criteriaDescription || criteria.description || "",
+            response: criteria.response,
+          }))
         : [], // Explicitly return empty array if no desirable criteria
     additionalInformation:
       rawTenderData.additionalInformation?.map((info) => ({

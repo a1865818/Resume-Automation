@@ -65,6 +65,9 @@ export default function PdfUpload() {
       const extractedText = await extractTextFromPDF(file, {
         useOCR: true,
         verbose: true,
+        useComprehensiveOCR: true, // Use the comprehensive OCR approach (same as testComprehensiveOCR)
+        preferGemini: true, // Use Tesseract + Gemini skills detection
+        fallbackToTesseract: true, // Fallback to Tesseract if Gemini fails
         progressCallback: (progress) => {
           console.log(`Processing page ${progress.current}/${progress.total} - ${progress.stage}`);
           setOcrProgress(progress);

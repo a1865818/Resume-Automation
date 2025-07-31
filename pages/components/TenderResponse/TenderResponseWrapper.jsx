@@ -84,7 +84,7 @@ const imageToBase64 = async (imagePath) => {
 
 // Custom hook for tender response docx generation
 const useTenderResponseDocx = () => {
-  const generateTenderResponseDocx = async (tenderData, detectedSector = 'Government') => {
+  const generateTenderResponseDocx = async (tenderData, detectedSector = 'Government', templateType = 'criteria-statement') => {
     try {
       console.log('🚀 Starting tender response docx generation with data:', tenderData);
       
@@ -126,6 +126,7 @@ const useTenderResponseDocx = () => {
       // Load images
       const pappspmLogoBase64 = await imageToBase64('/PappspmLogo.jpeg');
       const smeLogoBase64 = await imageToBase64('/assets/images/SMELogo.jpeg');
+      const consunetLogoBase64 = await imageToBase64('/ConsunetLogo.jpeg');
       const bannerImageBase64 = await imageToBase64('/assets/images/BannerTenderResponse.jpg');
       
       // Create document sections
@@ -178,7 +179,8 @@ const useTenderResponseDocx = () => {
                         children: [
                           new Paragraph({
                             children: (() => {
-                              const logoData = getImageData(smeLogoBase64);
+                              const logoBase64 = templateType === 'consunet' ? consunetLogoBase64 : smeLogoBase64;
+                              const logoData = getImageData(logoBase64);
                               return logoData ? [
                                 new ImageRun({
                                   data: logoData.data,
@@ -190,7 +192,7 @@ const useTenderResponseDocx = () => {
                                 })
                               ] : [
                                 new TextRun({
-                                  text: "[SME Logo]",
+                                  text: templateType === 'consunet' ? "[Consunet Logo]" : "[SME Logo]",
                                   italics: true,
                                   color: "666666",
                                 })
@@ -686,7 +688,7 @@ const useTenderResponseDocx = () => {
     }
   };
 
-  const downloadTenderResponseDocx = async (tenderData, detectedSector = 'Government') => {
+  const downloadTenderResponseDocx = async (tenderData, detectedSector = 'Government', templateType = 'criteria-statement') => {
     try {
       const name = tenderData.candidateDetails?.name || 'Criteria_Statement';
       const sanitizedName = name
@@ -701,7 +703,7 @@ const useTenderResponseDocx = () => {
       console.log('📄 Generating true tender response .docx document...');
       
       // Generate the document
-      const doc = await generateTenderResponseDocx(tenderData, detectedSector);
+      const doc = await generateTenderResponseDocx(tenderData, detectedSector, templateType);
       
       // Pack and save
       const blob = await Packer.toBlob(doc);
@@ -887,7 +889,7 @@ const TenderResponseWrapper = ({
     setIsWordLoading(true);
     
     try {
-      await downloadTenderResponseDocx(tenderData, currentDetectedSector);
+      await downloadTenderResponseDocx(tenderData, currentDetectedSector, templateType);
     } catch (error) {
       alert('There was an error generating the Word document. Please try again.');
     } finally {
@@ -1199,7 +1201,7 @@ const TenderResponseWrapper = ({
         overflow: 'hidden'
       }}>
         <div ref={tenderRef}>
-          <TenderResponseNew tenderData={tenderData} />
+          <TenderResponseNew tenderData={tenderData} templateType={templateType} />
         </div>
       </div>
 
@@ -1211,7 +1213,7 @@ const TenderResponseWrapper = ({
         width: '1012px'
       }}>
         <div ref={wordTenderRef}>
-          <TenderResponseWordCompatible tenderData={tenderData} />
+          <TenderResponseWordCompatible tenderData={tenderData} templateType={templateType} />
         </div>
       </div>
     </div>
