@@ -696,9 +696,42 @@ const useTenderResponseDocx = () => {
         .replace(/\s+/g, '_')
         .trim();
       
-      const rfqNumber = tenderData?.rfqAnalysis?.procurementDetails?.rfqNumber;
-      const rfqSuffix = rfqNumber ? `_${rfqNumber}` : '';
-      const filename = `${sanitizedName}_${detectedSector}_Criteria_Statement${rfqSuffix}.docx`;
+      // Extract RFQ number and role title from tender data
+      // These fields are at the root level of the tender response data
+      const rfqNumber = tenderData?.rfqNumber || '';
+      const roleTitle = tenderData?.roleTitle || '';
+      
+      // Debug logging to help identify data structure issues
+      console.log('🔍 Tender Response Data Structure (DOCX):', {
+        hasRfqNumber: !!tenderData?.rfqNumber,
+        rfqNumber: tenderData?.rfqNumber,
+        hasRoleTitle: !!tenderData?.roleTitle,
+        roleTitle: tenderData?.roleTitle,
+        tenderDataKeys: Object.keys(tenderData || {}),
+        sanitizedRoleTitle: roleTitle
+          .replace(/[^a-zA-Z0-9\s]/g, '')
+          .replace(/\s+/g, '_')
+          .trim(),
+        finalFilename: `PAPPSPM-${rfqNumber}-${roleTitle
+          .replace(/[^a-zA-Z0-9\s]/g, '')
+          .replace(/\s+/g, '_')
+          .trim()}-${sanitizedName}-Evaluation To Criteria.docx`
+      });
+      
+      // Sanitize role title for filename
+      const sanitizedRoleTitle = roleTitle
+        .replace(/[^a-zA-Z0-9\s]/g, '')
+        .replace(/\s+/g, '_')
+        .trim();
+      
+      // Create filename in format: PAPPSPM-RFQnumber-RoleTitle-CandidateName-Evaluation
+      console.log('🔧 Creating filename with values:', {
+        rfqNumber,
+        sanitizedRoleTitle,
+        sanitizedName,
+        originalRoleTitle: roleTitle
+      });
+      const filename = `PAPPSPM-${rfqNumber}-${sanitizedRoleTitle}-${sanitizedName}-Evaluation To Criteria.docx`;
       
       console.log('📄 Generating true tender response .docx document...');
       
@@ -845,9 +878,42 @@ const TenderResponseWrapper = ({
         .replace(/\s+/g, '_')
         .trim();
       
-      const rfqNumber = tenderData?.rfqAnalysis?.procurementDetails?.rfqNumber;
-      const rfqSuffix = rfqNumber ? `_${rfqNumber}` : '';
-      const filename = `${sanitizedName}_${currentDetectedSector}_Criteria_Statement${rfqSuffix}.pdf`;
+      // Extract RFQ number and role title from tender data
+      // These fields are at the root level of the tender response data
+      const rfqNumber = tenderData?.rfqNumber || '';
+      const roleTitle = tenderData?.roleTitle || '';
+      
+      // Debug logging to help identify data structure issues
+      console.log('🔍 Tender Response Data Structure (PDF):', {
+        hasRfqNumber: !!tenderData?.rfqNumber,
+        rfqNumber: tenderData?.rfqNumber,
+        hasRoleTitle: !!tenderData?.roleTitle,
+        roleTitle: tenderData?.roleTitle,
+        tenderDataKeys: Object.keys(tenderData || {}),
+        sanitizedRoleTitle: roleTitle
+          .replace(/[^a-zA-Z0-9\s]/g, '')
+          .replace(/\s+/g, '_')
+          .trim(),
+        finalFilename: `PAPPSPM-${rfqNumber}-${roleTitle
+          .replace(/[^a-zA-Z0-9\s]/g, '')
+          .replace(/\s+/g, '_')
+          .trim()}-${sanitizedName}-Evaluation.pdf`
+      });
+      
+      // Sanitize role title for filename
+      const sanitizedRoleTitle = roleTitle
+        .replace(/[^a-zA-Z0-9\s]/g, '')
+        .replace(/\s+/g, '_')
+        .trim();
+      
+      // Create filename in format: PAPPSPM-RFQnumber-RoleTitle-CandidateName-Evaluation
+      console.log('🔧 Creating PDF filename with values:', {
+        rfqNumber,
+        sanitizedRoleTitle,
+        sanitizedName,
+        originalRoleTitle: roleTitle
+      });
+      const filename = `PAPPSPM-${rfqNumber}-${sanitizedRoleTitle}-${sanitizedName}-Evaluation To Criteria.pdf`;
       
       const options = {
         filename: filename,

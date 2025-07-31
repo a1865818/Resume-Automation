@@ -2508,7 +2508,30 @@ const useResumeDocx = () => {
         .replace(/\s+/g, "_")
         .trim();
 
-      const filename = `${sanitizedName}_SME_Gateway_Resume.docx`;
+      // Extract RFQ number and role title from resume data (for tailored resumes)
+      const rfqNumber = resumeData?.rfqNumber || '';
+      const roleTitle = resumeData?.roleTitle || '';
+
+      // Debug logging to track filename generation
+      console.log('🔍 SME Gateway DOCX Filename Generation:', {
+        hasRfqNumber: !!rfqNumber,
+        rfqNumber: rfqNumber,
+        hasRoleTitle: !!roleTitle,
+        roleTitle: roleTitle,
+        sanitizedName: sanitizedName,
+        isTailoredResume: !!(rfqNumber && roleTitle)
+      });
+
+      // Sanitize role title for filename
+      const sanitizedRoleTitle = roleTitle
+        .replace(/[^a-zA-Z0-9\s]/g, '')
+        .replace(/\s+/g, '_')
+        .trim();
+
+      // Create filename based on whether it's a tailored resume or not
+      const filename = rfqNumber && roleTitle
+        ? `PAPPSPM-${rfqNumber}-${sanitizedRoleTitle}-${sanitizedName}-CV.docx`
+        : `${sanitizedName}_SME_Gateway_Resume.docx`;
 
       console.log("📄 Generating SME Gateway .docx document...");
       console.log("✅ Using getImageData for all images - NO .split() method");
@@ -2551,7 +2574,20 @@ const useResumeDocx = () => {
         .replace(/\s+/g, "_")
         .trim();
 
-      const filename = `${sanitizedName}_Default_Resume.docx`;
+      // Extract RFQ number and role title from resume data (for tailored resumes)
+      const rfqNumber = resumeData?.rfqNumber || '';
+      const roleTitle = resumeData?.roleTitle || '';
+
+      // Sanitize role title for filename
+      const sanitizedRoleTitle = roleTitle
+        .replace(/[^a-zA-Z0-9\s]/g, '')
+        .replace(/\s+/g, '_')
+        .trim();
+
+      // Create filename based on whether it's a tailored resume or not
+      const filename = rfqNumber && roleTitle
+        ? `PAPPSPM-${rfqNumber}-${sanitizedRoleTitle}-${sanitizedName}-CV.docx`
+        : `${sanitizedName}_Default_Resume.docx`;
 
       console.log("📄 Generating Default .docx document...");
       console.log("✅ Using getImageData for all images - NO .split() method");
@@ -3728,7 +3764,20 @@ const useResumeDocx = () => {
         .replace(/\s+/g, "_")
         .trim();
 
-      const filename = `${sanitizedName}_Consunet_Resume.docx`;
+      // Extract RFQ number and role title from resume data (for tailored resumes)
+      const rfqNumber = resumeData?.rfqNumber || '';
+      const roleTitle = resumeData?.roleTitle || '';
+
+      // Sanitize role title for filename
+      const sanitizedRoleTitle = roleTitle
+        .replace(/[^a-zA-Z0-9\s]/g, '')
+        .replace(/\s+/g, '_')
+        .trim();
+
+      // Create filename based on whether it's a tailored resume or not
+      const filename = rfqNumber && roleTitle
+        ? `PAPPSPM-${rfqNumber}-${sanitizedRoleTitle}-${sanitizedName}-CV.docx`
+        : `${sanitizedName}_Consunet_Resume.docx`;
 
       console.log("📄 Generating Consunet .docx document...");
       console.log("✅ Using getImageData for all images - NO .split() method");

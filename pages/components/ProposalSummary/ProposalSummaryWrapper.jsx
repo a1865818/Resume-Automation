@@ -500,7 +500,28 @@ const useProposalSummaryDocx = () => {
         throw new Error('Invalid candidate name');
       }
       
-      const filename = `${sanitizedName}_${detectedSector}_Proposal_Summary.docx`;
+      // Extract RFQ number and role title from proposal data
+      // These fields are at the root level of the proposal data
+      const rfqNumber = proposalData?.rfqNumber || '';
+      const roleTitle = proposalData?.roleTitle || '';
+      
+      // Debug logging to help identify data structure issues
+      console.log('🔍 Proposal Summary Data Structure (DOCX):', {
+        hasRfqNumber: !!proposalData?.rfqNumber,
+        rfqNumber: proposalData?.rfqNumber,
+        hasRoleTitle: !!proposalData?.roleTitle,
+        roleTitle: proposalData?.roleTitle,
+        proposalDataKeys: Object.keys(proposalData || {})
+      });
+      
+      // Sanitize role title for filename
+      const sanitizedRoleTitle = roleTitle
+        .replace(/[^a-zA-Z0-9\s]/g, '')
+        .replace(/\s+/g, '_')
+        .trim();
+      
+      // Create filename in format: PAPPSPM-RFQnumber-RoleTitle-CandidateName-Proposal
+      const filename = `PAPPSPM-${rfqNumber}-${sanitizedRoleTitle}-${sanitizedName}-Proposal.docx`;
       
       console.log('📄 Generating true .docx document...');
       
@@ -624,8 +645,28 @@ const ProposalSummaryWrapper = ({
         .replace(/\s+/g, '_')
         .trim();
       
-      // Enhanced filename with RFQ info if available
-      const filename = `${sanitizedName}_${detectedSector}_Proposal_Summary.pdf`;
+      // Extract RFQ number and role title from proposal data
+      // These fields are at the root level of the proposal data
+      const rfqNumber = proposalData?.rfqNumber || '';
+      const roleTitle = proposalData?.roleTitle || '';
+      
+      // Debug logging to help identify data structure issues
+      console.log('🔍 Proposal Summary Data Structure (PDF):', {
+        hasRfqNumber: !!proposalData?.rfqNumber,
+        rfqNumber: proposalData?.rfqNumber,
+        hasRoleTitle: !!proposalData?.roleTitle,
+        roleTitle: proposalData?.roleTitle,
+        proposalDataKeys: Object.keys(proposalData || {})
+      });
+      
+      // Sanitize role title for filename
+      const sanitizedRoleTitle = roleTitle
+        .replace(/[^a-zA-Z0-9\s]/g, '')
+        .replace(/\s+/g, '_')
+        .trim();
+      
+      // Create filename in format: PAPPSPM-RFQnumber-RoleTitle-CandidateName-Proposal
+      const filename = `PAPPSPM-${rfqNumber}-${sanitizedRoleTitle}-${sanitizedName}-Proposal.pdf`;
       
       const options = {
         filename: filename,

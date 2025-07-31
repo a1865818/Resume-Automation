@@ -579,6 +579,9 @@ const PdfSummary = ({ pdfText, fileName, profilePicture, profilePicturePreview }
     const formatForTenderTemplate = (rawTenderData) => {
         // Ensure the data structure matches exactly what the template expects
         return {
+          // Preserve metadata fields for filename generation
+          roleTitle: rawTenderData.roleTitle,
+          rfqNumber: rawTenderData.rfqNumber,
           candidateDetails: {
             name: rawTenderData.candidateDetails?.name || 'Candidate Name',
             proposedRole: rawTenderData.candidateDetails?.proposedRole || 'Application Response',

@@ -100,7 +100,21 @@ const ResumeTemplate = ({ resumeData, onBackToSummary, viewMode = 'generate' }) 
           .replace(/[^a-zA-Z0-9\s]/g, '')
           .replace(/\s+/g, '_')
           .trim();
-        const filename = `${sanitizedName}_Resume.pdf`;
+        
+        // Extract RFQ number and role title from resume data (for tailored resumes)
+        const rfqNumber = resumeData?.rfqNumber || '';
+        const roleTitle = resumeData?.roleTitle || '';
+        
+        // Sanitize role title for filename
+        const sanitizedRoleTitle = roleTitle
+          .replace(/[^a-zA-Z0-9\s]/g, '')
+          .replace(/\s+/g, '_')
+          .trim();
+        
+        // Create filename based on whether it's a tailored resume or not
+        const filename = rfqNumber && roleTitle 
+          ? `PAPPSPM-${rfqNumber}-${sanitizedRoleTitle}-${sanitizedName}-CV.pdf`
+          : `${sanitizedName}_Resume.pdf`;
   
         const options = {
           method: pdfSettings.method,
@@ -168,7 +182,21 @@ const ResumeTemplate = ({ resumeData, onBackToSummary, viewMode = 'generate' }) 
         .replace(/[^a-zA-Z0-9\s]/g, '')
         .replace(/\s+/g, '_')
         .trim();
-      const filename = `${sanitizedName}_Resume.doc`;
+      
+      // Extract RFQ number and role title from resume data (for tailored resumes)
+      const rfqNumber = resumeData?.rfqNumber || '';
+      const roleTitle = resumeData?.roleTitle || '';
+      
+      // Sanitize role title for filename
+      const sanitizedRoleTitle = roleTitle
+        .replace(/[^a-zA-Z0-9\s]/g, '')
+        .replace(/\s+/g, '_')
+        .trim();
+      
+      // Create filename based on whether it's a tailored resume or not
+      const filename = rfqNumber && roleTitle 
+        ? `PAPPSPM-${rfqNumber}-${sanitizedRoleTitle}-${sanitizedName}-CV.doc`
+        : `${sanitizedName}_Resume.doc`;
 
       // Get the Word-compatible content
       const contentDiv = wordResumeRef.current;

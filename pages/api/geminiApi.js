@@ -680,30 +680,30 @@ Return ONLY the JSON object, no additional text or formatting.`;
         : [],
       experience: Array.isArray(response.experience)
         ? response.experience.map((exp) => ({
-            title: exp.title || "Position",
-            period: exp.period || "Date not specified",
-            responsibilities: Array.isArray(exp.responsibilities)
-              ? exp.responsibilities
-              : [],
-          }))
+          title: exp.title || "Position",
+          period: exp.period || "Date not specified",
+          responsibilities: Array.isArray(exp.responsibilities)
+            ? exp.responsibilities
+            : [],
+        }))
         : [],
       fullExperience: Array.isArray(response.fullExperience)
         ? response.fullExperience.map((exp) => ({
-            title: exp.title || "Position",
-            period: exp.period || "Date not specified",
-            responsibilities: Array.isArray(exp.responsibilities)
-              ? exp.responsibilities
-              : [],
-          }))
+          title: exp.title || "Position",
+          period: exp.period || "Date not specified",
+          responsibilities: Array.isArray(exp.responsibilities)
+            ? exp.responsibilities
+            : [],
+        }))
         : [],
       referees:
         Array.isArray(response.referees) && response.referees.length > 0
           ? response.referees.map((ref) => ({
-              name: ref?.name,
-              title: ref?.title,
-              email: ref?.email,
-              phone: ref?.phone,
-            }))
+            name: ref?.name,
+            title: ref?.title,
+            email: ref?.email,
+            phone: ref?.phone,
+          }))
           : null,
     };
   } catch (error) {
@@ -849,6 +849,8 @@ export async function generateTenderResponse(
   Create a JSON object that follows this exact structure for a ${detectedSector} Criteria Statement:
   
   {
+    "roleTitle": "Extract the exact job title from the RFQ analysis or job description",
+    "rfqNumber": "Extract the RFQ/tender reference number from the RFQ analysis or job description",
     "candidateDetails": {
       "name": "Candidate's full name from resume",
       "proposedRole": "Application Response to [specific role/project name from RFQ]",
@@ -869,9 +871,8 @@ export async function generateTenderResponse(
     }
     ],
      "desirableCriteria": [
-        ${
-          hasDesirableCriteria
-            ? `
+        ${hasDesirableCriteria
+      ? `
         {
         "criteriaTitle": "Summary",
         "criteriaDescription": "Overall summary of the candidate's qualifications relevant to the desirable criteria",
@@ -884,46 +885,42 @@ export async function generateTenderResponse(
         }
         // Repeat for each desirable criterion from RFQ analysis
         `
-            : `
+      : `
         // CRITICAL: If RFQ analysis shows NO desirable criteria, return EMPTY ARRAY []
         // DO NOT CREATE desirable criteria if none exist in the RFQ analysis
         `
-        }
+    }
     ],
     "additionalInformation": [
       {
-        "criteria": "Security Clearance Status${
-          detectedSector === "Defence"
-            ? " (Essential for Defence roles)"
-            : detectedSector === "ICT"
-            ? " (Often required for government ICT)"
-            : " (If applicable)"
-        }",
-        "response": "Clear statement about current clearance level and ability to obtain/maintain required clearance${
-          detectedSector === "Defence"
-            ? ", including any special defence clearances"
-            : ""
-        }"
+        "criteria": "Security Clearance Status${detectedSector === "Defence"
+      ? " (Essential for Defence roles)"
+      : detectedSector === "ICT"
+        ? " (Often required for government ICT)"
+        : " (If applicable)"
+    }",
+        "response": "Clear statement about current clearance level and ability to obtain/maintain required clearance${detectedSector === "Defence"
+      ? ", including any special defence clearances"
+      : ""
+    }"
       },
       {
         "criteria": "Availability and Start Date",
         "response": "Specific availability information and earliest possible start date for this ${detectedSector} role"
       },
       {
-        "criteria": "Previous Experience with ${
-          detectedSector === "Defence"
-            ? "Defence/Military Projects"
-            : detectedSector === "ICT"
-            ? "Government/Defence ICT Projects"
-            : detectedSector === "Finance"
-            ? "Government/Public Sector Finance"
-            : `Government/${detectedSector} Projects`
-        }",
+        "criteria": "Previous Experience with ${detectedSector === "Defence"
+      ? "Defence/Military Projects"
+      : detectedSector === "ICT"
+        ? "Government/Defence ICT Projects"
+        : detectedSector === "Finance"
+          ? "Government/Public Sector Finance"
+          : `Government/${detectedSector} Projects`
+    }",
         "response": "Details of any previous ${sectorTerminology} work with government or relevant organizations, including duration and nature of projects"
       }
     ],
-        "roleTitle": "Exact job title from RFQ",
-        "rfqNumber": "RFQ/tender reference number"
+        
   }
   
   🔥 CRITICAL WRITING GUIDELINES:
@@ -978,12 +975,18 @@ export async function generateTenderResponse(
   - All content must be truthful and based on actual resume information
   - Use exact project names, companies, and roles from the resume
   - Include specific years of experience and quantifiable metrics
-  - Reference security clearance accurately as stated in resume (especially important for ${
-    detectedSector === "Defence" ? "Defence roles" : "government roles"
-  })
+  - Reference security clearance accurately as stated in resume (especially important for ${detectedSector === "Defence" ? "Defence roles" : "government roles"
+    })
   - Maintain professional government tender standards
   - Every response must demonstrate specific competency for the role
   - Adapt examples to highlight ${detectedSector} sector relevance
+  
+  🚨 CRITICAL FIELD EXTRACTION RULES:
+  - "roleTitle": MUST extract the actual job title from the RFQ analysis (jobAnalysis.procurementDetails.positionTitle) or job description
+  - "rfqNumber": MUST extract the actual RFQ number from the RFQ analysis (jobAnalysis.procurementDetails.rfqNumber) or job description
+  - DO NOT use placeholder text - extract the real values from the provided data
+  - If the RFQ analysis contains these fields, use them directly
+  - If not found in RFQ analysis, extract from the job description text
   
   🎯 EXTRACTION STRATEGY:
   1. Map resume experience to each essential and desirable criterion
@@ -1131,8 +1134,8 @@ export async function generateProposalSummary(
   Create a JSON object with this exact structure:
   
   {
-    "roleTitle": "Exact job title from RFQ",
-    "rfqNumber": "RFQ/tender reference number",
+    "roleTitle": "Extract the exact job title from the RFQ analysis or job description",
+    "rfqNumber": "Extract the RFQ/tender reference number from the RFQ analysis or job description",
     "candidateDetails": {
       "name": "Candidate's full name from tender response",
       "proposedRole": "Application Response to [specific role/project name from RFQ]",
@@ -1225,6 +1228,13 @@ export async function generateProposalSummary(
   - Use ${detectedSector}-specific terminology and demonstrate sector knowledge
   - Maintain professional executive tone suitable for senior procurement evaluation
   - Ensure each paragraph has distinct focus - avoid overlap or repetition
+  
+  🚨 CRITICAL FIELD EXTRACTION RULES:
+  - "roleTitle": MUST extract the actual job title from the tender response data (tenderResponseData.roleTitle) or RFQ analysis (jobAnalysis.procurementDetails.positionTitle) or job description
+  - "rfqNumber": MUST extract the actual RFQ number from the tender response data (tenderResponseData.rfqNumber) or RFQ analysis (jobAnalysis.procurementDetails.rfqNumber) or job description
+  - DO NOT use placeholder text - extract the real values from the provided data
+  - If the tender response data contains these fields, use them directly
+  - If not found in tender response, check RFQ analysis, then job description
   
   Return ONLY the JSON object, no additional text.`;
 
@@ -1354,8 +1364,21 @@ export function detectSector(jobDescription, jobAnalysis) {
 
 // Enhanced formatForTenderTemplate function with better desirable criteria handling
 export function formatForTenderTemplate(rawTenderData) {
+  // Debug logging to see what data we're receiving
+  console.log('🔧 formatForTenderTemplate - Raw input data:', {
+    hasRoleTitle: !!rawTenderData?.roleTitle,
+    roleTitle: rawTenderData?.roleTitle,
+    hasRfqNumber: !!rawTenderData?.rfqNumber,
+    rfqNumber: rawTenderData?.rfqNumber,
+    inputKeys: Object.keys(rawTenderData || {}),
+    rawData: rawTenderData
+  });
+
   // Ensure the data structure matches exactly what the template expects
-  return {
+  const result = {
+    // Preserve metadata fields for filename generation
+    roleTitle: rawTenderData.roleTitle,
+    rfqNumber: rawTenderData.rfqNumber,
     candidateDetails: {
       name: rawTenderData.candidateDetails?.name || "Candidate Name",
       proposedRole:
@@ -1378,19 +1401,19 @@ export function formatForTenderTemplate(rawTenderData) {
     // Enhanced desirable criteria handling - ensure empty array if no criteria
     desirableCriteria:
       rawTenderData.desirableCriteria &&
-      Array.isArray(rawTenderData.desirableCriteria) &&
-      rawTenderData.desirableCriteria.length > 0
+        Array.isArray(rawTenderData.desirableCriteria) &&
+        rawTenderData.desirableCriteria.length > 0
         ? rawTenderData.desirableCriteria.map((criteria) => ({
-            criteriaTitle:
-              criteria.criteriaTitle ||
-              criteria.title ||
-              criteria.criteria ||
-              criteria.requirement ||
-              "",
-            criteriaDescription:
-              criteria.criteriaDescription || criteria.description || "",
-            response: criteria.response,
-          }))
+          criteriaTitle:
+            criteria.criteriaTitle ||
+            criteria.title ||
+            criteria.criteria ||
+            criteria.requirement ||
+            "",
+          criteriaDescription:
+            criteria.criteriaDescription || criteria.description || "",
+          response: criteria.response,
+        }))
         : [], // Explicitly return empty array if no desirable criteria
     additionalInformation:
       rawTenderData.additionalInformation?.map((info) => ({
@@ -1398,4 +1421,15 @@ export function formatForTenderTemplate(rawTenderData) {
         response: info.response,
       })) || [],
   };
+
+  // Debug logging to see what we're returning
+  console.log('🔧 formatForTenderTemplate - Output data:', {
+    hasRoleTitle: !!result.roleTitle,
+    roleTitle: result.roleTitle,
+    hasRfqNumber: !!result.rfqNumber,
+    rfqNumber: result.rfqNumber,
+    outputKeys: Object.keys(result)
+  });
+
+  return result;
 }
