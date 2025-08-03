@@ -174,34 +174,37 @@ const useTenderResponseDocx = () => {
                           }),
                         ],
                       }),
-                      new TableCell({
-                        width: { size: 80, type: WidthType.PERCENTAGE },
-                        children: [
-                          new Paragraph({
-                            children: (() => {
-                              const logoBase64 = templateType === 'consunet' ? consunetLogoBase64 : smeLogoBase64;
-                              const logoData = getImageData(logoBase64);
-                              return logoData ? [
-                                new ImageRun({
-                                  data: logoData.data,
-                                  transformation: {
-                                    width: 175,
-                                    height: 130,
-                                  },
-                                  type: logoData.type,
-                                })
-                              ] : [
-                                new TextRun({
-                                  text: templateType === 'consunet' ? "[Consunet Logo]" : "[SME Logo]",
-                                  italics: true,
-                                  color: "666666",
-                                })
-                              ];
-                            })(),
-                            alignment: AlignmentType.LEFT,
-                          }),
-                        ],
-                      }),
+                      // Only include the SME/Consunet logo cell if templateType is not 'default'
+                      ...(templateType !== 'default' ? [
+                        new TableCell({
+                          width: { size: 80, type: WidthType.PERCENTAGE },
+                          children: [
+                            new Paragraph({
+                              children: (() => {
+                                const logoBase64 = templateType === 'consunet' ? consunetLogoBase64 : smeLogoBase64;
+                                const logoData = getImageData(logoBase64);
+                                return logoData ? [
+                                  new ImageRun({
+                                    data: logoData.data,
+                                    transformation: {
+                                      width: 175,
+                                      height: 130,
+                                    },
+                                    type: logoData.type,
+                                  })
+                                ] : [
+                                  new TextRun({
+                                    text: templateType === 'consunet' ? "[Consunet Logo]" : "[SME Logo]",
+                                    italics: true,
+                                    color: "666666",
+                                  })
+                                ];
+                              })(),
+                              alignment: AlignmentType.LEFT,
+                            }),
+                          ],
+                        })
+                      ] : []),
                     ],
                   }),
                 ],

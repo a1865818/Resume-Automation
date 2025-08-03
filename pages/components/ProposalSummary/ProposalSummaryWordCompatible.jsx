@@ -68,15 +68,30 @@ const ProposalSummaryWordFormatted = ({ proposalData, templateType = 'criteria-s
                 style={{ objectFit: 'contain', display: 'block', border: 'none' }}
               />
             </td>
-            <td style={{ verticalAlign: 'top', paddingTop: '18px' }}>
-              <img
-                src={templateType === 'consunet' ? "/ConsunetLogo.jpeg" : "/assets/images/SMELogo.jpeg"}
-                alt={templateType === 'consunet' ? "Consunet Logo" : "SME Logo"}
-                width="175"
-                height="125"
-                style={{ objectFit: 'contain', display: 'block', border: 'none' }}
-              />
-            </td>
+            <tr>
+              {/* PappsPM Logo */}
+              <td style={{ verticalAlign: 'top', paddingTop: '18px' }}>
+                <img
+                  src="/PappspmLogo.jpeg"
+                  alt="PappsPM Logo"
+                  width="175"
+                  height="125"
+                  style={{ objectFit: 'contain', display: 'block', border: 'none' }}
+                />
+              </td>
+              {/* SME/Consunet Logo - only if not default */}
+              {templateType !== 'default' && (
+                <td style={{ verticalAlign: 'top', paddingTop: '18px' }}>
+                  <img
+                    src={templateType === 'consunet' ? "/ConsunetLogo.jpeg" : "/assets/images/SMELogo.jpeg"}
+                    alt={templateType === 'consunet' ? "Consunet Logo" : "SME Logo"}
+                    width="175"
+                    height="125"
+                    style={{ objectFit: 'contain', display: 'block', border: 'none' }}
+                  />
+                </td>
+              )}
+            </tr>
           </tr>
         </tbody>
       </table>

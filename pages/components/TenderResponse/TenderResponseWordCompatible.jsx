@@ -144,42 +144,30 @@ const TenderResponseWordCompatible = ({ tenderData, templateType = 'criteria-sta
       {/* Header section with logos - using table for better Word compatibility */}
       <table style={{ width: '100%', marginBottom: '8px', borderCollapse: 'collapse', border: 'none' }}>
         <tbody>
+          {/* Logos Container */}
           <tr>
-            <td style={{ 
-              width: '130px', 
-              height: '125px',
-              verticalAlign: 'top',
-              border: 'none'
-            }}>
+            {/* PappsPM Logo */}
+            <td style={{ verticalAlign: 'top', paddingTop: '18px', border: 'none' }}>
               <img
                 src="/PappspmLogo.jpeg"
-                alt="Pappspm Logo"
-                width="125"
-                height="125"
-                style={{
-                  objectFit: 'contain',
-                  display: 'block',
-                  border: 'none'
-                }}
-              />
-            </td>
-            <td style={{ 
-              verticalAlign: 'top',
-              paddingTop: '18px',
-              border: 'none'
-            }}>
-              <img 
-                src={templateType === 'consunet' ? "/ConsunetLogo.jpeg" : "/assets/images/SMELogo.jpeg"}
-                alt={templateType === 'consunet' ? "Consunet Logo" : "SME Logo"}
+                alt="PappsPM Logo"
                 width="175"
                 height="125"
-                style={{ 
-                  objectFit: 'contain',
-                  display: 'block',
-                  border: 'none'
-                }} 
+                style={{ objectFit: 'contain', display: 'block', border: 'none' }}
               />
             </td>
+            {/* SME/Consunet Logo - only if not default */}
+            {templateType !== 'default' && (
+              <td style={{ verticalAlign: 'top', paddingTop: '18px', border: 'none' }}>
+                <img
+                  src={templateType === 'consunet' ? "/ConsunetLogo.jpeg" : "/assets/images/SMELogo.jpeg"}
+                  alt={templateType === 'consunet' ? "Consunet Logo" : "SME Logo"}
+                  width="175"
+                  height="125"
+                  style={{ objectFit: 'contain', display: 'block', border: 'none' }}
+                />
+              </td>
+            )}
           </tr>
         </tbody>
       </table>

@@ -155,36 +155,38 @@ const useProposalSummaryDocx = () => {
             insideHorizontal: { style: BorderStyle.NONE, size: 0 },
             insideVertical: { style: BorderStyle.NONE, size: 0 }, 
           },
-          rows: [
-            new TableRow({
-              children: [
-                new TableCell({
-                  width: { size: 20, type: WidthType.PERCENTAGE },
-                  children: [
-                    new Paragraph({
-                      children: (() => {
-                        const logoData = getImageData(pappspmLogoBase64);
-                        return logoData ? [
-                          new ImageRun({
-                            data: logoData.data,
-                            transformation: {
-                              width: 145,
-                              height: 130,
-                            },
-                            type: logoData.type,
-                          })
-                        ] : [
-                          new TextRun({
-                            text: "[PappsPM Logo]",
-                            italics: true,
-                            color: "666666",
-                          })
-                        ];
-                      })(),
-                      alignment: AlignmentType.LEFT,
-                    }),
-                  ],
-                }),
+                  rows: [
+          new TableRow({
+            children: [
+              new TableCell({
+                width: { size: 20, type: WidthType.PERCENTAGE },
+                children: [
+                  new Paragraph({
+                    children: (() => {
+                      const logoData = getImageData(pappspmLogoBase64);
+                      return logoData ? [
+                        new ImageRun({
+                          data: logoData.data,
+                          transformation: {
+                            width: 145,
+                            height: 130,
+                          },
+                          type: logoData.type,
+                        })
+                      ] : [
+                        new TextRun({
+                          text: "[PappsPM Logo]",
+                          italics: true,
+                          color: "666666",
+                        })
+                      ];
+                    })(),
+                    alignment: AlignmentType.LEFT,
+                  }),
+                ],
+              }),
+              // Only include the SME/Consunet logo cell if templateType is not 'default'
+              ...(templateType !== 'default' ? [
                 new TableCell({
                   width: { size: 80, type: WidthType.PERCENTAGE },
                   children: [
@@ -212,10 +214,11 @@ const useProposalSummaryDocx = () => {
                       alignment: AlignmentType.LEFT,
                     }),
                   ],
-                }),
-              ],
-            }),
-          ],
+                })
+              ] : []),
+            ],
+          }),
+        ],
         });
         documentChildren.push(logoTable);
       }

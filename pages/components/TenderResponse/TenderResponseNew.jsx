@@ -152,33 +152,33 @@ const TenderResponse = ({ tenderData, templateType = 'criteria-statement' }) => 
         <div>
           {/* PappsPM Logo */}
           <div style={{
-            height: "200px",     
+            height: "200px",
             width: "195px",
             display: 'inline-block',
             verticalAlign: 'top',
             marginRight: '5px',
             background: "url(/PappspmLogo.jpeg) no-repeat center center",
             backgroundSize: 'contain'
-          }}>
-          </div>
-          
-          {/* Logo based on template type */}
-          <div style={{
-            height: '170px',
-            display: 'inline-block',
-            verticalAlign: 'top',
-            marginTop: '18.5px',
-          }}>
-            <img 
-              src={templateType === 'consunet' ? "/ConsunetLogo.jpeg" : "/assets/images/SMELogo.jpeg"}
-              alt={templateType === 'consunet' ? "Consunet Logo" : "SME Logo"}
-              style={{ 
-                height: '170px',
-                maxWidth: '300px',
-                objectFit: 'contain'
-              }} 
-            />
-          </div>
+          }}></div>
+          {/* SME/Consunet Logo - only if not default */}
+          {templateType !== 'default' && (
+            <div style={{
+              height: '170px',
+              display: 'inline-block',
+              verticalAlign: 'top',
+              marginTop: '18.5px',
+            }}>
+              <img
+                src={templateType === 'consunet' ? "/ConsunetLogo.jpeg" : "/assets/images/SMELogo.jpeg"}
+                alt={templateType === 'consunet' ? "Consunet Logo" : "SME Logo"}
+                style={{
+                  height: '170px',
+                  maxWidth: '300px',
+                  objectFit: 'contain'
+                }}
+              />
+            </div>
+          )}
         </div>
         
         {/* Dynamic Sector Header */}

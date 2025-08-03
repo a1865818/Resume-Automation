@@ -102,23 +102,25 @@ const ProposalSummary = ({ proposalData, templateType = 'criteria-statement' }) 
           }}>
           </div>
           
-          {/* Logo based on template type */}
-          <div style={{
-            height: '170px',
-            display: 'inline-block',
-            verticalAlign: 'top',
-            marginTop: '18.5px',
-          }}>
-            <img 
-              src={templateType === 'consunet' ? "/ConsunetLogo.jpeg" : "/assets/images/SMELogo.jpeg"}
-              alt={templateType === 'consunet' ? "Consunet Logo" : "SME Logo"}
-              style={{ 
-                height: '170px',
-                maxWidth: '300px',
-                objectFit: 'contain'
-              }} 
-            />
-          </div>
+          {/* SME/Consunet Logo - only if not default */}
+          {templateType !== 'default' && (
+            <div style={{
+              height: '170px',
+              display: 'inline-block',
+              verticalAlign: 'top',
+              marginTop: '18.5px',
+            }}>
+              <img
+                src={templateType === 'consunet' ? "/ConsunetLogo.jpeg" : "/assets/images/SMELogo.jpeg"}
+                alt={templateType === 'consunet' ? "Consunet Logo" : "SME Logo"}
+                style={{
+                  height: '170px',
+                  maxWidth: '300px',
+                  objectFit: 'contain'
+                }}
+              />
+            </div>
+          )}
         </div>
         
         {/* Dynamic Sector Header */}

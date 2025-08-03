@@ -147,7 +147,8 @@ async function pageNeedsOCR(page) {
     const needsOCR = meaningfulText.length < 50;
 
     console.log(
-      `Page text analysis: "${meaningfulText.substring(0, 100)}..." (${meaningfulText.length
+      `Page text analysis: "${meaningfulText.substring(0, 100)}..." (${
+        meaningfulText.length
       } chars) - Needs OCR: ${needsOCR}`
     );
 
@@ -326,7 +327,7 @@ Return ONLY the extracted text, no additional commentary or formatting.`;
 
     // Make request to Gemini Vision API
     const response = await fetch(
-      "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent",
+      "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
       {
         method: "POST",
         headers: {
@@ -544,7 +545,8 @@ export async function extractTextFromPDF(file, options = {}) {
       });
 
       // Return the combined text which includes both full text and skills sections
-      let extractedText = comprehensiveResult.combinedText || comprehensiveResult.fullText || "";
+      let extractedText =
+        comprehensiveResult.combinedText || comprehensiveResult.fullText || "";
 
       // Apply overlapping prevention to prevent duplicate experience sections
       console.log("Applying overlapping content prevention...");
@@ -640,7 +642,7 @@ export async function extractTextFromPDF(file, options = {}) {
                 console.log(`\n=== PAGE ${i} EXTRACTED TEXT (DIRECT) ===`);
                 console.log(
                   pageText.substring(0, 500) +
-                  (pageText.length > 500 ? "..." : "")
+                    (pageText.length > 500 ? "..." : "")
                 );
                 console.log(`=== END PAGE ${i} DIRECT TEXT ===\n`);
               } else if (useOCR) {
@@ -675,7 +677,8 @@ export async function extractTextFromPDF(file, options = {}) {
                 // Use Tesseract for main text extraction
                 const tesseractResult = await performOCR(canvas, { verbose });
                 console.log(
-                  `Page ${i}: Tesseract extracted ${tesseractResult ? tesseractResult.length : 0
+                  `Page ${i}: Tesseract extracted ${
+                    tesseractResult ? tesseractResult.length : 0
                   } characters`
                 );
 
@@ -699,7 +702,8 @@ export async function extractTextFromPDF(file, options = {}) {
                     !skillsResult.includes("No skills section found") &&
                     skillsResult.trim().length > 0;
                   console.log(
-                    `Page ${i}: Focused skills detection completed: ${skillsResult ? skillsResult.length : 0
+                    `Page ${i}: Focused skills detection completed: ${
+                      skillsResult ? skillsResult.length : 0
                     } characters, hasSkillsSection: ${hasSkillsSection}`
                   );
                 } catch (skillsError) {
@@ -746,21 +750,21 @@ export async function extractTextFromPDF(file, options = {}) {
                 console.log("--- Tesseract Text ---");
                 console.log(
                   tesseractText.substring(0, 500) +
-                  (tesseractText.length > 500 ? "..." : "")
+                    (tesseractText.length > 500 ? "..." : "")
                 );
 
                 if (hasSkillsSection && skillsText.trim().length > 0) {
                   console.log("--- Focused Skills Text ---");
                   console.log(
                     skillsText.substring(0, 300) +
-                    (skillsText.length > 300 ? "..." : "")
+                      (skillsText.length > 300 ? "..." : "")
                   );
                 }
 
                 console.log("--- Combined Final Text ---");
                 console.log(
                   pageText.substring(0, 600) +
-                  (pageText.length > 600 ? "..." : "")
+                    (pageText.length > 600 ? "..." : "")
                 );
                 console.log(`=== END PAGE ${i} TEXT ===\n`);
 
@@ -783,7 +787,8 @@ export async function extractTextFromPDF(file, options = {}) {
                   ) {
                     pageText = highResTextString;
                     console.log(
-                      `Page ${i}: High-res OCR extracted ${pageText ? pageText.length : 0
+                      `Page ${i}: High-res OCR extracted ${
+                        pageText ? pageText.length : 0
                       } characters`
                     );
                   }
@@ -841,8 +846,12 @@ export async function extractTextFromPDF(file, options = {}) {
         );
 
         // Apply overlapping prevention to prevent duplicate experience sections
-        console.log("Applying overlapping content prevention to fallback extraction...");
-        const cleanedText = removeOverlappingExperienceSections(fullText.trim());
+        console.log(
+          "Applying overlapping content prevention to fallback extraction..."
+        );
+        const cleanedText = removeOverlappingExperienceSections(
+          fullText.trim()
+        );
         resolve(cleanedText);
       } catch (error) {
         console.error("Error extracting text from PDF:", error);
@@ -924,7 +933,8 @@ export async function extractTextFromPDFWithComprehensiveOCR(
     console.log("Comprehensive OCR extraction completed:");
     console.log(`- Total text length: ${extractedText.length} characters`);
     console.log(
-      `- Pages with skills: ${comprehensiveResult.summary?.pagesWithSkills || 0
+      `- Pages with skills: ${
+        comprehensiveResult.summary?.pagesWithSkills || 0
       }`
     );
     console.log(
@@ -937,8 +947,6 @@ export async function extractTextFromPDFWithComprehensiveOCR(
     throw new Error(`Comprehensive OCR extraction failed: ${error.message}`);
   }
 }
-
-
 
 /**
  * Extract formatted text from Word document (.docx) with basic HTML formatting
@@ -1519,11 +1527,13 @@ function deduplicateSkillsContent(skillsSections, fullText) {
   }
 
   // Split skills into individual lines for deduplication
-  const skillsLines = cleanedSkills.split('\n').filter(line => line.trim().length > 0);
+  const skillsLines = cleanedSkills
+    .split("\n")
+    .filter((line) => line.trim().length > 0);
   const fullTextLower = fullText.toLowerCase();
 
   // Filter out skills that are already present in the full text
-  const uniqueSkillsLines = skillsLines.filter(skillLine => {
+  const uniqueSkillsLines = skillsLines.filter((skillLine) => {
     const skillLower = skillLine.toLowerCase().trim();
 
     // Skip empty lines
@@ -1538,14 +1548,14 @@ function deduplicateSkillsContent(skillsSections, fullText) {
     }
 
     // Skip if this is just a section header that's already present
-    if (/^skills$/i.test(skillLower) && fullTextLower.includes('skills')) {
+    if (/^skills$/i.test(skillLower) && fullTextLower.includes("skills")) {
       console.log(`Skipping duplicate skills header: "${skillLine}"`);
       return false;
     }
 
     // Skip if this is a bullet point that's already present
-    if (skillLower.startsWith('•') || skillLower.startsWith('-')) {
-      const skillWithoutBullet = skillLower.replace(/^[•\-]\s*/, '').trim();
+    if (skillLower.startsWith("•") || skillLower.startsWith("-")) {
+      const skillWithoutBullet = skillLower.replace(/^[•\-]\s*/, "").trim();
       if (fullTextLower.includes(skillWithoutBullet)) {
         console.log(`Skipping duplicate bullet skill: "${skillLine}"`);
         return false;
@@ -1555,9 +1565,11 @@ function deduplicateSkillsContent(skillsSections, fullText) {
     return true;
   });
 
-  const deduplicatedSkills = uniqueSkillsLines.join('\n');
+  const deduplicatedSkills = uniqueSkillsLines.join("\n");
 
-  console.log(`Skills deduplication: ${skillsLines.length} original lines -> ${uniqueSkillsLines.length} unique lines`);
+  console.log(
+    `Skills deduplication: ${skillsLines.length} original lines -> ${uniqueSkillsLines.length} unique lines`
+  );
 
   return deduplicatedSkills;
 }
@@ -1574,7 +1586,7 @@ function removeOverlappingExperienceSections(text) {
 
   console.log("Checking for overlapping experience sections...");
 
-  const lines = text.split('\n');
+  const lines = text.split("\n");
   const cleanedLines = [];
   let inExperienceSection = false;
   let experienceContent = new Set(); // Track unique experience content
@@ -1592,8 +1604,14 @@ function removeOverlappingExperienceSections(text) {
     const lowerLine = line.toLowerCase();
 
     // Check if this line starts an experience section
-    const isExperienceHeader = /^(experience|work\s+experience|employment\s+history|professional\s+experience)/i.test(lowerLine);
-    const isRelevantExperienceHeader = /^(relevant\s+experience|key\s+experience|selected\s+experience)/i.test(lowerLine);
+    const isExperienceHeader =
+      /^(experience|work\s+experience|employment\s+history|professional\s+experience)/i.test(
+        lowerLine
+      );
+    const isRelevantExperienceHeader =
+      /^(relevant\s+experience|key\s+experience|selected\s+experience)/i.test(
+        lowerLine
+      );
 
     if (isRelevantExperienceHeader) {
       // Starting a relevant experience section
@@ -1615,11 +1633,14 @@ function removeOverlappingExperienceSections(text) {
       }
     } else if (inExperienceSection) {
       // Check if this line contains experience content
-      const isExperienceContent = /(led|managed|developed|implemented|designed|created|maintained|coordinated|delivered|achieved|increased|improved|reduced|established|provided|ensured|maintained|supported|collaborated|worked|responsible|duties|responsibilities|technical\s+program\s+manager|senior\s+project\s+manager|senior\s+technical\s+project\s+manager)/i.test(lowerLine);
+      const isExperienceContent =
+        /(led|managed|developed|implemented|designed|created|maintained|coordinated|delivered|achieved|increased|improved|reduced|established|provided|ensured|maintained|supported|collaborated|worked|responsible|duties|responsibilities|technical\s+program\s+manager|senior\s+project\s+manager|senior\s+technical\s+project\s+manager)/i.test(
+          lowerLine
+        );
 
       if (isExperienceContent) {
         // Check if this content is already present
-        const normalizedContent = lowerLine.replace(/\s+/g, ' ').trim();
+        const normalizedContent = lowerLine.replace(/\s+/g, " ").trim();
 
         if (experienceContent.has(normalizedContent)) {
           console.log(`Skipping duplicate experience content: "${line}"`);
@@ -1638,7 +1659,7 @@ function removeOverlappingExperienceSections(text) {
     }
   }
 
-  const cleanedText = cleanedLines.join('\n');
+  const cleanedText = cleanedLines.join("\n");
   console.log(`Experience deduplication completed`);
 
   return cleanedText;
@@ -1788,7 +1809,7 @@ Return ONLY the skills section content that is VISUALLY PRESENT in the image, no
 
     // Make request to Gemini Vision API
     const response = await fetch(
-      "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent",
+      "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
       {
         method: "POST",
         headers: {
@@ -2085,15 +2106,24 @@ export async function extractComprehensiveTextFromPDF(file, options = {}) {
 
                 if (!skillsInTesseract) {
                   // Deduplicate skills content at page level
-                  const deduplicatedSkills = deduplicateSkillsContent([skillsResult], tesseractResult);
+                  const deduplicatedSkills = deduplicateSkillsContent(
+                    [skillsResult],
+                    tesseractResult
+                  );
                   if (deduplicatedSkills.trim().length > 0) {
                     pageText = `${tesseractResult}\n\n${deduplicatedSkills}`;
-                    console.log(`Page ${i}: Added deduplicated skills section to Tesseract result`);
+                    console.log(
+                      `Page ${i}: Added deduplicated skills section to Tesseract result`
+                    );
                   } else {
-                    console.log(`Page ${i}: All skills were already present in Tesseract result`);
+                    console.log(
+                      `Page ${i}: All skills were already present in Tesseract result`
+                    );
                   }
                 } else {
-                  console.log(`Page ${i}: Skills section already found in Tesseract result`);
+                  console.log(
+                    `Page ${i}: Skills section already found in Tesseract result`
+                  );
                 }
               }
 
@@ -2151,8 +2181,13 @@ export async function extractComprehensiveTextFromPDF(file, options = {}) {
         allResults.combinedTextWithMarkers = allResults.fullText;
 
         // Remove overlapping experience sections from the full text
-        allResults.combinedText = removeOverlappingExperienceSections(allResults.combinedText);
-        allResults.combinedTextWithMarkers = removeOverlappingExperienceSections(allResults.combinedTextWithMarkers);
+        allResults.combinedText = removeOverlappingExperienceSections(
+          allResults.combinedText
+        );
+        allResults.combinedTextWithMarkers =
+          removeOverlappingExperienceSections(
+            allResults.combinedTextWithMarkers
+          );
 
         // Add skills sections if found, with deduplication
         const skillsSections = allResults.pages
@@ -2161,7 +2196,10 @@ export async function extractComprehensiveTextFromPDF(file, options = {}) {
 
         if (skillsSections.length > 0) {
           // Deduplicate skills content to prevent overlapping
-          const deduplicatedSkills = deduplicateSkillsContent(skillsSections, allResults.combinedText);
+          const deduplicatedSkills = deduplicateSkillsContent(
+            skillsSections,
+            allResults.combinedText
+          );
 
           if (deduplicatedSkills.trim().length > 0) {
             // Add skills naturally without markers for exact matching
@@ -2227,7 +2265,8 @@ export async function extractAndParsePDFToJSON(file, options = {}) {
         progressCallback,
         apiKey,
       });
-      extractedText = comprehensiveResult.combinedText || comprehensiveResult.fullText || "";
+      extractedText =
+        comprehensiveResult.combinedText || comprehensiveResult.fullText || "";
     } else {
       console.log("Using standard OCR for text extraction...");
       extractedText = await extractTextFromPDF(file, {
@@ -2242,7 +2281,9 @@ export async function extractAndParsePDFToJSON(file, options = {}) {
       throw new Error("No text extracted from PDF");
     }
 
-    console.log(`Text extraction completed: ${extractedText.length} characters`);
+    console.log(
+      `Text extraction completed: ${extractedText.length} characters`
+    );
 
     // Step 2: Parse the extracted text to structured JSON
     console.log("Parsing extracted text to structured JSON...");
@@ -2253,7 +2294,6 @@ export async function extractAndParsePDFToJSON(file, options = {}) {
 
     console.log("PDF extraction and parsing completed successfully");
     return structuredData;
-
   } catch (error) {
     console.error("PDF extraction and parsing failed:", error);
     throw new Error(`PDF extraction and parsing failed: ${error.message}`);
@@ -2268,10 +2308,7 @@ export async function extractAndParsePDFToJSON(file, options = {}) {
  * @returns {Promise<Object>} - Structured resume data in JSON format
  */
 export async function parseOCRTextToJSON(ocrText, options = {}) {
-  const {
-    verbose = false,
-    apiKey = null,
-  } = options;
+  const { verbose = false, apiKey = null } = options;
 
   console.log("Parsing OCR text to structured JSON using Gemini...");
   console.log(`Input text length: ${ocrText.length} characters`);
@@ -2286,9 +2323,8 @@ export async function parseOCRTextToJSON(ocrText, options = {}) {
     }
 
     // Trim text if it's too long (Gemini has input limits)
-    const trimmedText = ocrText.length > 30000
-      ? ocrText.substring(0, 30000) + "..."
-      : ocrText;
+    const trimmedText =
+      ocrText.length > 30000 ? ocrText.substring(0, 30000) + "..." : ocrText;
 
     const parsingPrompt = `You are an expert resume parser. Parse the following OCR-extracted resume text into a structured JSON object. Extract the EXACT text as it appears in the original - do not summarize, rewrite, or modify any content.
 
@@ -2379,7 +2415,7 @@ Return ONLY the JSON object, no additional text or formatting.`;
 
     // Make request to Gemini API
     const response = await fetch(
-      "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent",
+      "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
       {
         method: "POST",
         headers: {
@@ -2408,7 +2444,8 @@ Return ONLY the JSON object, no additional text or formatting.`;
 
     if (!response.ok) {
       const errorData = await response.json();
-      const errorMessage = errorData.error?.message || `API Error: ${response.status}`;
+      const errorMessage =
+        errorData.error?.message || `API Error: ${response.status}`;
       throw new Error(errorMessage);
     }
 
@@ -2434,45 +2471,64 @@ Return ONLY the JSON object, no additional text or formatting.`;
           location: parsedData.profile?.location || "",
           clearance: parsedData.profile?.clearance || null,
           photo: "/api/placeholder/400/600",
-          description: parsedData.profile?.description || "Professional with extensive experience in their field.",
-          description2: parsedData.profile?.description2 || "Skilled professional with a strong background in project management and technical expertise.",
+          description:
+            parsedData.profile?.description ||
+            "Professional with extensive experience in their field.",
+          description2:
+            parsedData.profile?.description2 ||
+            "Skilled professional with a strong background in project management and technical expertise.",
         },
         contact: {
           email: parsedData.contact?.email || null,
           phone: parsedData.contact?.phone || null,
           linkedin: parsedData.contact?.linkedin || null,
         },
-        qualifications: Array.isArray(parsedData.qualifications) ? parsedData.qualifications : [],
-        affiliations: Array.isArray(parsedData.affiliations) ? parsedData.affiliations : [],
+        qualifications: Array.isArray(parsedData.qualifications)
+          ? parsedData.qualifications
+          : [],
+        affiliations: Array.isArray(parsedData.affiliations)
+          ? parsedData.affiliations
+          : [],
         skills: Array.isArray(parsedData.skills) ? parsedData.skills : [],
-        keyAchievements: Array.isArray(parsedData.keyAchievements) ? parsedData.keyAchievements : [],
+        keyAchievements: Array.isArray(parsedData.keyAchievements)
+          ? parsedData.keyAchievements
+          : [],
         experience: Array.isArray(parsedData.experience)
           ? parsedData.experience.map((exp) => ({
-            title: exp.title || "Position",
-            period: exp.period || "Date not specified",
-            responsibilities: Array.isArray(exp.responsibilities) ? exp.responsibilities : [],
-          }))
+              title: exp.title || "Position",
+              period: exp.period || "Date not specified",
+              responsibilities: Array.isArray(exp.responsibilities)
+                ? exp.responsibilities
+                : [],
+            }))
           : [],
         fullExperience: Array.isArray(parsedData.fullExperience)
           ? parsedData.fullExperience.map((exp) => ({
-            title: exp.title || "Position",
-            period: exp.period || "Date not specified",
-            responsibilities: Array.isArray(exp.responsibilities) ? exp.responsibilities : [],
-          }))
+              title: exp.title || "Position",
+              period: exp.period || "Date not specified",
+              responsibilities: Array.isArray(exp.responsibilities)
+                ? exp.responsibilities
+                : [],
+            }))
           : [],
-        referees: Array.isArray(parsedData.referees) && parsedData.referees.length > 0
-          ? parsedData.referees.map((ref) => ({
-            name: ref?.name,
-            title: ref?.title,
-            email: ref?.email,
-            phone: ref?.phone,
-          }))
-          : null,
+        referees:
+          Array.isArray(parsedData.referees) && parsedData.referees.length > 0
+            ? parsedData.referees.map((ref) => ({
+                name: ref?.name,
+                title: ref?.title,
+                email: ref?.email,
+                phone: ref?.phone,
+              }))
+            : null,
       };
 
       console.log("OCR text parsing completed successfully:");
-      console.log(`- Profile: ${result.profile.name} - ${result.profile.title}`);
-      console.log(`- Experience sections: ${result.experience.length} relevant, ${result.fullExperience.length} full`);
+      console.log(
+        `- Profile: ${result.profile.name} - ${result.profile.title}`
+      );
+      console.log(
+        `- Experience sections: ${result.experience.length} relevant, ${result.fullExperience.length} full`
+      );
       console.log(`- Skills: ${result.skills.length} items`);
       console.log(`- Qualifications: ${result.qualifications.length} items`);
 
@@ -2520,10 +2576,25 @@ export async function testPDFParsingToJSON(file) {
 
     console.log("PDF parsing to JSON test results:");
     console.log("Total processing time:", totalTime, "ms");
-    console.log("Profile:", results.summary.profile, "-", results.summary.title);
-    console.log("Experience sections:", results.summary.experienceCount, "relevant,", results.summary.fullExperienceCount, "full");
+    console.log(
+      "Profile:",
+      results.summary.profile,
+      "-",
+      results.summary.title
+    );
+    console.log(
+      "Experience sections:",
+      results.summary.experienceCount,
+      "relevant,",
+      results.summary.fullExperienceCount,
+      "full"
+    );
     console.log("Skills:", results.summary.skillsCount, "items");
-    console.log("Qualifications:", results.summary.qualificationsCount, "items");
+    console.log(
+      "Qualifications:",
+      results.summary.qualificationsCount,
+      "items"
+    );
 
     return results;
   } catch (error) {

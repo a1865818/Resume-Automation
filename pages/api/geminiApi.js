@@ -104,14 +104,14 @@ Instructions:
 RFQ/Tender Document:
 ${rfqDocument}
 
-Return ONLY the JSON object, no additional text.`;
+The response must Return ONLY the JSON object, no additional text.`;
 
   try {
     const response = await makeGeminiRequest(
       prompt,
       effectiveApiKey,
       0.15,
-      4096
+      14048
     );
     console.log("RFQ Analysis Result:", response);
     return response;
@@ -141,6 +141,8 @@ export async function optimizeResumeForTender(
 
   const prompt = `You are an elite government tender response specialist with expertise in procurement evaluation. Transform this candidate's resume into a winning tender submission that maximizes evaluation scores.
 
+  RETURN ONLY the JSON object, no additional text.
+
 🎯 RFQ ANALYSIS:
 ${JSON.stringify(rfqAnalysis, null, 2)}
 
@@ -160,16 +162,13 @@ JSON SCHEMA - Optimized for government tender evaluation:
     "name": "Full Name",
     "title": "Professional title using government/RFQ terminology",
     "location": "Candidate's actual location (maintain authenticity)",
-    "clearance": "Security clearance level or eligibility status",
+    //Security clearance response should be "NV1" or "NV2", no need to add extra statement behind the clearance level and must be taken from candidate's resume.
+    "clearance": "Security clearance level",
     //Using third person view with professional tone and sounds natural.
-    "description": "190-220 words directly addressing top 3-4 essential criteria with government-focused language and quantified achievements",
-    "description2": "190-220 words showcasing additional essential criteria compliance and competitive advantages for government work"
+    "description": "160-200 words directly addressing top 3-4 essential criteria with government-focused language and quantified achievements",
+    "description2": "160-200 words showcasing additional essential criteria compliance and competitive advantages for government work"
   },
-  "contact": {
-    "email": "email@example.com or null if not provided",
-    "phone": "+61 XXX XXX XXX or null if not provided", 
-    "linkedin": "LinkedIn profile URL or null if not provided"
-  },
+
   "qualifications": ["Qualifications prioritized by RFQ requirements, using exact terminology from tender"],
   "affiliations": ["Professional memberships that demonstrate government/regulatory sector credibility"],
   "skills": ["Top 8 skills ranked by RFQ importance - lead with essential criteria, use government terminology"],
@@ -178,7 +177,7 @@ JSON SCHEMA - Optimized for government tender evaluation:
     {
       "title": "Job Title - Organization",
       "period": "Date Range",
-      "responsibilities": ["4 strategic bullets demonstrating essential criteria using RFQ language and government impact metrics"]
+      "responsibilities": ["4 strategic bullets demonstrating essential criteria using RFQ language and government impact metrics, don't need to be too much detailed, write just enough for a quick scan by evaluators - around 15-18 words each bullet point"]
     }
   ],
   "fullExperience": [
@@ -190,11 +189,11 @@ JSON SCHEMA - Optimized for government tender evaluation:
   ],
   "referees": [
     {
-    // If referees are provided, include their details. otherwise return an empty array.
-      "title": "Job title (Organization)" or return empty array if not provided,
-      "name": "Referee Name" or return empty array if not provided,
-      "email": "email@example.com" or return empty array if not provided, 
-      "phone": "+61 XXX XXX XXX" or return empty array if not provided
+    // If referees are provided, include their details. otherwise must return an empty array.
+      "title": "Job title (Organization)" or must return empty array if not provided,
+      "name": "Referee Name" or must return empty array if not provided,
+      "email": "email@example.com" or must return empty array if not provided, 
+      "phone": "+61 XXX XXX XXX" or must return empty array if not provided
     }
   ],
   "roleTitle": "Exact job title from RFQ",
@@ -202,6 +201,9 @@ JSON SCHEMA - Optimized for government tender evaluation:
 }
 
 🚨 CRITICAL TENDER OPTIMIZATION RULES:
+- Using Australian English.
+- Remove any markdown formatting like "**text**" - use plain text only
+- If the resume has numbers to highlight achievements, mention them in the full experience section followed the format he/she used A to achieve those results by doing B. Or you can use some similar format.
 - Use EXACT terminology from the RFQ essential and desirable criteria
 - Address every essential criterion with concrete evidence
 - Incorporate government/regulatory sector language naturally
@@ -220,7 +222,10 @@ JSON SCHEMA - Optimized for government tender evaluation:
 - If the experience has no responsibilities, do not add that position to the fullExperience section.
 - Skills: Combine technical and regulatory/compliance skills strategically
 - Format consistently for professional government submission standards
-- If no referees are provided, return an empty array[] for the fields like "title", "name", "email", "phone". Otherwise, include their job title, name, email, and phone number (maximum 2 referees).
+- If no referees are provided, must return an empty array[] for the fields like "title", "name", "email", "phone". Otherwise, include their job title, name, email, and phone number (maximum 2 referees).
+- Try to response in the most natural way possible, like a human would write it.
+- Do not call the candidate by Mr/Ms/Mrs/Dr or any other title, just use their first name or 'he/she' instead.
+
 
 CANDIDATE'S RESUME:
 ${resumeText}
@@ -232,7 +237,7 @@ Return ONLY the JSON object, no additional text.`;
       prompt,
       effectiveApiKey,
       0.1,
-      8192
+      18000
     );
     return response;
   } catch (error) {
@@ -311,7 +316,7 @@ function extractCompetitiveAdvantages(rfqAnalysis, finalResume) {
 async function makeGeminiRequest(prompt, apiKey, temperature, maxTokens) {
   try {
     const response = await fetch(
-      "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent",
+      "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
       {
         method: "POST",
         headers: {
@@ -375,170 +380,6 @@ async function makeGeminiRequest(prompt, apiKey, temperature, maxTokens) {
   }
 }
 
-// LEGACY CODE - Standard resume generation (non-tailored)
-
-// /**
-//  * Standard resume generation (non-tailored)
-//  * @param {string} resumeText - The resume text content to analyze
-//  * @param {string} [apiKey] - Optional Google API key for Gemini (overrides config)
-//  * @returns {Promise<Object>} - A promise that resolves to the structured resume data
-//  */
-// export async function generateResumeJSON(resumeText, apiKey = null) {
-//   const effectiveApiKey = apiKey || config.geminiApiKey;
-
-//   if (!effectiveApiKey) {
-//     throw new Error(
-//       "Gemini API key is required. Please provide an API key or set it in your environment variables."
-//     );
-//   }
-
-//   // Trim text if it's too long (Gemini has input limits)
-//   const trimmedText =
-//     resumeText.length > 30000
-//       ? resumeText.substring(0, 30000) + "..."
-//       : resumeText;
-
-//   const standardPrompt = `Please analyze the following resume text and return a JSON object with the structured information that matches this exact schema for a professional resume template:
-
-// {
-//   "profile": {
-//     "name": "Full Name",
-//     "title": "PROFESSIONAL TITLE IN CAPS",
-//     "location": "city",
-//     "clearance": "Security clearance level (e.g., NV1, Baseline) or null if not mentioned",
-//     "description": "First paragraph of professional summary focusing on background, experience, and key strengths",
-//     "description2": "Second paragraph of professional summary focusing on additional experience, skills, and suitability for roles"
-//   },
-//   "contact": {
-//     "email": "email@example.com or null if not provided",
-//     "phone": "+61 XXX XXX XXX or null if not provided",
-//     "linkedin": "LinkedIn profile URL or null if not provided"
-//   },
-//   "qualifications": ["List of degrees, certifications, and professional qualifications"],
-//   "affiliations": ["Professional memberships and associations"],
-//   "skills": ["Key technical and professional skills"],
-//   "keyAchievements": ["Major career achievements and accomplishments with quantifiable results where possible"],
-//   "experience": [
-//   //Return 3 most recent positions.
-//     {
-//       "title": "Job Title - Company (Organization if applicable)",
-//       "period": "Start Date - End Date",
-//       "responsibilities": ["Key responsibility or achievement 1", "Key responsibility or achievement 2"]
-//     }
-//   ],
-//   "fullExperience": [
-//   //REturn all positions provided in the resume text
-//     {
-//       "title": "Job Title - Company (Organization if applicable)",
-//       "period": "Start Date - End Date",
-//       "responsibilities": [
-//         "Detailed responsibility or achievement 1",
-//         "Detailed responsibility or achievement 2",
-//         "Maximum 6-8 detailed responsibilities per position"
-//       ]
-//     }
-//   ],
-//   "referees": [
-//     {
-//       "title": "Job title (Company)" or return empty array if not provided,
-//       "name": "Referee Name" or return empty array if not provided,
-//       "email": "email@example.com" or return empty array if not provided,
-//       "phone": "+61 XXX XXX XXX" or return empty array if not provided
-//     }
-//   ]
-// }
-
-// SPECIAL INSTRUCTIONS:
-// - Extract actual information from the resume text.
-// - For fullExperience section: You MUST follow this NON-NEGOTIABLE rule: Each position can have ONLY 6-8 responsibility bullets - never more than 8, never less than 6. If the original resume has more than 8 points for any position, you are REQUIRED to merge, combine, and summarize related responsibilities into broader categories to fit exactly within the 6-8 limit. Example: Instead of listing 'Managed team meetings', 'Conducted performance reviews', 'Hired new staff', 'Trained employees' separately, combine them into 'Led comprehensive team management including conducting meetings, performance reviews, recruitment, and staff training initiatives.' This consolidation is MANDATORY - there are no exceptions. COUNT your bullets for each position and ensure you never exceed 8. If you generate more than 8 bullets for any position, you have failed the task and must restart that section
-// - If the full experience's responsibilities are not provided, do not add that experience to the fullExperience section.
-// - For profile descriptions, write comprehensive paragraphs (150-200 words each) highlighting background, experience, and suitability
-// - Include quantifiable achievements where mentioned
-// - Format job titles as "Position - Company (Department/Organization)" if applicable
-// - For security clearance: ONLY include if explicitly mentioned. Return null if not mentioned
-// - List qualifications in order of relevance/importance
-// - Include both technical and soft skills (top 8 skills, combining related skills like "Python/Django")
-// - If referees are not provided, return an empty array[] for the fields like "title", "name", "email", "phone". Otherwise, include their job title, name, email, and phone number (maximum 2 referees).
-// - For affiliations, must return professional message ("No information given") if not available, otherwise list concisely
-// - Keep formatting professional and consistent
-
-// Resume text to analyze:
-// ${trimmedText}
-
-// Return ONLY the JSON object, no additional text or formatting.`;
-
-//   try {
-//     const response = await makeGeminiRequest(
-//       standardPrompt,
-//       effectiveApiKey,
-//       0.1,
-//       6048
-//     );
-
-//     // Validate and set defaults for required fields
-//     return {
-//       profile: {
-//         name: response.profile?.name || "Unknown Candidate",
-//         title: response.profile?.title || "PROFESSIONAL",
-//         location: response.profile?.location || "",
-//         clearance: response.profile?.clearance || null,
-//         photo: "/api/placeholder/400/600",
-//         description:
-//           response.profile?.description ||
-//           "Professional with extensive experience in their field.",
-//         description2:
-//           response.profile?.description2 ||
-//           "Skilled professional with a strong background in project management and technical expertise.",
-//       },
-//       contact: {
-//         email: response.contact?.email || null,
-//         phone: response.contact?.phone || null,
-//         linkedin: response.contact?.linkedin || null,
-//       },
-//       qualifications: Array.isArray(response.qualifications)
-//         ? response.qualifications
-//         : [],
-//       affiliations: Array.isArray(response.affiliations)
-//         ? response.affiliations
-//         : [],
-//       skills: Array.isArray(response.skills) ? response.skills : [],
-//       keyAchievements: Array.isArray(response.keyAchievements)
-//         ? response.keyAchievements
-//         : [],
-//       experience: Array.isArray(response.experience)
-//         ? response.experience.map((exp) => ({
-//           title: exp.title || "Position",
-//           period: exp.period || "Date not specified",
-//           responsibilities: Array.isArray(exp.responsibilities)
-//             ? exp.responsibilities
-//             : [],
-//         }))
-//         : [],
-//       fullExperience: Array.isArray(response.fullExperience)
-//         ? response.fullExperience.map((exp) => ({
-//           title: exp.title || "Position",
-//           period: exp.period || "Date not specified",
-//           responsibilities: Array.isArray(exp.responsibilities)
-//             ? exp.responsibilities
-//             : [],
-//         }))
-//         : [],
-//       referees:
-//         Array.isArray(response.referees) && response.referees.length > 0
-//           ? response.referees.map((ref) => ({
-//             name: ref?.name,
-//             title: ref?.title,
-//             email: ref?.email,
-//             phone: ref?.phone,
-//           }))
-//           : null,
-//     };
-//   } catch (error) {
-//     console.error("Error generating standard resume:", error);
-//     throw error;
-//   }
-// }
-
 /**
  * Standard resume generation (non-tailored) - Direct mapping version
  * @param {string} resumeText - The resume text content to map
@@ -574,11 +415,7 @@ export async function generateResumeJSON(resumeText, apiKey = null) {
     "description": "First paragraph of professional summary - extract exact text, each description around 150-200 words",
     "description2": "Second paragraph of professional summary - extract exact text, each description around 150-200 words"
   },
-  "contact": {
-    "email": "email@example.com or null if not provided",
-    "phone": "+61 XXX XXX XXX or null if not provided", 
-    "linkedin": "LinkedIn profile URL or null if not provided"
-  },
+
   "qualifications": ["List of degrees, certifications, and professional qualifications - exact text"],
   "affiliations": ["Professional memberships and associations - exact text"],
   "skills": [
@@ -608,15 +445,16 @@ export async function generateResumeJSON(resumeText, apiKey = null) {
   ],
   "referees": [
     {
-      "title": "Job title (Company) - exact text" or return empty array if not provided,
-      "name": "Referee Name - exact text" or return empty array if not provided, 
-      "email": "email@example.com - exact text" or return empty array if not provided,
-      "phone": "+61 XXX XXX XXX - exact text" or return empty array if not provided
+      "title": "Job title (Company) - exact text" or must return empty array if not provided,
+      "name": "Referee Name - exact text" or must return empty array if not provided, 
+      "email": "email@example.com - exact text" or must return empty array if not provided,
+      "phone": "+61 XXX XXX XXX - exact text" or must return empty array if not provided
     }
   ]
 }
 
 CRITICAL INSTRUCTIONS - DIRECT MAPPING ONLY:
+- Using Australian English
 - DO NOT analyze, summarize, rewrite, or modify ANY text from the original resume.
 - If the original text from resume has "-" or "+" or "." as the bullet point, neglect those bullets and only extract the text as it is, not the bullet point.
 - Extract and copy the EXACT words, phrases, and sentences as they appear
@@ -631,7 +469,7 @@ CRITICAL INSTRUCTIONS - DIRECT MAPPING ONLY:
 - For experience: Copy every single bullet point/responsibility exactly as written
 - For skills: Copy the exact skill names/descriptions as listed
 - For qualifications: Copy degree names, institution names, and dates exactly
-- If referees are not provided, return empty array for the fields. If provided, copy exact details
+- If referees are not provided, must return empty array for the fields. If provided, copy exact details
 - For affiliations: Copy exact organization names and membership details, or return "No information given" if not available
 
 Your job is purely extraction and mapping - you are NOT an editor or summarizer.
@@ -646,7 +484,7 @@ Return ONLY the JSON object, no additional text or formatting.`;
       standardPrompt,
       effectiveApiKey,
       0.1,
-      6048
+      18000
     );
 
     // Validate and set defaults for required fields
@@ -834,7 +672,7 @@ export async function generateTenderResponse(
     Array.isArray(jobAnalysis.desirableCriteria) &&
     jobAnalysis.desirableCriteria.length > 0;
 
-  const prompt = `You are an expert government tender response specialist creating a comprehensive Criteria Statement for ${detectedSector} sector procurement. Using the provided tailored resume and RFQ requirements, create a professional tender response that demonstrates how the candidate meets each criterion with specific examples and evidence. . Create a comprehensive tender response that addresses each criterion EXACTLY as specified in the RFQ analysis. Use the dynamic criteria structure provided to create responses that match the specific requirements.
+  const prompt = `You are an expert government tender response specialist creating a comprehensive Criteria Statement for ${detectedSector} sector procurement. Using the provided tailored resume and RFQ requirements, create a professional tender response that demonstrates how the candidate meets each criterion with specific examples and evidence. . Create a comprehensive tender response that addresses each criterion EXACTLY as specified in the RFQ analysis. Use the dynamic criteria structure provided to create responses that match the specific requirements Using Australian English.
   
   🎯 ORIGINAL JOB DESCRIPTION/RFQ:
   ${jobDescription}
@@ -867,7 +705,7 @@ export async function generateTenderResponse(
     {
       "criteriaTitle": "Exact title from RFQ analysis. For example: if the RFQ has a title like 'Demonstrated Experience in Project Management', use that exact title",
       "criteriaDescription": "Full criteria text from RFQ (for reference)",
-      "response": "Detailed response (150-300 words) directly addressing this specific criterion using candidate's experience and RFQ keywords"
+      "response": "Detailed response (150-300 words) directly addressing this specific criterion using candidate's experience and RFQ keywords" // Do not use full name in the response, use first name or 'he/she' instead. Moreover, write the response in 1 paragraph with 150-300 words.
     // Repeat for each essential criterion from RFQ analysis
     }
     ],
@@ -878,12 +716,12 @@ export async function generateTenderResponse(
         {
         "criteriaTitle": "Summary",
         "criteriaDescription": "Overall summary of the candidate's qualifications relevant to the desirable criteria",
-        "response": "Summary response (100–200 words) highlighting how the candidate exceeds desirable expectations and offers added value"
+        "response": "Summary response (100–200 words) highlighting how the candidate exceeds desirable expectations and offers added value."
         },
         {
         "criteriaTitle": "Exact title from RFQ analysis. For example: if the RFQ has a title like 'Experience with Agile Methodologies', use that exact title", 
         "criteriaDescription": "Full criteria text from RFQ (for reference)",
-        "response": "Detailed response (100-200 words) addressing this specific criterion"
+        "response": "Detailed response (100-200 words) addressing this specific criterion" // Do not use full name in the response, use first name or 'he/she' instead. Moreover, write the response in 1 paragraph with 100-200 words.
         }
         // Repeat for each desirable criterion from RFQ analysis
         `
@@ -928,37 +766,44 @@ export async function generateTenderResponse(
         
   }
   
-  🔥 CRITICAL WRITING GUIDELINES:
+  🔥 CRITICAL WRITING GUIDELINES: 
 
   🚨 CRITICAL DESIRABLE CRITERIA RULES:
     1. IF NO DESIRABLE CRITERIA IN RFQ ANALYSIS: Return desirableCriteria as an empty array []
     2. IF DESIRABLE CRITERIA EXIST IN RFQ ANALYSIS: Create detailed responses for each one
     3. NEVER CREATE FICTIONAL DESIRABLE CRITERIA: Only use what's explicitly in the RFQ analysis
     4. CONDITIONAL LOGIC: Check jobAnalysis.desirableCriteria array length before creating responses
-  
+    5. Do not invent or exaggerate qualifications or experience, do not hallucinate
+    6. Capitalize sector names (e.g., Defence, ICT, Finance, Banking) consistently
+    7. You are only allowed once to use candidate's full name in the beginning of the summary for essential and desirable criteria's response. Other than that, you must use first name  in the response for all other criteria and additional information section.
+
   **CONTENT REQUIREMENTS:**
   - Write exclusively in third-person perspective using the candidate's full name
-  - Never use "I", "my", "me" - always use "[Name] has...", "They demonstrate...", etc.
+  - Never use "I", "my", "me", "their" - always use "[Name] has...", "He/She demonstrate...", etc.
   - Provide specific examples from the candidate's actual experience
+  - Do not use Unsubstantiated claim reviewing experience.
   - Include quantifiable achievements and metrics where possible
   - Use professional, confident language appropriate for government evaluation
   - Reference specific technologies, methodologies, and frameworks from their background
   - Tailor language to ${detectedSector} sector terminology and requirements
+  - Do not call the candidate by Mr/Ms/Mrs/Dr or any other title, just use their first name or 'he/she' instead.
+
   
   **RESPONSE STRUCTURE:**
+  - For the desirable and essential criteria, Avoid phrases such as “While she does not have...” or “Although not mentioned in his/her resume...”. Instead, focus on positively framing transferable experience. Highlight strengths and relevance confidently without referencing gaps, try to give a positive spin on the candidate's experience and qualifications.
   - Essential "Skills, Knowledge, and Experience" should be the longest and most detailed response
   - Use bullet points with headers for key competency areas in the skills section
   - Each desirable criteria response should be substantial but concise
   - Include specific project names, organizations, and outcomes from their resume
   - Demonstrate clear understanding of the role and ${detectedSector} sector requirements
-  
+  - Do not use word that like "indicate", "suggest", "imply" or similar. Use strong, affirmative language that directly states the candidate's qualifications and experience.
+
   **QUALITY STANDARDS:**
-  - Summary responses: 100-200 words focusing on overall qualifications
-  - Skills response: 400-500 words with detailed competency breakdowns
   - Achievement responses: Include 3-4 specific, quantifiable accomplishments
-  - Desirable responses: 120-150 words each with concrete examples
+  - Desirable responses: 120-170 words each with concrete examples
   - All responses must be grounded in actual resume content
   - Remove any markdown formatting like "**text**" - use plain text only
+  - Try to response in the most natural way possible, like a human would write it.
   
   **GOVERNMENT TENDER OPTIMIZATION:**
   - Use terminology from the RFQ and job analysis
@@ -978,6 +823,7 @@ export async function generateTenderResponse(
   
   🚨 MANDATORY RULES:
   - All content must be truthful and based on actual resume information
+  - Do not invent or exaggerate qualifications or experience, do not hallucinate
   - Use exact project names, companies, and roles from the resume
   - Include specific years of experience and quantifiable metrics
   - Reference security clearance accurately as stated in resume (especially important for ${
@@ -1010,7 +856,7 @@ export async function generateTenderResponse(
       prompt,
       effectiveApiKey,
       0.15,
-      8192
+      18192
     );
     return response;
   } catch (error) {
@@ -1124,7 +970,7 @@ export async function generateProposalSummary(
     }
   }
 
-  const prompt = `You are an expert government tender response specialist creating a comprehensive, executive-level Proposal Summary for ${detectedSector} sector procurement that directly addresses RFQ requirements with detailed professional content.
+  const prompt = `You are an expert government tender response specialist creating a comprehensive, executive-level Proposal Summary for ${detectedSector} sector procurement that directly addresses RFQ requirements with detailed professional content Using Australian English.
   
   🎯 ORIGINAL RFQ/JOB DESCRIPTION:
   ${jobDescription}
@@ -1208,6 +1054,7 @@ export async function generateProposalSummary(
   
   **QUALITY STANDARDS:**
   - Each paragraph must be 70-90 words (strict requirement)
+  - Never use "I", "my", "me", "their" - always use "[Name] has...", "He/She demonstrate...", etc.
   - Address different aspects of candidacy - no repetition between paragraphs
   - Use third-person perspective throughout with candidate's full name
   - Extract specific details from tender response criteria answers
@@ -1215,6 +1062,9 @@ export async function generateProposalSummary(
   - Use professional government tender language appropriate for ${detectedSector}
   - Directly reference RFQ essential and desirable criteria terminology
   - Maintain flow between paragraphs while keeping distinct themes
+  - Try to response in the most natural way possible, like a human would write it.
+  - only use full name for the first paragraph, and use first name in the response for all other paragraphs.
+
   
   **RFQ ALIGNMENT REQUIREMENTS:**
   - Paragraph themes must directly address the essential criteria from RFQ analysis
@@ -1231,6 +1081,7 @@ export async function generateProposalSummary(
   - Use specific achievements, roles, and metrics from criteria responses
   - Reference exact RFQ requirements and compliance statements
   - Include precise clearance status and availability information
+  - Do not call the candidate by Mr/Ms/Mrs/Dr or any other title, just use their first name or 'he/she' instead.
   - Use ${detectedSector}-specific terminology and demonstrate sector knowledge
   - Maintain professional executive tone suitable for senior procurement evaluation
   - Ensure each paragraph has distinct focus - avoid overlap or repetition
@@ -1238,6 +1089,7 @@ export async function generateProposalSummary(
   🚨 CRITICAL FIELD EXTRACTION RULES:
   - "roleTitle": MUST extract the actual job title from the tender response data (tenderResponseData.roleTitle) or RFQ analysis (jobAnalysis.procurementDetails.positionTitle) or job description
   - "rfqNumber": MUST extract the actual RFQ number from the tender response data (tenderResponseData.rfqNumber) or RFQ analysis (jobAnalysis.procurementDetails.rfqNumber) or job description
+  - Do not invent or exaggerate qualifications or experience, do not hallucinate
   - DO NOT use placeholder text - extract the real values from the provided data
   - If the tender response data contains these fields, use them directly
   - If not found in tender response, check RFQ analysis, then job description
@@ -1249,7 +1101,7 @@ export async function generateProposalSummary(
       prompt,
       effectiveApiKey,
       0.1,
-      8192
+      10192
     );
     return response;
   } catch (error) {
