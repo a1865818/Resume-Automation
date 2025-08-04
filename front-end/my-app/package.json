@@ -1,0 +1,48 @@
+{
+  "name": "my-app",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@react-pdf/renderer": "^4.3.0",
+    "@sparticuz/chromium": "^133.0.0",
+    "antd": "^5.25.4",
+    "autoprefixer": "^10.4.21",
+    "dayjs": "^1.11.13",
+    "docx": "^9.5.0",
+    "dotenv": "^16.5.0",
+    "file-saver": "^2.0.5",
+    "html-docx": "^1.2.0",
+    "html-docx-js": "^0.3.1",
+    "html-to-docx": "^1.8.0",
+    "html2canvas": "^1.4.1",
+    "html2pdf.js": "^0.10.3",
+    "jsdom": "^26.1.0",
+    "jspdf": "^3.0.1",
+    "lucide-react": "^0.511.0",
+    "mammoth": "^1.9.1",
+    "next": "15.3.2",
+    "node-fetch": "^3.3.2",
+    "pdf-lib": "^1.17.1",
+    "puppeteer": "^24.9.0",
+    "puppeteer-core": "^24.9.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-to-pdf": "^2.0.0",
+    "tesseract.js": "^6.0.1",
+    "uuid": "^11.1.0"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3",
+    "@tailwindcss/postcss": "^4",
+    "eslint": "^9",
+    "eslint-config-next": "15.3.2",
+    "tailwindcss": "^4"
+  }
+}

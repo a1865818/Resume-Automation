@@ -1,126 +1,246 @@
-# Resume Automation Frontend
+# Resume Automation System
 
-This is a Next.js application for automated resume processing and optimization.
+A comprehensive system for generating, managing, and storing professional resumes, tender responses, and proposal summaries with AI-powered content generation and persistent storage.
 
 ## Features
 
-### Enhanced OCR with Gemini Vision API
+### Frontend (Next.js)
+- **PDF Upload & OCR**: Extract text from PDF resumes with advanced OCR capabilities
+- **AI-Powered Generation**: Generate resumes, tender responses, and proposal summaries using Gemini AI
+- **Document Templates**: Professional templates for different document types
+- **Real-time Preview**: Live preview of generated documents
+- **Word/PDF Export**: Download documents in multiple formats
+- **Profile Picture Support**: Upload and integrate profile pictures
+- **Job Description Integration**: Tailor resumes based on job descriptions
 
-The application now includes advanced OCR capabilities using Google's Gemini Vision API, which provides superior text extraction compared to traditional OCR methods, especially for:
+### Backend (.NET Web API)
+- **RESTful API**: Clean, RESTful endpoints for all operations
+- **Supabase Integration**: PostgreSQL database hosted on Supabase
+- **Document Versioning**: Track multiple versions of each document
+- **Candidate Management**: Store and manage candidate information
+- **Custom URL Routing**: Support for SEO-friendly document URLs
+- **CORS Support**: Configured for frontend integration
 
-- **Styled text on colored backgrounds** (like white text on grey backgrounds)
-- **Complex document layouts**
-- **Small or stylized text**
-- **Text in different colors or fonts**
-- **Skills sections and technical content**
+## Project Structure
 
-#### How to Use Gemini Vision OCR
-
-1. **Set up your API key:**
-   ```bash
-   # Add to your .env.local file
-   NEXT_PUBLIC_GEMINI_API_KEY=your_gemini_api_key_here
-   ```
-
-2. **Test the functionality:**
-   - Navigate to `/ocr-test` to access the OCR testing interface
-   - Use the "Gemini Vision OCR Test" section to compare performance
-   - Use the "Skills Extraction Test" for specialized skills extraction
-
-3. **Programmatic usage:**
-   ```javascript
-   import { extractTextFromPDF, extractSkillsSection } from './utils/pdfUtils';
-
-   // Enhanced OCR with Gemini Vision (default)
-   const text = await extractTextFromPDF(file, {
-     preferGemini: true,        // Use Gemini Vision OCR
-     fallbackToTesseract: true, // Fallback to Tesseract if needed
-     verbose: true
-   });
-
-   // Skills-specific extraction
-   const skills = await extractSkillsSection(file, 1);
-   ```
-
-#### OCR Methods Comparison
-
-| Method | Pros | Cons | Best For |
-|--------|------|------|----------|
-| **Gemini Vision OCR** | Superior text extraction, handles styled text, better accuracy | Requires API key, slower, costs money | Complex documents, styled text, skills sections |
-| **Tesseract OCR** | Free, fast, works offline | Limited with styled text, lower accuracy | Simple documents, fallback option |
-
-#### Testing and Validation
-
-The application includes comprehensive testing tools:
-
-- **Basic OCR Test**: Tests Tesseract.js functionality
-- **Gemini Vision OCR Test**: Compares Gemini vs Tesseract performance
-- **Skills Extraction Test**: Specialized skills extraction testing
-- **Enhanced PDF Test**: Full document processing with fallback
-
-#### Configuration Options
-
-```javascript
-const options = {
-  preferGemini: true,           // Use Gemini Vision OCR as primary
-  fallbackToTesseract: true,    // Fallback to Tesseract if Gemini fails
-  verbose: false,               // Enable detailed logging
-  ocrScale: 2.0,               // Image rendering scale
-  apiKey: null                  // Override API key
-};
+```
+Resume_Automation/
+├── front-end/
+│   └── my-app/                 # Next.js frontend application
+│       ├── pages/              # Next.js pages and API routes
+│       ├── components/         # React components
+│       ├── utils/              # Utility functions and API service
+│       └── public/             # Static assets
+└── back-end/                   # .NET Web API backend
+    ├── Controllers/            # API controllers
+    ├── Models/                 # Entity models
+    ├── DTOs/                   # Data transfer objects
+    ├── Services/               # Business logic services
+    ├── Repositories/           # Data access layer
+    └── Data/                   # Database context
 ```
 
-## Getting Started
+## Prerequisites
 
-1. Install dependencies:
+- Node.js 18+ and npm
+- .NET 8 SDK
+- Supabase account and project
+- Gemini AI API key
+
+## Quick Start
+
+### 1. Backend Setup
+
+1. **Navigate to backend directory:**
+   ```bash
+   cd back-end
+   ```
+
+2. **Configure Supabase:**
+   - Create a new Supabase project at [supabase.com](https://supabase.com)
+   - Update `appsettings.json` with your Supabase credentials:
+   ```json
+   {
+     "ConnectionStrings": {
+       "DefaultConnection": "Host=db.YOUR_SUPABASE_PROJECT_ID.supabase.co;Database=postgres;Username=postgres;Password=YOUR_SUPABASE_DB_PASSWORD;Port=5432;SSL Mode=Require;Trust Server Certificate=true"
+     },
+     "Supabase": {
+       "Url": "https://YOUR_SUPABASE_PROJECT_ID.supabase.co",
+       "Key": "YOUR_SUPABASE_ANON_KEY",
+       "ServiceKey": "YOUR_SUPABASE_SERVICE_ROLE_KEY"
+     }
+   }
+   ```
+
+3. **Install dependencies and run:**
+   ```bash
+   dotnet restore
+   dotnet run
+   ```
+
+   The API will be available at `https://localhost:7000`
+
+### 2. Frontend Setup
+
+1. **Navigate to frontend directory:**
+   ```bash
+   cd front-end/my-app
+   ```
+
+2. **Install dependencies:**
    ```bash
    npm install
    ```
 
-2. Set up environment variables:
+3. **Configure environment:**
+   - Copy `env.example` to `.env.local`
+   - Update the API base URL if needed:
+   ```
+   NEXT_PUBLIC_API_BASE_URL=https://localhost:7000/api
+   NEXT_PUBLIC_GEMINI_API_KEY=your_gemini_api_key_here
+   ```
+
+4. **Run the development server:**
    ```bash
-   cp .env.example .env.local
-   # Edit .env.local with your API keys
+   npm run dev
    ```
 
-3. Run the development server:
-```bash
-npm run dev
-   ```
+   The frontend will be available at `http://localhost:3000`
 
-4. Navigate to `/ocr-test` to test OCR functionality
+## API Endpoints
 
-## API Keys Required
+### Candidates
+- `GET /api/candidates` - Get all candidates
+- `GET /api/candidates/{id}` - Get candidate by ID
+- `GET /api/candidates/name/{name}` - Get candidate by name
+- `POST /api/candidates` - Create new candidate
+- `PUT /api/candidates/{id}` - Update candidate
+- `DELETE /api/candidates/{id}` - Delete candidate
 
-- **Gemini API Key**: For enhanced OCR functionality
-  - Get from: [Google AI Studio](https://makersuite.google.com/app/apikey)
-  - Set as: `NEXT_PUBLIC_GEMINI_API_KEY`
+### Documents
+- `GET /api/documents` - Get all documents
+- `GET /api/documents/{id}` - Get document by ID
+- `GET /api/documents/candidate/{candidateId}` - Get all documents for a candidate
+- `GET /api/documents/candidate/{candidateName}/roles/{roleName}/{documentType}/{documentId}` - Get specific document with custom routing
+- `POST /api/documents` - Create new document
+- `PUT /api/documents/{id}` - Update document
+- `DELETE /api/documents/{id}` - Delete document
+- `POST /api/documents/{id}/versions` - Add new version to document
+- `GET /api/documents/{id}/versions` - Get all versions of a document
+
+## Custom URL Routing
+
+The system supports custom URL structures for document access:
+
+```
+localhost:3000/pdf-upload/{candidate-name}/roles/{role-name}/{document-type}/{document-id}
+```
+
+### Example URLs:
+- `localhost:3000/pdf-upload/john-doe/roles/software-engineer/resume/1`
+- `localhost:3000/pdf-upload/jane-smith/roles/project-manager/tenderresponse/2`
+- `localhost:3000/pdf-upload/bob-wilson/roles/consultant/proposalsummary/3`
+
+## Database Schema
+
+### Candidates Table
+- `Id` (Primary Key)
+- `Name` (Unique)
+- `Email`
+- `Phone`
+- `CreatedAt`
+- `UpdatedAt`
+
+### Documents Table
+- `Id` (Primary Key)
+- `Title`
+- `DocumentType` (Resume, TenderResponse, ProposalSummary)
+- `CandidateId` (Foreign Key)
+- `CreatedAt`
+- `UpdatedAt`
+
+### DocumentVersions Table
+- `Id` (Primary Key)
+- `Version`
+- `Content` (JSON)
+- `DocumentId` (Foreign Key)
+- `CreatedAt`
+
+## Usage Workflow
+
+1. **Upload PDF Resume**: Upload a PDF resume to extract text using OCR
+2. **Generate Resume**: Use AI to generate a professional resume
+3. **Upload Job Description** (Optional): Upload a job description for tailored resume generation
+4. **Generate Tender Response**: Create criteria statements for government tenders
+5. **Generate Proposal Summary**: Create narrative proposal summaries
+6. **Save Documents**: Save all documents to the database with version control
+7. **Access Saved Documents**: Use custom URLs to access saved documents later
+
+## Development
+
+### Backend Development
+- The backend uses Entity Framework with `EnsureCreated()` for automatic database schema creation
+- Swagger documentation is available at `https://localhost:7000/swagger`
+- CORS is configured to allow frontend requests
+
+### Frontend Development
+- Next.js with React 19
+- Tailwind CSS for styling
+- Custom API service for backend communication
+- Dynamic routing for document access
+
+### Adding New Features
+1. Create models in the backend `Models` folder
+2. Add DTOs in the `DTOs` folder
+3. Create repository and service layers
+4. Add API controllers
+5. Update frontend components and API service
+6. Test with Swagger and frontend
+
+## Deployment
+
+### Backend Deployment
+The .NET backend can be deployed to:
+- Azure App Service
+- AWS Elastic Beanstalk
+- Heroku
+- Docker containers
+
+### Frontend Deployment
+The Next.js frontend can be deployed to:
+- Vercel
+- Netlify
+- AWS Amplify
+- Docker containers
+
+### Environment Configuration
+Remember to update:
+- Database connection strings
+- CORS settings
+- API base URLs
+- Environment variables
 
 ## Troubleshooting
 
-### OCR Issues
+### Common Issues
 
-1. **Gemini Vision OCR not working:**
-   - Check your API key is set correctly
-   - Verify the API key has vision capabilities enabled
-   - Check browser console for error messages
+1. **CORS Errors**: Ensure the backend CORS configuration includes your frontend URL
+2. **Database Connection**: Verify Supabase credentials and connection string
+3. **API Key Issues**: Check that your Gemini API key is properly configured
+4. **Port Conflicts**: Ensure ports 3000 (frontend) and 7000 (backend) are available
 
-2. **Poor text extraction:**
-   - Try increasing the `ocrScale` option
-   - Use the skills extraction function for specific sections
-   - Check if the document has very low resolution
+### Logs
+- Backend logs are available in the console when running `dotnet run`
+- Frontend logs are available in the browser console and terminal
 
-3. **API rate limits:**
-   - Gemini Vision API has usage limits
-   - Consider implementing caching for repeated documents
-   - Use Tesseract fallback for high-volume processing
+## Contributing
 
-### Performance Optimization
-
-- **For large documents**: Process pages individually
-- **For batch processing**: Implement request queuing
-- **For production**: Consider server-side OCR processing
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test thoroughly
+5. Submit a pull request
 
 ## License
 
-This project is licensed under the MIT License.
+This project is licensed under the MIT License. 

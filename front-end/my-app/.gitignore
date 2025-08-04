@@ -40,20 +40,4 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-front-end/my-app/public/uploads
-
 /public/uploads
-
-# Visual Studio files
-.vs/
-*.vsidx
-*.suo
-*.user
-*.userosscache
-*.sln.docstates
-bin/
-obj/
-
-# Node modules
-node_modules/
-.next/
