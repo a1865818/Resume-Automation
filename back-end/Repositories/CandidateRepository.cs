@@ -18,16 +18,16 @@ public class CandidateRepository : ICandidateRepository
         return await _context.Candidates
             .Include(c => c.Applications)
             .ThenInclude(a => a.Documents)
-            .ThenInclude(d => d.Versions.OrderByDescending(v => v.Version).Take(1))
+            .ThenInclude(d => d.Versions)
             .ToListAsync();
     }
 
-    public async Task<Candidate?> GetByIdAsync(int id)
+    public async Task<Candidate?> GetByIdAsync(Guid id)
     {
         return await _context.Candidates
             .Include(c => c.Applications)
             .ThenInclude(a => a.Documents)
-            .ThenInclude(d => d.Versions.OrderByDescending(v => v.Version))
+            .ThenInclude(d => d.Versions)
             .FirstOrDefaultAsync(c => c.Id == id);
     }
 
@@ -36,7 +36,7 @@ public class CandidateRepository : ICandidateRepository
         return await _context.Candidates
             .Include(c => c.Applications)
             .ThenInclude(a => a.Documents)
-            .ThenInclude(d => d.Versions.OrderByDescending(v => v.Version))
+            .ThenInclude(d => d.Versions)
             .FirstOrDefaultAsync(c => c.Name == name);
     }
 
@@ -55,7 +55,7 @@ public class CandidateRepository : ICandidateRepository
         return candidate;
     }
 
-    public async Task DeleteAsync(int id)
+    public async Task DeleteAsync(Guid id)
     {
         var candidate = await _context.Candidates.FindAsync(id);
         if (candidate != null)
@@ -65,7 +65,7 @@ public class CandidateRepository : ICandidateRepository
         }
     }
 
-    public async Task<bool> ExistsAsync(int id)
+    public async Task<bool> ExistsAsync(Guid id)
     {
         return await _context.Candidates.AnyAsync(c => c.Id == id);
     }

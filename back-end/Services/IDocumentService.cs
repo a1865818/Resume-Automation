@@ -6,12 +6,12 @@ namespace ResumeAutomation.API.Services;
 public interface IDocumentService
 {
     Task<IEnumerable<DocumentDto>> GetAllAsync();
-    Task<DocumentDto?> GetByIdAsync(int id);
-    Task<IEnumerable<DocumentDto>> GetByApplicationIdAsync(int applicationId);
-    Task<DocumentWithContentDto?> GetByApplicationAndTypeAsync(int applicationId, DocumentType documentType);
+    Task<DocumentDto?> GetByIdAsync(Guid id);
+    Task<IEnumerable<DocumentDto>> GetByApplicationIdAsync(Guid applicationId);
+    Task<DocumentWithContentDto?> GetByApplicationAndTypeAsync(Guid applicationId, DocumentType documentType);
     Task<DocumentDto> CreateAsync(CreateDocumentDto createDto);
-    Task<DocumentDto> UpdateAsync(int id, UpdateDocumentDto updateDto);
-    Task DeleteAsync(int id);
-    Task<DocumentVersionDto> AddVersionAsync(int documentId, string content);
-    Task<IEnumerable<DocumentVersionDto>> GetVersionsAsync(int documentId);
+    Task<DocumentDto> UpdateAsync(Guid id, UpdateDocumentDto updateDto);
+    Task DeleteAsync(Guid id);
+    Task<DocumentVersionDto> AddVersionAsync(Guid documentId, string content);
+    Task<IEnumerable<DocumentVersionDto>> GetVersionsAsync(Guid documentId);
 } 

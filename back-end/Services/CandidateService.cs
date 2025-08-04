@@ -22,7 +22,7 @@ public class CandidateService : ICandidateService
         return _mapper.Map<IEnumerable<CandidateDto>>(candidates);
     }
 
-    public async Task<CandidateDto?> GetByIdAsync(int id)
+    public async Task<CandidateDto?> GetByIdAsync(Guid id)
     {
         var candidate = await _candidateRepository.GetByIdAsync(id);
         return _mapper.Map<CandidateDto>(candidate);
@@ -47,7 +47,7 @@ public class CandidateService : ICandidateService
         return _mapper.Map<CandidateDto>(createdCandidate);
     }
 
-    public async Task<CandidateDto> UpdateAsync(int id, UpdateCandidateDto updateDto)
+    public async Task<CandidateDto> UpdateAsync(Guid id, UpdateCandidateDto updateDto)
     {
         var candidate = await _candidateRepository.GetByIdAsync(id);
         if (candidate == null)
@@ -72,11 +72,17 @@ public class CandidateService : ICandidateService
         if (updateDto.Phone != null)
             candidate.Phone = updateDto.Phone;
 
+        if (updateDto.DateOfBirth != null)
+            candidate.DateOfBirth = updateDto.DateOfBirth;
+
+        if (updateDto.CSID_Number != null)
+            candidate.CSID_Number = updateDto.CSID_Number;
+
         var updatedCandidate = await _candidateRepository.UpdateAsync(candidate);
         return _mapper.Map<CandidateDto>(updatedCandidate);
     }
 
-    public async Task DeleteAsync(int id)
+    public async Task DeleteAsync(Guid id)
     {
         if (!await _candidateRepository.ExistsAsync(id))
         {

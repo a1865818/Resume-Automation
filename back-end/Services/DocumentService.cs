@@ -24,19 +24,19 @@ public class DocumentService : IDocumentService
         return _mapper.Map<IEnumerable<DocumentDto>>(documents);
     }
 
-    public async Task<DocumentDto?> GetByIdAsync(int id)
+    public async Task<DocumentDto?> GetByIdAsync(Guid id)
     {
         var document = await _documentRepository.GetByIdAsync(id);
         return _mapper.Map<DocumentDto>(document);
     }
 
-    public async Task<IEnumerable<DocumentDto>> GetByApplicationIdAsync(int applicationId)
+    public async Task<IEnumerable<DocumentDto>> GetByApplicationIdAsync(Guid applicationId)
     {
         var documents = await _documentRepository.GetByApplicationIdAsync(applicationId);
         return _mapper.Map<IEnumerable<DocumentDto>>(documents);
     }
 
-    public async Task<DocumentWithContentDto?> GetByApplicationAndTypeAsync(int applicationId, DocumentType documentType)
+    public async Task<DocumentWithContentDto?> GetByApplicationAndTypeAsync(Guid applicationId, DocumentType documentType)
     {
         var document = await _documentRepository.GetByApplicationAndTypeAsync(applicationId, documentType);
         if (document == null) return null;
@@ -86,7 +86,7 @@ public class DocumentService : IDocumentService
         return _mapper.Map<DocumentDto>(documentWithVersions);
     }
 
-    public async Task<DocumentDto> UpdateAsync(int id, UpdateDocumentDto updateDto)
+    public async Task<DocumentDto> UpdateAsync(Guid id, UpdateDocumentDto updateDto)
     {
         var document = await _documentRepository.GetByIdAsync(id);
         if (document == null)
@@ -111,7 +111,7 @@ public class DocumentService : IDocumentService
         return _mapper.Map<DocumentDto>(documentWithVersions);
     }
 
-    public async Task DeleteAsync(int id)
+    public async Task DeleteAsync(Guid id)
     {
         if (!await _documentRepository.ExistsAsync(id))
         {
@@ -121,7 +121,7 @@ public class DocumentService : IDocumentService
         await _documentRepository.DeleteAsync(id);
     }
 
-    public async Task<DocumentVersionDto> AddVersionAsync(int documentId, string content)
+    public async Task<DocumentVersionDto> AddVersionAsync(Guid documentId, string content)
     {
         if (!await _documentRepository.ExistsAsync(documentId))
         {
@@ -132,7 +132,7 @@ public class DocumentService : IDocumentService
         return _mapper.Map<DocumentVersionDto>(version);
     }
 
-    public async Task<IEnumerable<DocumentVersionDto>> GetVersionsAsync(int documentId)
+    public async Task<IEnumerable<DocumentVersionDto>> GetVersionsAsync(Guid documentId)
     {
         if (!await _documentRepository.ExistsAsync(documentId))
         {

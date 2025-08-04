@@ -28,7 +28,7 @@ public class DocumentsController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<DocumentDto>> GetById(int id)
+    public async Task<ActionResult<DocumentDto>> GetById(Guid id)
     {
         var document = await _documentService.GetByIdAsync(id);
         if (document == null)
@@ -38,7 +38,7 @@ public class DocumentsController : ControllerBase
     }
 
     [HttpGet("application/{applicationId}")]
-    public async Task<ActionResult<IEnumerable<DocumentDto>>> GetByApplicationId(int applicationId)
+    public async Task<ActionResult<IEnumerable<DocumentDto>>> GetByApplicationId(Guid applicationId)
     {
         var documents = await _documentService.GetByApplicationIdAsync(applicationId);
         return Ok(documents);
@@ -50,7 +50,7 @@ public class DocumentsController : ControllerBase
         string candidateName, 
         string roleName, 
         string documentType, 
-        int documentId)
+        Guid documentId)
     {
         // First, find the candidate by name
         var candidate = await _candidateService.GetByNameAsync(candidateName);
@@ -97,7 +97,7 @@ public class DocumentsController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public async Task<ActionResult<DocumentDto>> Update(int id, UpdateDocumentDto updateDto)
+    public async Task<ActionResult<DocumentDto>> Update(Guid id, UpdateDocumentDto updateDto)
     {
         try
         {
@@ -111,7 +111,7 @@ public class DocumentsController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    public async Task<ActionResult> Delete(int id)
+    public async Task<ActionResult> Delete(Guid id)
     {
         try
         {
@@ -125,7 +125,7 @@ public class DocumentsController : ControllerBase
     }
 
     [HttpPost("{id}/versions")]
-    public async Task<ActionResult<DocumentVersionDto>> AddVersion(int id, [FromBody] string content)
+    public async Task<ActionResult<DocumentVersionDto>> AddVersion(Guid id, [FromBody] string content)
     {
         try
         {
@@ -139,7 +139,7 @@ public class DocumentsController : ControllerBase
     }
 
     [HttpGet("{id}/versions")]
-    public async Task<ActionResult<IEnumerable<DocumentVersionDto>>> GetVersions(int id)
+    public async Task<ActionResult<IEnumerable<DocumentVersionDto>>> GetVersions(Guid id)
     {
         try
         {

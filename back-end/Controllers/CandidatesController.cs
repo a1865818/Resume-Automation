@@ -23,7 +23,7 @@ public class CandidatesController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<CandidateDto>> GetById(int id)
+    public async Task<ActionResult<CandidateDto>> GetById(Guid id)
     {
         var candidate = await _candidateService.GetByIdAsync(id);
         if (candidate == null)
@@ -57,7 +57,7 @@ public class CandidatesController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public async Task<ActionResult<CandidateDto>> Update(int id, UpdateCandidateDto updateDto)
+    public async Task<ActionResult<CandidateDto>> Update(Guid id, UpdateCandidateDto updateDto)
     {
         try
         {
@@ -75,7 +75,7 @@ public class CandidatesController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    public async Task<ActionResult> Delete(int id)
+    public async Task<ActionResult> Delete(Guid id)
     {
         try
         {

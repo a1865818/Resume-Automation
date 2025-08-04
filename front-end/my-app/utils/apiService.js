@@ -157,21 +157,23 @@ class ApiService {
             // Check if resume document already exists for this application
             let document;
             try {
-                document = await this.getDocumentByCustomRoute(candidateName, roleName, 'Resume', 0);
+                const documents = await this.getDocumentsByApplicationId(application.id);
+                document = documents.find(doc => doc.documentType === 'Resume');
             } catch (error) {
+                // No documents found
+            }
+
+            if (!document) {
                 // Document doesn't exist, create one
                 document = await this.createDocument({
                     title: `${candidateName} Resume`,
                     documentType: 'Resume',
-                    content: JSON.stringify(resumeData),
                     applicationId: application.id,
                 });
             }
 
-            // If document exists, add new version
-            if (document && document.id) {
-                await this.addDocumentVersion(document.id, JSON.stringify(resumeData));
-            }
+            // Always add new version with the content
+            await this.addDocumentVersion(document.id, JSON.stringify(resumeData));
 
             return {
                 candidate,
@@ -195,8 +197,8 @@ class ApiService {
                 // Candidate doesn't exist, create one
                 candidate = await this.createCandidate({
                     name: candidateName,
-                    email: '',
-                    phone: '',
+                    email: null,
+                    phone: null,
                 });
             }
 
@@ -216,21 +218,23 @@ class ApiService {
             // Check if tender response document already exists for this application
             let document;
             try {
-                document = await this.getDocumentByCustomRoute(candidateName, roleName, 'TenderResponse', 0);
+                const documents = await this.getDocumentsByApplicationId(application.id);
+                document = documents.find(doc => doc.documentType === 'TenderResponse');
             } catch (error) {
+                // No documents found
+            }
+
+            if (!document) {
                 // Document doesn't exist, create one
                 document = await this.createDocument({
                     title: `${candidateName} Tender Response`,
                     documentType: 'TenderResponse',
-                    content: JSON.stringify(tenderData),
                     applicationId: application.id,
                 });
             }
 
-            // If document exists, add new version
-            if (document && document.id) {
-                await this.addDocumentVersion(document.id, JSON.stringify(tenderData));
-            }
+            // Always add new version with the content
+            await this.addDocumentVersion(document.id, JSON.stringify(tenderData));
 
             return {
                 candidate,
@@ -254,8 +258,8 @@ class ApiService {
                 // Candidate doesn't exist, create one
                 candidate = await this.createCandidate({
                     name: candidateName,
-                    email: '',
-                    phone: '',
+                    email: null,
+                    phone: null,
                 });
             }
 
@@ -275,21 +279,23 @@ class ApiService {
             // Check if proposal summary document already exists for this application
             let document;
             try {
-                document = await this.getDocumentByCustomRoute(candidateName, roleName, 'ProposalSummary', 0);
+                const documents = await this.getDocumentsByApplicationId(application.id);
+                document = documents.find(doc => doc.documentType === 'ProposalSummary');
             } catch (error) {
+                // No documents found
+            }
+
+            if (!document) {
                 // Document doesn't exist, create one
                 document = await this.createDocument({
                     title: `${candidateName} Proposal Summary`,
                     documentType: 'ProposalSummary',
-                    content: JSON.stringify(proposalData),
                     applicationId: application.id,
                 });
             }
 
-            // If document exists, add new version
-            if (document && document.id) {
-                await this.addDocumentVersion(document.id, JSON.stringify(proposalData));
-            }
+            // Always add new version with the content
+            await this.addDocumentVersion(document.id, JSON.stringify(proposalData));
 
             return {
                 candidate,
@@ -306,9 +312,19 @@ class ApiService {
     async loadDocument(candidateName, roleName, documentType, documentId) {
         try {
             const document = await this.getDocumentByCustomRoute(candidateName, roleName, documentType, documentId);
+
+            // Get the latest version content
+            const versions = await this.getDocumentVersions(documentId);
+            const latestVersion = versions.sort((a, b) => b.version - a.version)[0];
+
+            if (!latestVersion) {
+                throw new Error('No content found for this document');
+            }
+
             return {
                 ...document,
-                content: JSON.parse(document.content),
+                content: JSON.parse(latestVersion.content),
+                candidateName: candidateName,
             };
         } catch (error) {
             console.error('Error loading document:', error);

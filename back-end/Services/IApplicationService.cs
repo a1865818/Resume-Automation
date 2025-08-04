@@ -5,11 +5,11 @@ namespace ResumeAutomation.API.Services
     public interface IApplicationService
     {
         Task<IEnumerable<ApplicationDto>> GetAllAsync();
-        Task<ApplicationDto?> GetByIdAsync(int id);
-        Task<IEnumerable<ApplicationDto>> GetByCandidateIdAsync(int candidateId);
-        Task<ApplicationDto?> GetByCandidateAndRoleAsync(int candidateId, string roleName);
+        Task<ApplicationDto?> GetByIdAsync(Guid id);
+        Task<IEnumerable<ApplicationDto>> GetByCandidateIdAsync(Guid candidateId);
+        Task<ApplicationDto?> GetByCandidateAndRoleAsync(Guid candidateId, string roleName);
         Task<ApplicationDto> CreateAsync(CreateApplicationDto createDto);
-        Task<ApplicationDto> UpdateAsync(int id, UpdateApplicationDto updateDto);
-        Task DeleteAsync(int id);
+        Task<ApplicationDto> UpdateAsync(Guid id, UpdateApplicationDto updateDto);
+        Task DeleteAsync(Guid id);
     }
 } 

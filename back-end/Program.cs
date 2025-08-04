@@ -3,6 +3,10 @@ using ResumeAutomation.API.Data;
 using ResumeAutomation.API.Services;
 using ResumeAutomation.API.Repositories;
 using Supabase;
+using DotNetEnv;
+
+// Load environment variables from .env file
+Env.Load(".env");
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,15 +26,24 @@ builder.Services.AddCors(options =>
     });
 });
 
+
+// Build connection string from environment variables
+var connectionString = $"Host={Environment.GetEnvironmentVariable("SUPABASE_DB_HOST")};" +
+                      $"Database={Environment.GetEnvironmentVariable("SUPABASE_DB_NAME")};" +
+                      $"Username={Environment.GetEnvironmentVariable("SUPABASE_DB_USERNAME")};" +
+                      $"Password={Environment.GetEnvironmentVariable("SUPABASE_DB_PASSWORD")};" +
+                      $"Port={Environment.GetEnvironmentVariable("SUPABASE_DB_PORT")};" +
+                      $"SSL Mode=Require;Trust Server Certificate=true;";
+
 // Configure Entity Framework
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseNpgsql(connectionString));
 
 // Configure Supabase Client (for database operations)
 builder.Services.AddScoped<Supabase.Client>(provider =>
 {
-    var supabaseUrl = builder.Configuration["Supabase:Url"];
-    var supabaseKey = builder.Configuration["Supabase:Key"];
+    var supabaseUrl = Environment.GetEnvironmentVariable("SUPABASE_URL");
+    var supabaseKey = Environment.GetEnvironmentVariable("SUPABASE_ANON_KEY");
     return new Supabase.Client(supabaseUrl, supabaseKey);
 });
 

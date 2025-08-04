@@ -18,31 +18,31 @@ public class DocumentRepository : IDocumentRepository
         return await _context.Documents
             .Include(d => d.Application)
                 .ThenInclude(a => a.Candidate)
-            .Include(d => d.Versions.OrderByDescending(v => v.Version))
+            .Include(d => d.Versions)
             .ToListAsync();
     }
 
-    public async Task<Document?> GetByIdAsync(int id)
+    public async Task<Document?> GetByIdAsync(Guid id)
     {
         return await _context.Documents
             .Include(d => d.Application)
                 .ThenInclude(a => a.Candidate)
-            .Include(d => d.Versions.OrderByDescending(v => v.Version))
+            .Include(d => d.Versions)
             .FirstOrDefaultAsync(d => d.Id == id);
     }
 
-    public async Task<IEnumerable<Document>> GetByApplicationIdAsync(int applicationId)
+    public async Task<IEnumerable<Document>> GetByApplicationIdAsync(Guid applicationId)
     {
         return await _context.Documents
-            .Include(d => d.Versions.OrderByDescending(v => v.Version))
+            .Include(d => d.Versions)
             .Where(d => d.ApplicationId == applicationId)
             .ToListAsync();
     }
 
-    public async Task<Document?> GetByApplicationAndTypeAsync(int applicationId, DocumentType documentType)
+    public async Task<Document?> GetByApplicationAndTypeAsync(Guid applicationId, DocumentType documentType)
     {
         return await _context.Documents
-            .Include(d => d.Versions.OrderByDescending(v => v.Version))
+            .Include(d => d.Versions)
             .FirstOrDefaultAsync(d => d.ApplicationId == applicationId && d.DocumentType == documentType);
     }
 
@@ -61,7 +61,7 @@ public class DocumentRepository : IDocumentRepository
         return document;
     }
 
-    public async Task DeleteAsync(int id)
+    public async Task DeleteAsync(Guid id)
     {
         var document = await _context.Documents.FindAsync(id);
         if (document != null)
@@ -71,12 +71,12 @@ public class DocumentRepository : IDocumentRepository
         }
     }
 
-    public async Task<bool> ExistsAsync(int id)
+    public async Task<bool> ExistsAsync(Guid id)
     {
         return await _context.Documents.AnyAsync(d => d.Id == id);
     }
 
-    public async Task<DocumentVersion> AddVersionAsync(int documentId, string content)
+    public async Task<DocumentVersion> AddVersionAsync(Guid documentId, string content)
     {
         var document = await _context.Documents
             .Include(d => d.Versions)
@@ -101,7 +101,7 @@ public class DocumentRepository : IDocumentRepository
         return version;
     }
 
-    public async Task<DocumentVersion?> GetLatestVersionAsync(int documentId)
+    public async Task<DocumentVersion?> GetLatestVersionAsync(Guid documentId)
     {
         return await _context.DocumentVersions
             .Where(v => v.DocumentId == documentId)
@@ -109,7 +109,7 @@ public class DocumentRepository : IDocumentRepository
             .FirstOrDefaultAsync();
     }
 
-    public async Task<IEnumerable<DocumentVersion>> GetVersionsAsync(int documentId)
+    public async Task<IEnumerable<DocumentVersion>> GetVersionsAsync(Guid documentId)
     {
         return await _context.DocumentVersions
             .Where(v => v.DocumentId == documentId)

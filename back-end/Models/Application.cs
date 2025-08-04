@@ -4,7 +4,7 @@ namespace ResumeAutomation.API.Models
     {
         public string RoleName { get; set; } = string.Empty;
         public string? Description { get; set; }
-        public int CandidateId { get; set; }
+        public Guid CandidateId { get; set; }
         
         // Navigation properties
         public Candidate Candidate { get; set; } = null!;

@@ -18,33 +18,33 @@ namespace ResumeAutomation.API.Repositories
             return await _context.Applications
                 .Include(a => a.Candidate)
                 .Include(a => a.Documents)
-                    .ThenInclude(d => d.LatestVersion)
+                    .ThenInclude(d => d.Versions)
                 .ToListAsync();
         }
 
-        public async Task<Application?> GetByIdAsync(int id)
+        public async Task<Application?> GetByIdAsync(Guid id)
         {
             return await _context.Applications
                 .Include(a => a.Candidate)
                 .Include(a => a.Documents)
-                    .ThenInclude(d => d.LatestVersion)
+                    .ThenInclude(d => d.Versions)
                 .FirstOrDefaultAsync(a => a.Id == id);
         }
 
-        public async Task<IEnumerable<Application>> GetByCandidateIdAsync(int candidateId)
+        public async Task<IEnumerable<Application>> GetByCandidateIdAsync(Guid candidateId)
         {
             return await _context.Applications
                 .Include(a => a.Documents)
-                    .ThenInclude(d => d.LatestVersion)
+                    .ThenInclude(d => d.Versions)
                 .Where(a => a.CandidateId == candidateId)
                 .ToListAsync();
         }
 
-        public async Task<Application?> GetByCandidateAndRoleAsync(int candidateId, string roleName)
+        public async Task<Application?> GetByCandidateAndRoleAsync(Guid candidateId, string roleName)
         {
             return await _context.Applications
                 .Include(a => a.Documents)
-                    .ThenInclude(d => d.LatestVersion)
+                    .ThenInclude(d => d.Versions)
                 .FirstOrDefaultAsync(a => a.CandidateId == candidateId && a.RoleName == roleName);
         }
 
@@ -67,7 +67,7 @@ namespace ResumeAutomation.API.Repositories
             return application;
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(Guid id)
         {
             var application = await _context.Applications.FindAsync(id);
             if (application != null)
@@ -77,12 +77,12 @@ namespace ResumeAutomation.API.Repositories
             }
         }
 
-        public async Task<bool> ExistsAsync(int id)
+        public async Task<bool> ExistsAsync(Guid id)
         {
             return await _context.Applications.AnyAsync(a => a.Id == id);
         }
 
-        public async Task<bool> ExistsByCandidateAndRoleAsync(int candidateId, string roleName)
+        public async Task<bool> ExistsByCandidateAndRoleAsync(Guid candidateId, string roleName)
         {
             return await _context.Applications.AnyAsync(a => a.CandidateId == candidateId && a.RoleName == roleName);
         }

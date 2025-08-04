@@ -23,7 +23,7 @@ namespace ResumeAutomation.API.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<ApplicationDto>> GetById(int id)
+        public async Task<ActionResult<ApplicationDto>> GetById(Guid id)
         {
             var application = await _applicationService.GetByIdAsync(id);
             if (application == null)
@@ -34,14 +34,14 @@ namespace ResumeAutomation.API.Controllers
         }
 
         [HttpGet("candidate/{candidateId}")]
-        public async Task<ActionResult<IEnumerable<ApplicationDto>>> GetByCandidateId(int candidateId)
+        public async Task<ActionResult<IEnumerable<ApplicationDto>>> GetByCandidateId(Guid candidateId)
         {
             var applications = await _applicationService.GetByCandidateIdAsync(candidateId);
             return Ok(applications);
         }
 
         [HttpGet("candidate/{candidateId}/role/{roleName}")]
-        public async Task<ActionResult<ApplicationDto>> GetByCandidateAndRole(int candidateId, string roleName)
+        public async Task<ActionResult<ApplicationDto>> GetByCandidateAndRole(Guid candidateId, string roleName)
         {
             var application = await _applicationService.GetByCandidateAndRoleAsync(candidateId, roleName);
             if (application == null)
@@ -70,7 +70,7 @@ namespace ResumeAutomation.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<ApplicationDto>> Update(int id, UpdateApplicationDto updateDto)
+        public async Task<ActionResult<ApplicationDto>> Update(Guid id, UpdateApplicationDto updateDto)
         {
             try
             {
@@ -88,7 +88,7 @@ namespace ResumeAutomation.API.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult> Delete(int id)
+        public async Task<ActionResult> Delete(Guid id)
         {
             try
             {

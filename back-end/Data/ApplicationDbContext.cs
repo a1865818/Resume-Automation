@@ -23,7 +23,7 @@ namespace ResumeAutomation.API.Data
             {
                 entity.ToTable("Candidates");
                 entity.HasKey(e => e.Id);
-                entity.Property(e => e.Id).HasColumnName("Id").ValueGeneratedOnAdd();
+                entity.Property(e => e.Id).HasColumnName("Id").HasDefaultValueSql("gen_random_uuid()");
                 entity.Property(e => e.Name).HasColumnName("Name").IsRequired().HasMaxLength(200);
                 entity.Property(e => e.Email).HasColumnName("Email").HasMaxLength(255);
                 entity.Property(e => e.Phone).HasColumnName("Phone").HasMaxLength(50);
@@ -41,7 +41,7 @@ namespace ResumeAutomation.API.Data
             {
                 entity.ToTable("Applications");
                 entity.HasKey(e => e.Id);
-                entity.Property(e => e.Id).HasColumnName("Id").ValueGeneratedOnAdd();
+                entity.Property(e => e.Id).HasColumnName("Id").HasDefaultValueSql("gen_random_uuid()");
                 entity.Property(e => e.RoleName).HasColumnName("RoleName").IsRequired().HasMaxLength(200);
                 entity.Property(e => e.Description).HasColumnName("Description").HasMaxLength(500);
                 entity.Property(e => e.CandidateId).HasColumnName("CandidateId");
@@ -60,7 +60,7 @@ namespace ResumeAutomation.API.Data
             {
                 entity.ToTable("Documents");
                 entity.HasKey(e => e.Id);
-                entity.Property(e => e.Id).HasColumnName("Id").ValueGeneratedOnAdd();
+                entity.Property(e => e.Id).HasColumnName("Id").HasDefaultValueSql("gen_random_uuid()");
                 entity.Property(e => e.Title).HasColumnName("Title").IsRequired().HasMaxLength(200);
                 entity.Property(e => e.DocumentType).HasColumnName("DocumentType").IsRequired();
                 entity.Property(e => e.ApplicationId).HasColumnName("ApplicationId");
@@ -79,7 +79,7 @@ namespace ResumeAutomation.API.Data
             {
                 entity.ToTable("DocumentVersions");
                 entity.HasKey(e => e.Id);
-                entity.Property(e => e.Id).HasColumnName("Id").ValueGeneratedOnAdd();
+                entity.Property(e => e.Id).HasColumnName("Id").HasDefaultValueSql("gen_random_uuid()");
                 entity.Property(e => e.Version).HasColumnName("Version").IsRequired();
                 entity.Property(e => e.Content).HasColumnName("Content").IsRequired();
                 entity.Property(e => e.DocumentId).HasColumnName("DocumentId");

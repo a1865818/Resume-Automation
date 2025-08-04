@@ -7,7 +7,7 @@ public class CreateDocumentDto
     public string Title { get; set; } = string.Empty;
     public DocumentType DocumentType { get; set; }
     public string Content { get; set; } = string.Empty; // JSON content
-    public int ApplicationId { get; set; }
+    public Guid ApplicationId { get; set; }
 }
 
 public class UpdateDocumentDto
@@ -18,10 +18,10 @@ public class UpdateDocumentDto
 
 public class DocumentDto
 {
-    public int Id { get; set; }
+    public Guid Id { get; set; }
     public string Title { get; set; } = string.Empty;
     public DocumentType DocumentType { get; set; }
-    public int ApplicationId { get; set; }
+    public Guid ApplicationId { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
     public DocumentVersionDto? LatestVersion { get; set; }
@@ -30,7 +30,7 @@ public class DocumentDto
 
 public class DocumentVersionDto
 {
-    public int Id { get; set; }
+    public Guid Id { get; set; }
     public int Version { get; set; }
     public string Content { get; set; } = string.Empty;
     public DateTime CreatedAt { get; set; }
@@ -38,10 +38,10 @@ public class DocumentVersionDto
 
 public class DocumentWithContentDto
 {
-    public int Id { get; set; }
+    public Guid Id { get; set; }
     public string Title { get; set; } = string.Empty;
     public DocumentType DocumentType { get; set; }
-    public int ApplicationId { get; set; }
+    public Guid ApplicationId { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
     public string Content { get; set; } = string.Empty; // Latest version content

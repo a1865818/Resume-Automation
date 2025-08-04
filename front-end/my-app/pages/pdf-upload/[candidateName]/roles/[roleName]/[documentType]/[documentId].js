@@ -28,7 +28,7 @@ export default function DocumentViewer() {
                     decodeURIComponent(candidateName),
                     decodeURIComponent(roleName),
                     documentType,
-                    parseInt(documentId)
+                    documentId
                 );
 
                 setDocumentData(data);

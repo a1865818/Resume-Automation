@@ -4,7 +4,7 @@ namespace ResumeAutomation.API.Models
     {
         public string Title { get; set; } = string.Empty;
         public DocumentType DocumentType { get; set; }
-        public int ApplicationId { get; set; }
+        public Guid ApplicationId { get; set; }
         
         // Navigation properties
         public virtual Application Application { get; set; } = null!;

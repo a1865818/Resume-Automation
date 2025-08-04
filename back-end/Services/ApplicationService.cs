@@ -27,19 +27,19 @@ namespace ResumeAutomation.API.Services
             return _mapper.Map<IEnumerable<ApplicationDto>>(applications);
         }
 
-        public async Task<ApplicationDto?> GetByIdAsync(int id)
+        public async Task<ApplicationDto?> GetByIdAsync(Guid id)
         {
             var application = await _applicationRepository.GetByIdAsync(id);
             return _mapper.Map<ApplicationDto?>(application);
         }
 
-        public async Task<IEnumerable<ApplicationDto>> GetByCandidateIdAsync(int candidateId)
+        public async Task<IEnumerable<ApplicationDto>> GetByCandidateIdAsync(Guid candidateId)
         {
             var applications = await _applicationRepository.GetByCandidateIdAsync(candidateId);
             return _mapper.Map<IEnumerable<ApplicationDto>>(applications);
         }
 
-        public async Task<ApplicationDto?> GetByCandidateAndRoleAsync(int candidateId, string roleName)
+        public async Task<ApplicationDto?> GetByCandidateAndRoleAsync(Guid candidateId, string roleName)
         {
             var application = await _applicationRepository.GetByCandidateAndRoleAsync(candidateId, roleName);
             return _mapper.Map<ApplicationDto?>(application);
@@ -65,7 +65,7 @@ namespace ResumeAutomation.API.Services
             return _mapper.Map<ApplicationDto>(createdApplication);
         }
 
-        public async Task<ApplicationDto> UpdateAsync(int id, UpdateApplicationDto updateDto)
+        public async Task<ApplicationDto> UpdateAsync(Guid id, UpdateApplicationDto updateDto)
         {
             var application = await _applicationRepository.GetByIdAsync(id);
             if (application == null)
@@ -87,7 +87,7 @@ namespace ResumeAutomation.API.Services
             return _mapper.Map<ApplicationDto>(updatedApplication);
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(Guid id)
         {
             if (!await _applicationRepository.ExistsAsync(id))
             {
