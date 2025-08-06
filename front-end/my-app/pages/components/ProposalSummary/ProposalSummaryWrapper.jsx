@@ -16,6 +16,7 @@ import { useRef, useState } from 'react';
 import generatePDF from 'react-to-pdf';
 import ProposalSummary from './ProposalSummary';
 import ProposalSummaryWordCompatible from './ProposalSummaryWordCompatible';
+import CandidateSelectionModal from '../PdfSummary/CandidateSelectionModal';
 
 // Helper function to convert image to base64 (for embedding)
 const imageToBase64 = async (imagePath) => {
@@ -566,11 +567,18 @@ const ProposalSummaryWrapper = ({
   onRegenerateProposalSummary = null,
   isRegenerating = false,
   detectedSector = 'Government',
-  templateType = 'criteria-statement'
+  templateType = 'criteria-statement',
+  // Save functionality props
+  onSaveProposalSummary = null,
+  isSaving = false,
+  savedDocumentUrl = '',
+  saveError = '',
+  roleName = ''
 }) => {
   const [isPdfLoading, setIsPdfLoading] = useState(false);
   const [isWordLoading, setIsWordLoading] = useState(false);
   const [validationResults, setValidationResults] = useState(null);
+  const [showCandidateModal, setShowCandidateModal] = useState(false);
   const proposalRef = useRef();
   const wordProposalRef = useRef();
   
@@ -747,6 +755,22 @@ const ProposalSummaryWrapper = ({
     }
   };
 
+  // Modal handlers for save functionality
+  const handleSaveProposalSummaryClick = () => {
+    setShowCandidateModal(true);
+  };
+
+  const handleCandidateModalConfirm = (result) => {
+    setShowCandidateModal(false);
+    if (onSaveProposalSummary) {
+      onSaveProposalSummary(result);
+    }
+  };
+
+  const handleCandidateModalCancel = () => {
+    setShowCandidateModal(false);
+  };
+
   if (!proposalData) {
     return (
       <div style={{ 
@@ -874,6 +898,31 @@ const ProposalSummaryWrapper = ({
           )}
         </button>
 
+        {/* Save Proposal Summary Button */}
+        {onSaveProposalSummary && (
+          <button
+            onClick={handleSaveProposalSummaryClick}
+            disabled={isSaving || isRegenerating}
+            className={`px-6 py-3 rounded-lg font-medium flex items-center gap-2 transition-colors duration-200 ${
+              isSaving || isRegenerating
+                ? 'bg-gray-400 text-gray-700 cursor-not-allowed'
+                : 'bg-emerald-600 text-white hover:bg-emerald-700'
+            }`}
+          >
+            {isSaving ? (
+              <>
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                Saving...
+              </>
+            ) : (
+              <>
+                <span>💾</span>
+                Save Proposal Summary
+              </>
+            )}
+          </button>
+        )}
+
         {/* Regenerate Proposal Summary Button */}
         <button
           onClick={handleRegenerateClick}
@@ -935,6 +984,20 @@ const ProposalSummaryWrapper = ({
             <p className="text-green-600 text-xs mt-1">
               🚀 <strong>NEW:</strong> Word documents generated using true .docx format - no companion folders created when editing!
             </p>
+            {/* Save Status Feedback */}
+            {savedDocumentUrl && (
+              <p className="text-emerald-600 text-xs mt-1">
+                ✅ <strong>Saved!</strong> Document saved successfully. 
+                <a href={savedDocumentUrl} target="_blank" rel="noopener noreferrer" className="underline ml-1">
+                  View saved document
+                </a>
+              </p>
+            )}
+            {saveError && (
+              <p className="text-red-600 text-xs mt-1">
+                ❌ <strong>Save Error:</strong> {saveError}
+              </p>
+            )}
           </div>
           <div className="text-right">
             <div className="text-sm text-blue-600">
@@ -972,6 +1035,16 @@ const ProposalSummaryWrapper = ({
           <ProposalSummaryWordCompatible proposalData={proposalData} templateType={templateType} />
         </div>
       </div>
+
+      {/* Candidate Selection Modal */}
+      <CandidateSelectionModal
+        visible={showCandidateModal}
+        onCancel={handleCandidateModalCancel}
+        onConfirm={handleCandidateModalConfirm}
+        documentData={proposalData}
+        documentType="proposalSummary"
+        roleName={roleName || 'default'}
+      />
     </div>
   );
 };

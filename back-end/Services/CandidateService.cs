@@ -78,6 +78,7 @@ public class CandidateService : ICandidateService
         if (updateDto.CSID_Number != null)
             candidate.CSID_Number = updateDto.CSID_Number;
 
+
         var updatedCandidate = await _candidateRepository.UpdateAsync(candidate);
         return _mapper.Map<CandidateDto>(updatedCandidate);
     }

@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/router';
-import Layout from '../../../../components/Layout';
-import ResumeTemplate from '../../../../components/ResumeTemplate';
-import TenderResponseWrapper from '../../../../components/TenderResponse/TenderResponseWrapper';
-import ProposalSummaryWrapper from '../../../../components/ProposalSummary/ProposalSummaryWrapper';
-import apiService from '../../../../utils/apiService';
+import Layout from "@/pages/components/Layout";
+import ProposalSummaryWrapper from "@/pages/components/ProposalSummary/ProposalSummaryWrapper";
+import ResumeTemplate from "@/pages/components/ResumeTemplate";
+import TenderResponseWrapper from "@/pages/components/TenderResponse/TenderResponseWrapper";
+import apiService from "@/utils/apiService";
+import Head from "next/head";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 
 export default function DocumentViewer() {
     const router = useRouter();
@@ -33,8 +34,8 @@ export default function DocumentViewer() {
 
                 setDocumentData(data);
             } catch (err) {
-                console.error('Error loading document:', err);
-                setError(err.message || 'Failed to load document');
+                console.error("Error loading document:", err);
+                setError(err.message || "Failed to load document");
             } finally {
                 setLoading(false);
             }
@@ -44,7 +45,7 @@ export default function DocumentViewer() {
     }, [candidateName, roleName, documentType, documentId]);
 
     const handleBackToUpload = () => {
-        router.push('/pdf-upload');
+        router.push("/pdf-upload");
     };
 
     if (loading) {
@@ -66,7 +67,9 @@ export default function DocumentViewer() {
                 <div className="flex items-center justify-center min-h-screen">
                     <div className="text-center">
                         <div className="text-red-600 text-6xl mb-4">⚠️</div>
-                        <h1 className="text-2xl font-bold text-gray-800 mb-2">Document Not Found</h1>
+                        <h1 className="text-2xl font-bold text-gray-800 mb-2">
+                            Document Not Found
+                        </h1>
                         <p className="text-gray-600 mb-4">{error}</p>
                         <button
                             onClick={handleBackToUpload}
@@ -86,8 +89,12 @@ export default function DocumentViewer() {
                 <div className="flex items-center justify-center min-h-screen">
                     <div className="text-center">
                         <div className="text-gray-600 text-6xl mb-4">📄</div>
-                        <h1 className="text-2xl font-bold text-gray-800 mb-2">No Document Data</h1>
-                        <p className="text-gray-600 mb-4">The document could not be loaded.</p>
+                        <h1 className="text-2xl font-bold text-gray-800 mb-2">
+                            No Document Data
+                        </h1>
+                        <p className="text-gray-600 mb-4">
+                            The document could not be loaded.
+                        </p>
                         <button
                             onClick={handleBackToUpload}
                             className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
@@ -105,30 +112,30 @@ export default function DocumentViewer() {
         const content = documentData.content;
 
         switch (documentType.toLowerCase()) {
-            case 'resume':
+            case "resume":
                 return (
                     <ResumeTemplate
                         resumeData={content}
                         onBackToSummary={handleBackToUpload}
-                        isReadOnly={true}
+                        viewMode="generate"
                     />
                 );
 
-            case 'tenderresponse':
+            case "tenderresponse":
                 return (
                     <TenderResponseWrapper
                         tenderData={content}
-                        candidateName={documentData.candidateName || 'Candidate'}
+                        candidateName={documentData.candidateName || "Candidate"}
                         onBackToResume={handleBackToUpload}
                         isReadOnly={true}
                     />
                 );
 
-            case 'proposalsummary':
+            case "proposalsummary":
                 return (
                     <ProposalSummaryWrapper
                         proposalData={content}
-                        candidateName={documentData.candidateName || 'Candidate'}
+                        candidateName={documentData.candidateName || "Candidate"}
                         onBackToTenderResponse={handleBackToUpload}
                         isReadOnly={true}
                     />
@@ -137,8 +144,12 @@ export default function DocumentViewer() {
             default:
                 return (
                     <div className="text-center py-8">
-                        <h1 className="text-2xl font-bold text-gray-800 mb-4">Unknown Document Type</h1>
-                        <p className="text-gray-600 mb-4">Document type "{documentType}" is not supported.</p>
+                        <h1 className="text-2xl font-bold text-gray-800 mb-4">
+                            Unknown Document Type
+                        </h1>
+                        <p className="text-gray-600 mb-4">
+                            Document type &quot;{documentType}&quot; is not supported.
+                        </p>
                         <button
                             onClick={handleBackToUpload}
                             className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
@@ -152,6 +163,11 @@ export default function DocumentViewer() {
 
     return (
         <Layout>
+            <Head>
+                <link rel="preconnect" href="https://fonts.googleapis.com" />
+                <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin />
+                <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet" />
+            </Head>
             <div className="w-full">
                 {/* Header with document info */}
                 <div className="bg-white shadow-sm border-b px-6 py-4">
@@ -175,11 +191,17 @@ export default function DocumentViewer() {
                     </div>
                 </div>
 
-                {/* Document content */}
-                <div className="max-w-6xl mx-auto">
+                {/* Document content with appropriate width based on document type */}
+                <div style={{
+                    maxWidth: documentType.toLowerCase() === 'resume' ? '1512.8000488px' : '1012.8000488px',
+                    margin: '0 auto',
+                    // padding: '0 1rem',
+                    backgroundColor: '#f3f4f6',
+                    minHeight: '100vh'
+                }}>
                     {renderDocument()}
                 </div>
             </div>
         </Layout>
     );
-} 
+}

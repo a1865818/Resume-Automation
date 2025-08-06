@@ -10,8 +10,5 @@ namespace ResumeAutomation.API.Services
         {
             _supabaseClient = supabaseClient;
         }
-
-        // Basic Supabase client operations for database access
-        // Can be extended later when authentication is needed
     }
 } 

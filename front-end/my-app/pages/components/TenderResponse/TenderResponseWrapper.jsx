@@ -17,6 +17,7 @@ import { useRef, useState } from 'react';
 import generatePDF from 'react-to-pdf';
 import TenderResponseNew from './TenderResponseNew';
 import TenderResponseWordCompatible from './TenderResponseWordCompatible';
+import CandidateSelectionModal from '../PdfSummary/CandidateSelectionModal';
 
 // Helper function to convert image to base64 (for embedding)
 const imageToBase64 = async (imagePath) => {
@@ -770,12 +771,19 @@ const TenderResponseWrapper = ({
   onGenerateProposalSummary = null,
   isGeneratingProposal = false,
   hasProposalSummary = false,
-  onBackToProposalSummary = null
+  onBackToProposalSummary = null,
+  // Save functionality props
+  onSaveTenderResponse = null,
+  isSaving = false,
+  savedDocumentUrl = '',
+  saveError = '',
+  roleName = ''
 }) => {
   const [isPdfLoading, setIsPdfLoading] = useState(false);
   const [isWordLoading, setIsWordLoading] = useState(false);
   const [validationResults, setValidationResults] = useState(null);
   const [currentDetectedSector, setCurrentDetectedSector] = useState(detectedSector);
+  const [showCandidateModal, setShowCandidateModal] = useState(false);
   const tenderRef = useRef();
   const wordTenderRef = useRef();
   
@@ -987,6 +995,22 @@ const TenderResponseWrapper = ({
     }
   };
 
+  // Modal handlers for save functionality
+  const handleSaveTenderResponseClick = () => {
+    setShowCandidateModal(true);
+  };
+
+  const handleCandidateModalConfirm = (result) => {
+    setShowCandidateModal(false);
+    if (onSaveTenderResponse) {
+      onSaveTenderResponse(result);
+    }
+  };
+
+  const handleCandidateModalCancel = () => {
+    setShowCandidateModal(false);
+  };
+
   if (!tenderData) {
     return (
       <div style={{ 
@@ -1114,6 +1138,31 @@ const TenderResponseWrapper = ({
           )}
         </button>
 
+        {/* Save Tender Response Button */}
+        {onSaveTenderResponse && (
+          <button
+            onClick={handleSaveTenderResponseClick}
+            disabled={isSaving || isRegenerating}
+            className={`px-6 py-3 rounded-lg font-medium flex items-center gap-2 transition-colors duration-200 ${
+              isSaving || isRegenerating
+                ? 'bg-gray-400 text-gray-700 cursor-not-allowed'
+                : 'bg-emerald-600 text-white hover:bg-emerald-700'
+            }`}
+          >
+            {isSaving ? (
+              <>
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                Saving...
+              </>
+            ) : (
+              <>
+                <span>💾</span>
+                Save Tender Response
+              </>
+            )}
+          </button>
+        )}
+
         {/* Generate Proposal Summary Button */}
         {onGenerateProposalSummary && (
           <button
@@ -1216,6 +1265,20 @@ const TenderResponseWrapper = ({
                 📑 <strong>Proposal Summary Available:</strong> Narrative format ready for download!
               </p>
             )}
+            {/* Save Status Feedback */}
+            {savedDocumentUrl && (
+              <p className="text-emerald-600 text-xs mt-1">
+                ✅ <strong>Saved!</strong> Document saved successfully. 
+                <a href={savedDocumentUrl} target="_blank" rel="noopener noreferrer" className="underline ml-1">
+                  View saved document
+                </a>
+              </p>
+            )}
+            {saveError && (
+              <p className="text-red-600 text-xs mt-1">
+                ❌ <strong>Save Error:</strong> {saveError}
+              </p>
+            )}
           </div>
           <div className="text-right">
             <div className="text-sm text-blue-600">
@@ -1285,6 +1348,16 @@ const TenderResponseWrapper = ({
           <TenderResponseWordCompatible tenderData={tenderData} templateType={templateType} />
         </div>
       </div>
+
+      {/* Candidate Selection Modal */}
+      <CandidateSelectionModal
+        visible={showCandidateModal}
+        onCancel={handleCandidateModalCancel}
+        onConfirm={handleCandidateModalConfirm}
+        documentData={tenderData}
+        documentType="tenderResponse"
+        roleName={roleName || 'default'}
+      />
     </div>
   );
 };

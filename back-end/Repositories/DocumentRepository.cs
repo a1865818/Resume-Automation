@@ -56,6 +56,13 @@ public class DocumentRepository : IDocumentRepository
     public async Task<Document> UpdateAsync(Document document)
     {
         document.UpdatedAt = DateTime.UtcNow;
+        
+        // Ensure CreatedAt is UTC if it has Unspecified Kind
+        if (document.CreatedAt.Kind == DateTimeKind.Unspecified)
+        {
+            document.CreatedAt = DateTime.SpecifyKind(document.CreatedAt, DateTimeKind.Utc);
+        }
+        
         _context.Documents.Update(document);
         await _context.SaveChangesAsync();
         return document;

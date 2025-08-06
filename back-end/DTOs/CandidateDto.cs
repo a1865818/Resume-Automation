@@ -5,7 +5,7 @@ public class CreateCandidateDto
     public string Name { get; set; } = string.Empty;
     public string? Email { get; set; }
     public string? Phone { get; set; }
-    public DateTime? DateOfBirth { get; set; }
+    public DateOnly? DateOfBirth { get; set; }
     public string? CSID_Number { get; set; }
 }
 
@@ -14,7 +14,7 @@ public class UpdateCandidateDto
     public string? Name { get; set; }
     public string? Email { get; set; }
     public string? Phone { get; set; }
-    public DateTime? DateOfBirth { get; set; }
+    public DateOnly? DateOfBirth { get; set; }
     public string? CSID_Number { get; set; }
 }
 
@@ -24,7 +24,7 @@ public class CandidateDto
     public string Name { get; set; } = string.Empty;
     public string? Email { get; set; }
     public string? Phone { get; set; }
-    public DateTime? DateOfBirth { get; set; }
+    public DateOnly? DateOfBirth { get; set; }
     public string? CSID_Number { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }

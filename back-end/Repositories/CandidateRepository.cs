@@ -50,6 +50,13 @@ public class CandidateRepository : ICandidateRepository
     public async Task<Candidate> UpdateAsync(Candidate candidate)
     {
         candidate.UpdatedAt = DateTime.UtcNow;
+        
+        // Ensure CreatedAt is UTC if it has Unspecified Kind
+        if (candidate.CreatedAt.Kind == DateTimeKind.Unspecified)
+        {
+            candidate.CreatedAt = DateTime.SpecifyKind(candidate.CreatedAt, DateTimeKind.Utc);
+        }
+        
         _context.Candidates.Update(candidate);
         await _context.SaveChangesAsync();
         return candidate;

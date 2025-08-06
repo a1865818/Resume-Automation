@@ -12,8 +12,11 @@ export default function CandidatesPage() {
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [isModalVisible, setIsModalVisible] = useState(false);
+    const [editModalVisible, setEditModalVisible] = useState(false);
     const [selectedCandidate, setSelectedCandidate] = useState(null);
+    const [candidateToEdit, setCandidateToEdit] = useState(null);
     const [form] = Form.useForm();
+    const [editForm] = Form.useForm();
 
     useEffect(() => {
         loadCandidates();
@@ -49,7 +52,7 @@ export default function CandidatesPage() {
             // Convert dayjs date to ISO string if present
             const candidateData = {
                 ...values,
-                dateOfBirth: values.dateOfBirth ? values.dateOfBirth.toISOString() : null
+                dateOfBirth: values.dateOfBirth ? values.dateOfBirth.format('YYYY-MM-DD') : null
             };
             
             await apiService.createCandidate(candidateData);
@@ -75,6 +78,38 @@ export default function CandidatesPage() {
         } catch (error) {
             console.error('Error creating application:', error);
             message.error('Failed to create application');
+        }
+    };
+
+    const showEditModal = (candidate) => {
+        setCandidateToEdit(candidate);
+        // Prepopulate form
+        editForm.setFieldsValue({
+            name: candidate.name,
+            email: candidate.email,
+            phone: candidate.phone,
+            dateOfBirth: candidate.dateOfBirth ? dayjs(candidate.dateOfBirth) : null,
+            csidNumber: candidate.csidNumber,
+        });
+        setEditModalVisible(true);
+    };
+
+    const handleUpdateCandidate = async (values) => {
+        if (!candidateToEdit) return;
+        try {
+            const updateData = {
+                ...values,
+                dateOfBirth: values.dateOfBirth ? values.dateOfBirth.format('YYYY-MM-DD') : null,
+            };
+            await apiService.updateCandidate(candidateToEdit.id, updateData);
+            message.success('Candidate updated successfully');
+            setEditModalVisible(false);
+            setCandidateToEdit(null);
+            editForm.resetFields();
+            loadCandidates();
+        } catch (error) {
+            console.error('Error updating candidate:', error);
+            message.error('Failed to update candidate');
         }
     };
 
@@ -112,6 +147,11 @@ export default function CandidatesPage() {
     };
 
     const getDocumentTypeIcon = (documentType) => {
+        if (!documentType || typeof documentType !== 'string') {
+            console.warn('Invalid documentType:', documentType, typeof documentType);
+            return '📄';
+        }
+        
         switch (documentType.toLowerCase()) {
             case 'resume':
                 return '📄';
@@ -120,11 +160,16 @@ export default function CandidatesPage() {
             case 'proposalsummary':
                 return '📝';
             default:
+                console.warn('Unknown documentType:', documentType);
                 return '📄';
         }
     };
 
     const getDocumentTypeName = (documentType) => {
+        if (!documentType || typeof documentType !== 'string') {
+            return 'Document';
+        }
+        
         switch (documentType.toLowerCase()) {
             case 'resume':
                 return 'Resume';
@@ -185,14 +230,23 @@ export default function CandidatesPage() {
                                 </div>
                             }
                             extra={
-                                <Button
-                                    danger
-                                    icon={<DeleteOutlined />}
-                                    onClick={() => handleDeleteCandidate(candidate.id)}
-                                    size="small"
-                                >
-                                    Delete
-                                </Button>
+                                <div style={{ display: 'flex', gap: '8px' }}>
+                                    <Button
+                                        icon={<EditOutlined />}
+                                        onClick={() => showEditModal(candidate)}
+                                        size="small"
+                                    >
+                                        Edit
+                                    </Button>
+                                    <Button
+                                        danger
+                                        icon={<DeleteOutlined />}
+                                        onClick={() => handleDeleteCandidate(candidate.id)}
+                                        size="small"
+                                    >
+                                        Delete
+                                    </Button>
+                                </div>
                             }
                             style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}
                         >
@@ -247,19 +301,25 @@ export default function CandidatesPage() {
                                                 
                                                 {application.documents?.length > 0 ? (
                                                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                                                        {application.documents.map((document) => (
+                                                        {application.documents.map((document) => {
+                                                            console.log('Document data:', document);
+                                                            return (
                                                             <Button
                                                                 key={document.id}
                                                                 size="small"
                                                                 icon={getDocumentTypeIcon(document.documentType)}
                                                                 onClick={() => {
-                                                                    const url = `/pdf-upload/${encodeURIComponent(candidate.name)}/roles/${encodeURIComponent(application.roleName)}/${document.documentType.toLowerCase()}/${document.id}`;
+                                                                    const documentType = document.documentType && typeof document.documentType === 'string' 
+                                                                        ? document.documentType.toLowerCase() 
+                                                                        : 'resume';
+                                                                    const url = `/pdf-upload/${encodeURIComponent(candidate.name)}/roles/${encodeURIComponent(application.roleName)}/${documentType}/${document.id}`;
                                                                     window.open(url, '_blank');
                                                                 }}
                                                             >
                                                                 {getDocumentTypeName(document.documentType)}
                                                             </Button>
-                                                        ))}
+                                                            );
+                                                        })}
                                                     </div>
                                                 ) : (
                                                     <p style={{ color: '#999', fontSize: '12px' }}>
@@ -351,6 +411,80 @@ export default function CandidatesPage() {
                             Create Candidate
                         </Button>
                         <Button onClick={() => setIsModalVisible(false)}>
+                            Cancel
+                        </Button>
+                    </Form.Item>
+                </Form>
+            </Modal>
+
+            {/* Edit Candidate Modal */}
+            <Modal
+                title="Edit Candidate"
+                open={editModalVisible}
+                onCancel={() => {
+                    setEditModalVisible(false);
+                    setCandidateToEdit(null);
+                    editForm.resetFields();
+                }}
+                footer={null}
+            >
+                <Form
+                    form={editForm}
+                    layout="vertical"
+                    onFinish={handleUpdateCandidate}
+                >
+                    <Form.Item
+                        name="name"
+                        label="Name"
+                        rules={[{ required: true, message: 'Please enter candidate name' }]}
+                    >
+                        <Input placeholder="Enter candidate name" />
+                    </Form.Item>
+
+                    <Form.Item
+                        name="email"
+                        label="Email"
+                        rules={[{ type: 'email', message: 'Please enter a valid email' }]}
+                    >
+                        <Input placeholder="Enter email address" />
+                    </Form.Item>
+
+                    <Form.Item
+                        name="phone"
+                        label="Phone"
+                    >
+                        <Input placeholder="Enter phone number" />
+                    </Form.Item>
+
+                    <Form.Item
+                        name="dateOfBirth"
+                        label="Date of Birth"
+                    >
+                        <DatePicker
+                            placeholder="Select date of birth"
+                            style={{ width: '100%' }}
+                            format="YYYY-MM-DD"
+                        />
+                    </Form.Item>
+
+                    <Form.Item
+                        name="csidNumber"
+                        label="CSID Number"
+                    >
+                        <Input placeholder="Enter CSID number" />
+                    </Form.Item>
+
+                    <Form.Item>
+                        <Button type="primary" htmlType="submit" style={{ marginRight: '8px' }}>
+                            Update Candidate
+                        </Button>
+                        <Button
+                            onClick={() => {
+                                setEditModalVisible(false);
+                                setCandidateToEdit(null);
+                                editForm.resetFields();
+                            }}
+                        >
                             Cancel
                         </Button>
                     </Form.Item>

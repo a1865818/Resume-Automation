@@ -13,7 +13,7 @@ const DecorationRight = () => {
   }}
 >
   <img
-    src="assets/images/vector_16.svg"
+    src="/assets/images/vector_16.svg"
     alt="Vector"
     style={{
       position: "absolute",
@@ -23,7 +23,7 @@ const DecorationRight = () => {
   />
   <img
     id="_1_62__Vector"
-    src="assets/images/vector_17.svg"
+    src="/assets/images/vector_17.svg"
     alt="Vector"
     style={{
       position: "absolute",
@@ -33,7 +33,7 @@ const DecorationRight = () => {
   />
   <img
     id="_1_63__Vector"
-    src="assets/images/vector_18.svg"
+    src="/assets/images/vector_18.svg"
     alt="Vector"
     style={{
       position: "absolute",
@@ -43,7 +43,7 @@ const DecorationRight = () => {
   />
   <img
     id="_1_64__Vector"
-    src="assets/images/vector_19.svg"
+    src="/assets/images/vector_19.svg"
     alt="Vector"
     style={{
       position: "absolute",
@@ -53,7 +53,7 @@ const DecorationRight = () => {
   />
   <img
     id="_1_65__Vector"
-    src="assets/images/vector_20.svg"
+    src="/assets/images/vector_20.svg"
     alt="Vector"
     style={{
       position: "absolute",
@@ -63,7 +63,7 @@ const DecorationRight = () => {
   />
   <img
     id="_1_66__Vector"
-    src="assets/images/vector_21.svg"
+    src="/assets/images/vector_21.svg"
     alt="Vector"
     style={{
       position: "absolute",
@@ -73,7 +73,7 @@ const DecorationRight = () => {
   />
   <img
     id="_1_67__Vector"
-    src="assets/images/vector_22.svg"
+    src="/assets/images/vector_22.svg"
     alt="Vector"
     style={{
       position: "absolute",
@@ -83,7 +83,7 @@ const DecorationRight = () => {
   />
   <img
     id="_1_68__Vector"
-    src="assets/images/vector_23.svg"
+    src="/assets/images/vector_23.svg"
     alt="Vector"
     style={{
       position: "absolute",
@@ -93,7 +93,7 @@ const DecorationRight = () => {
   />
   <img
     id="_1_69__Vector"
-    src="assets/images/vector_24.svg"
+    src="/assets/images/vector_24.svg"
     alt="Vector"
     style={{
       position: "absolute",
@@ -103,7 +103,7 @@ const DecorationRight = () => {
   />
   <img
     id="_1_70__Vector"
-    src="assets/images/vector_25.svg"
+    src="/assets/images/vector_25.svg"
     alt="Vector"
     style={{
       position: "absolute",

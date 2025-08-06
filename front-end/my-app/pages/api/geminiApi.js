@@ -164,15 +164,14 @@ JSON SCHEMA - Optimized for government tender evaluation:
     "location": "Candidate's actual location (maintain authenticity)",
     //Security clearance response should be "NV1" or "NV2", no need to add extra statement behind the clearance level and must be taken from candidate's resume.
     "clearance": "Security clearance level",
-    //Using third person view with professional tone and sounds natural.
-    "description": "160-200 words directly addressing top 3-4 essential criteria with government-focused language and quantified achievements",
-    "description2": "160-200 words showcasing additional essential criteria compliance and competitive advantages for government work"
+    //Using third person view with professional tone and sounds natural. Only use information that provided by resume for the description and description2. Do not hallucinate or add any information.
+    "description": "160-180 words directly addressing top 3-4 essential criteria with government-focused language and quantified achievements. Only use information that provided by resume for the description and description2. Must not hallucinate or add any information.",
+    "description2": "160-180 words showcasing additional essential criteria compliance and competitive advantages for government work. Only use information that provided by resume for the description and description2. Must not hallucinate or add any information."
   },
 
   "qualifications": ["Qualifications prioritized by RFQ requirements, using exact terminology from tender"],
   "affiliations": ["Professional memberships that demonstrate government/regulatory sector credibility"],
-  "skills": ["Top 8 skills ranked by RFQ importance - lead with essential criteria, use government terminology"],
-  "keyAchievements": ["3 achievements with quantified outcomes that directly relate to government value delivery"],
+  "skills": ["Top 8 skills listed in the resume, combined technical and regulatory/compliance skills"],
   "experience": [
     {
       "title": "Job Title - Organization",
@@ -202,6 +201,7 @@ JSON SCHEMA - Optimized for government tender evaluation:
 
 🚨 CRITICAL TENDER OPTIMIZATION RULES:
 - Using Australian English.
+- Do not add information from RFQ that is not in the resume. You must remain authentic to the candidate's actual experience.
 - Remove any markdown formatting like "**text**" - use plain text only
 - If the resume has numbers to highlight achievements, mention them in the full experience section followed the format he/she used A to achieve those results by doing B. Or you can use some similar format.
 - Use EXACT terminology from the RFQ essential and desirable criteria
@@ -214,7 +214,7 @@ JSON SCHEMA - Optimized for government tender evaluation:
 - Maintain candidate authenticity while maximizing competitive positioning
 - Include compliance-related experience prominently
 - Demonstrate understanding of what RFTQ's required in processes and requirements
-- Location must be based on the RFTQ's requirements, not the candidate's actual location.
+- Location must be based on the RFTQ's requirements (primary location, no other secondary locations), not the candidate's actual location.
 - Security clearance: Include current status and eligibility for required level. If not applicable, return null.
 - Experience section: Focus on most relevant positions to the RFTQ's requirements. The bullet points should directly relate to the Essential Criteria of the RFTQs using key words that would be pciked up on a search function or ATS system. Moreover, provide 3 most relevant positions with 3-4 main bullet points each with insightful details that directly related to the Essenti. For example if the RFTQ's requires are for a Business Analyst, you would provide the 3 most relevant positions to the requirements.
 - Full experience: Include ALL positions but weight relevant work to the RFTQ's requirement more heavily.
@@ -748,6 +748,7 @@ export async function generateTenderResponse(
       },
       {
         "criteria": "Availability and Start Date",
+        //Mention about the location of the role to highlight the candidate's availability. Moreover, if the candidate have current roles, do not mention for this response and show that he/she is available for the role.
         "response": "Specific availability information and earliest possible start date for this ${detectedSector} role"
       },
       {
@@ -790,13 +791,13 @@ export async function generateTenderResponse(
 
   
   **RESPONSE STRUCTURE:**
-  - For the desirable and essential criteria, Avoid phrases such as “While she does not have...” or “Although not mentioned in his/her resume...”. Instead, focus on positively framing transferable experience. Highlight strengths and relevance confidently without referencing gaps, try to give a positive spin on the candidate's experience and qualifications.
+  - For the desirable and essential criteria that candidate does not have, Must avoid phrases such as “While she does not have in her resume...” or “Although not mentioned in his/her resume...”. Instead, focus on positively framing transferable experience. Highlight strengths and relevance confidently without referencing gaps, try to give a positive spin on the candidate's experience and qualifications. Must not use any negative words or phrases. For example: " While specific mention of Excel macros is not detailed" is not acceptable. Instead use "his expertise in developing intricate project schedules and designing Post Activity reporting processes for Army Data Boot Camps strongly indicates advanced Excel tool utilisation for data manipulation and automation.". Based on this example, you can see that the response is positive and does not mention any negative words or phrases.
   - Essential "Skills, Knowledge, and Experience" should be the longest and most detailed response
   - Use bullet points with headers for key competency areas in the skills section
   - Each desirable criteria response should be substantial but concise
   - Include specific project names, organizations, and outcomes from their resume
   - Demonstrate clear understanding of the role and ${detectedSector} sector requirements
-  - Do not use word that like "indicate", "suggest", "imply" or similar. Use strong, affirmative language that directly states the candidate's qualifications and experience.
+  - Do not use words that like "indicate", "suggest", "imply" or similar. Use strong, affirmative language that directly states the candidate's qualifications and experience.
 
   **QUALITY STANDARDS:**
   - Achievement responses: Include 3-4 specific, quantifiable accomplishments

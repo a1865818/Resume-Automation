@@ -24,7 +24,7 @@ const PageHeader = ({ resumeData }) => (
           top: "-24.5px"
         }}>
           <div style={{
-            background: "url(assets/images/rectangle.png) 100% / contain no-repeat",
+            background: "url(/assets/images/rectangle.png) 100% / contain no-repeat",
             height: "100.98%",
             width: "100.12%",
           }}></div>

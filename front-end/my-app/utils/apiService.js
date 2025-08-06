@@ -19,8 +19,48 @@ class ApiService {
             const response = await fetch(url, config);
 
             if (!response.ok) {
-                const errorData = await response.json().catch(() => ({}));
-                throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+                // Try to parse as JSON first, but handle cases where it's not JSON
+                let errorData = {};
+                try {
+                    const contentType = response.headers.get('content-type');
+                    if (contentType && contentType.includes('application/json')) {
+                        errorData = await response.json();
+                    }
+                } catch (parseError) {
+                    // If JSON parsing fails, create a generic error object
+                    errorData = {
+                        status: response.status,
+                        statusText: response.statusText,
+                        message: `HTTP error! status: ${response.status}`
+                    };
+                }
+
+                // Don't log 404 errors as they are expected and handled gracefully
+                if (response.status !== 404) {
+                    console.error('API Error Details:', {
+                        status: response.status,
+                        statusText: response.statusText,
+                        url: response.url,
+                        errorData: errorData
+                    });
+                }
+
+                // Create a custom error that includes the status code for proper handling
+                const error = new Error(errorData.message || errorData.title || `HTTP error! status: ${response.status}`);
+                error.status = response.status;
+                error.statusText = response.statusText;
+                throw error;
+            }
+
+            // Handle empty responses (like DELETE operations that return 204 No Content)
+            if (response.status === 204 || response.headers.get('content-length') === '0') {
+                return null;
+            }
+
+            // Check if response has content before trying to parse JSON
+            const contentType = response.headers.get('content-type');
+            if (!contentType || !contentType.includes('application/json')) {
+                return null;
             }
 
             return await response.json();
@@ -76,11 +116,13 @@ class ApiService {
     }
 
     async getApplicationByCandidateAndRole(candidateId, roleName) {
-        return this.request(`/applications/candidate/${candidateId}/role/${encodeURIComponent(roleName)}`);
+        const finalRoleName = roleName || 'default';
+        return this.request(`/applications/candidate/${candidateId}/role/${encodeURIComponent(finalRoleName)}`);
     }
 
     // Document endpoints
     async createDocument(documentData) {
+        console.log('Creating document with data:', documentData);
         return this.request('/documents', {
             method: 'POST',
             body: JSON.stringify(documentData),
@@ -126,69 +168,97 @@ class ApiService {
     }
 
     // Helper methods for document management
-    async saveResume(candidateName, resumeData, roleName = 'default') {
+    async saveResume(candidateName, resumeData, roleName = 'default', generationMode = 'Standard', templateType = 'Papps', jobDescription = null) {
         try {
+            const finalRoleName = roleName || 'default';
+            console.log('Starting saveResume:', { candidateName, roleName: finalRoleName, generationMode, templateType });
+
             // First, check if candidate exists, if not create one
             let candidate;
             try {
+                console.log('Checking if candidate exists:', candidateName);
                 candidate = await this.getCandidateByName(candidateName);
+                console.log('Candidate found:', candidate);
             } catch (error) {
+                console.log('Candidate not found, creating new candidate:', candidateName);
                 // Candidate doesn't exist, create one
                 candidate = await this.createCandidate({
                     name: candidateName,
-                    email: resumeData.profile?.email || '',
-                    phone: resumeData.profile?.phone || '',
+                    email: resumeData.profile?.email || null,
+                    phone: resumeData.profile?.phone || null,
                 });
+                console.log('Candidate created:', candidate);
             }
 
             // Check if application exists for this candidate and role, if not create one
             let application;
             try {
-                application = await this.getApplicationByCandidateAndRole(candidate.id, roleName);
+                console.log('Loading existing applications for candidate:', candidate.id);
+                const applications = await this.getApplicationsByCandidateId(candidate.id);
+                application = applications.find(app => app.roleName === finalRoleName);
             } catch (error) {
-                // Application doesn't exist, create one
+                console.warn('Could not load applications for candidate (treating as none):', error);
+            }
+
+            if (!application) {
+                console.log('Application not found, creating new application:', { candidateId: candidate.id, roleName: finalRoleName });
                 application = await this.createApplication({
-                    roleName: roleName,
-                    description: `Application for ${roleName} role`,
+                    roleName: finalRoleName,
+                    description: `Application for ${finalRoleName} role`,
                     candidateId: candidate.id,
+                    generationMode: generationMode,
+                    templateType: templateType,
+                    jobDescription: jobDescription,
                 });
+                console.log('Application created:', application);
             }
 
             // Check if resume document already exists for this application
             let document;
             try {
+                console.log('Checking if document exists for application:', application.id);
                 const documents = await this.getDocumentsByApplicationId(application.id);
                 document = documents.find(doc => doc.documentType === 'Resume');
+                console.log('Document found:', document);
             } catch (error) {
+                console.log('No documents found for application:', application.id);
                 // No documents found
             }
 
             if (!document) {
+                console.log('Creating new document for application:', application.id);
                 // Document doesn't exist, create one
                 document = await this.createDocument({
                     title: `${candidateName} Resume`,
                     documentType: 'Resume',
                     applicationId: application.id,
+                    content: JSON.stringify(resumeData),
                 });
+                console.log('Document created:', document);
+            } else {
+                // Document exists, add new version with content
+                console.log('Document exists, adding new version:', document.id);
+                await this.addDocumentVersion(document.id, JSON.stringify(resumeData));
+                console.log('New version added successfully');
             }
 
-            // Always add new version with the content
-            await this.addDocumentVersion(document.id, JSON.stringify(resumeData));
-
-            return {
+            const result = {
                 candidate,
                 application,
                 document,
-                url: `/pdf-upload/${encodeURIComponent(candidateName)}/roles/${encodeURIComponent(roleName)}/resume/${document.id}`,
+                url: `/pdf-upload/${encodeURIComponent(candidateName)}/roles/${encodeURIComponent(finalRoleName)}/resume/${document.id}`,
             };
+            console.log('SaveResume completed successfully:', result);
+            return result;
         } catch (error) {
             console.error('Error saving resume:', error);
             throw error;
         }
     }
 
-    async saveTenderResponse(candidateName, tenderData, roleName = 'default') {
+    async saveTenderResponse(candidateName, tenderData, roleName = 'default', generationMode = 'Tailored', templateType = 'Papps', jobDescription = null) {
         try {
+            const finalRoleName = roleName || 'default';
             // First, check if candidate exists, if not create one
             let candidate;
             try {
@@ -205,13 +275,20 @@ class ApiService {
             // Check if application exists for this candidate and role, if not create one
             let application;
             try {
-                application = await this.getApplicationByCandidateAndRole(candidate.id, roleName);
+                const applications = await this.getApplicationsByCandidateId(candidate.id);
+                application = applications.find(app => app.roleName === finalRoleName);
             } catch (error) {
-                // Application doesn't exist, create one
+                console.warn('Could not load applications for candidate (treating as none):', error);
+            }
+
+            if (!application) {
                 application = await this.createApplication({
-                    roleName: roleName,
-                    description: `Application for ${roleName} role`,
+                    roleName: finalRoleName,
+                    description: `Application for ${finalRoleName} role`,
                     candidateId: candidate.id,
+                    generationMode: generationMode,
+                    templateType: templateType,
+                    jobDescription: jobDescription,
                 });
             }
 
@@ -230,17 +307,18 @@ class ApiService {
                     title: `${candidateName} Tender Response`,
                     documentType: 'TenderResponse',
                     applicationId: application.id,
+                    content: JSON.stringify(tenderData),
                 });
+            } else {
+                // Document exists, add new version with content
+                await this.addDocumentVersion(document.id, JSON.stringify(tenderData));
             }
-
-            // Always add new version with the content
-            await this.addDocumentVersion(document.id, JSON.stringify(tenderData));
 
             return {
                 candidate,
                 application,
                 document,
-                url: `/pdf-upload/${encodeURIComponent(candidateName)}/roles/${encodeURIComponent(roleName)}/tenderresponse/${document.id}`,
+                url: `/pdf-upload/${encodeURIComponent(candidateName)}/roles/${encodeURIComponent(finalRoleName)}/tenderresponse/${document.id}`,
             };
         } catch (error) {
             console.error('Error saving tender response:', error);
@@ -248,8 +326,9 @@ class ApiService {
         }
     }
 
-    async saveProposalSummary(candidateName, proposalData, roleName = 'default') {
+    async saveProposalSummary(candidateName, proposalData, roleName = 'default', generationMode = 'Tailored', templateType = 'Papps', jobDescription = null) {
         try {
+            const finalRoleName = roleName || 'default';
             // First, check if candidate exists, if not create one
             let candidate;
             try {
@@ -266,13 +345,20 @@ class ApiService {
             // Check if application exists for this candidate and role, if not create one
             let application;
             try {
-                application = await this.getApplicationByCandidateAndRole(candidate.id, roleName);
+                const applications = await this.getApplicationsByCandidateId(candidate.id);
+                application = applications.find(app => app.roleName === finalRoleName);
             } catch (error) {
-                // Application doesn't exist, create one
+                console.warn('Could not load applications for candidate (treating as none):', error);
+            }
+
+            if (!application) {
                 application = await this.createApplication({
-                    roleName: roleName,
-                    description: `Application for ${roleName} role`,
+                    roleName: finalRoleName,
+                    description: `Application for ${finalRoleName} role`,
                     candidateId: candidate.id,
+                    generationMode: generationMode,
+                    templateType: templateType,
+                    jobDescription: jobDescription,
                 });
             }
 
@@ -291,17 +377,18 @@ class ApiService {
                     title: `${candidateName} Proposal Summary`,
                     documentType: 'ProposalSummary',
                     applicationId: application.id,
+                    content: JSON.stringify(proposalData),
                 });
+            } else {
+                // Document exists, add new version with content
+                await this.addDocumentVersion(document.id, JSON.stringify(proposalData));
             }
-
-            // Always add new version with the content
-            await this.addDocumentVersion(document.id, JSON.stringify(proposalData));
 
             return {
                 candidate,
                 application,
                 document,
-                url: `/pdf-upload/${encodeURIComponent(candidateName)}/roles/${encodeURIComponent(roleName)}/proposalsummary/${document.id}`,
+                url: `/pdf-upload/${encodeURIComponent(candidateName)}/roles/${encodeURIComponent(finalRoleName)}/proposalsummary/${document.id}`,
             };
         } catch (error) {
             console.error('Error saving proposal summary:', error);

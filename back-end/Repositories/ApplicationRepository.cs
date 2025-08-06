@@ -62,6 +62,12 @@ namespace ResumeAutomation.API.Repositories
         {
             application.UpdatedAt = DateTime.UtcNow;
             
+            // Ensure CreatedAt is UTC if it has Unspecified Kind
+            if (application.CreatedAt.Kind == DateTimeKind.Unspecified)
+            {
+                application.CreatedAt = DateTime.SpecifyKind(application.CreatedAt, DateTimeKind.Utc);
+            }
+            
             _context.Applications.Update(application);
             await _context.SaveChangesAsync();
             return application;

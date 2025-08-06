@@ -408,69 +408,96 @@ const PdfSummary = ({ pdfText, fileName, profilePicture, profilePicturePreview }
     };
 
     // NEW: Save document functions
-    const handleSaveResume = async () => {
-        if (!resumeData) return;
-        
-        setIsSavingDocument(true);
-        setSaveError('');
-        
-        try {
-            const candidateName = resumeData.profile?.name || 'Unknown Candidate';
-            const finalRoleName = roleName || (jobDescription ? 'tailored' : 'standard');
-            
-            const result = await apiService.saveResume(candidateName, resumeData, finalRoleName);
+    const handleSaveResume = async (result) => {
+        if (result) {
+            // Result comes from the candidate selection modal
             setSavedDocumentUrl(result.url);
-            
             console.log('✅ Resume saved successfully:', result.url);
-        } catch (error) {
-            console.error('❌ Error saving resume:', error);
-            setSaveError(error.message || 'Failed to save resume');
-        } finally {
-            setIsSavingDocument(false);
+        } else {
+            // Fallback for direct save (should not happen with new modal)
+            if (!resumeData) return;
+            
+            setIsSavingDocument(true);
+            setSaveError('');
+            
+            try {
+                const candidateName = resumeData.profile?.name || 'Unknown Candidate';
+                const finalRoleName = roleName || (jobDescription ? 'tailored' : 'standard');
+                
+                const saveResult = await apiService.saveResume(candidateName, resumeData, finalRoleName);
+                setSavedDocumentUrl(saveResult.url);
+                
+                console.log('✅ Resume saved successfully:', saveResult.url);
+            } catch (error) {
+                console.error('❌ Error saving resume:', error);
+                setSaveError(error.message || 'Failed to save resume');
+            } finally {
+                setIsSavingDocument(false);
+            }
         }
     };
 
-    const handleSaveTenderResponse = async () => {
-        if (!tenderResponseData) return;
-        
-        setIsSavingDocument(true);
-        setSaveError('');
-        
-        try {
-            const candidateName = resumeData?.profile?.name || 'Unknown Candidate';
-            const finalRoleName = roleName || (jobDescription ? 'tailored' : 'standard');
-            
-            const result = await apiService.saveTenderResponse(candidateName, tenderResponseData, finalRoleName);
+    const handleSaveTenderResponse = async (result) => {
+        if (result) {
+            // Result comes from the candidate selection modal
             setSavedDocumentUrl(result.url);
-            
             console.log('✅ Tender response saved successfully:', result.url);
-        } catch (error) {
-            console.error('❌ Error saving tender response:', error);
-            setSaveError(error.message || 'Failed to save tender response');
-        } finally {
-            setIsSavingDocument(false);
+        } else {
+            // Direct save from button click
+            if (!tenderResponseData) {
+                console.warn('No tender response data to save');
+                return;
+            }
+            
+            setIsSavingDocument(true);
+            setSaveError('');
+            
+            try {
+                const candidateName = resumeData?.profile?.name || 'Unknown Candidate';
+                const finalRoleName = roleName || (jobDescription ? 'tailored' : 'standard');
+                
+                const saveResult = await apiService.saveTenderResponse(candidateName, tenderResponseData, finalRoleName);
+                setSavedDocumentUrl(saveResult.url);
+                
+                console.log('✅ Tender response saved successfully:', saveResult.url);
+            } catch (error) {
+                console.error('❌ Error saving tender response:', error);
+                setSaveError(error.message || 'Failed to save tender response');
+            } finally {
+                setIsSavingDocument(false);
+            }
         }
     };
 
-    const handleSaveProposalSummary = async () => {
-        if (!proposalSummaryData) return;
-        
-        setIsSavingDocument(true);
-        setSaveError('');
-        
-        try {
-            const candidateName = resumeData?.profile?.name || 'Unknown Candidate';
-            const finalRoleName = roleName || (jobDescription ? 'tailored' : 'standard');
-            
-            const result = await apiService.saveProposalSummary(candidateName, proposalSummaryData, finalRoleName);
+    const handleSaveProposalSummary = async (result) => {
+        if (result) {
+            // Result comes from the candidate selection modal
             setSavedDocumentUrl(result.url);
-            
             console.log('✅ Proposal summary saved successfully:', result.url);
-        } catch (error) {
-            console.error('❌ Error saving proposal summary:', error);
-            setSaveError(error.message || 'Failed to save proposal summary');
-        } finally {
-            setIsSavingDocument(false);
+        } else {
+            // Direct save from button click
+            if (!proposalSummaryData) {
+                console.warn('No proposal summary data to save');
+                return;
+            }
+            
+            setIsSavingDocument(true);
+            setSaveError('');
+            
+            try {
+                const candidateName = resumeData?.profile?.name || 'Unknown Candidate';
+                const finalRoleName = roleName || (jobDescription ? 'tailored' : 'standard');
+                
+                const saveResult = await apiService.saveProposalSummary(candidateName, proposalSummaryData, finalRoleName);
+                setSavedDocumentUrl(saveResult.url);
+                
+                console.log('✅ Proposal summary saved successfully:', saveResult.url);
+            } catch (error) {
+                console.error('❌ Error saving proposal summary:', error);
+                setSaveError(error.message || 'Failed to save proposal summary');
+            } finally {
+                setIsSavingDocument(false);
+            }
         }
     };
 
@@ -689,6 +716,12 @@ const PdfSummary = ({ pdfText, fileName, profilePicture, profilePicturePreview }
             isRegenerating={isRegeneratingProposal}
             detectedSector={detectedSector}
             templateType={templateType}
+            // Save functionality
+            onSaveProposalSummary={handleSaveProposalSummary}
+            isSaving={isSavingDocument}
+            savedDocumentUrl={savedDocumentUrl}
+            saveError={saveError}
+            roleName={roleName}
           />
         );
       }
@@ -709,6 +742,12 @@ const PdfSummary = ({ pdfText, fileName, profilePicture, profilePicturePreview }
             isGeneratingProposal={isGeneratingProposal}
             hasProposalSummary={!!proposalSummaryData}
             onBackToProposalSummary={handleBackToProposalSummary}
+            // Save functionality
+            onSaveTenderResponse={handleSaveTenderResponse}
+            isSaving={isSavingDocument}
+            savedDocumentUrl={savedDocumentUrl}
+            saveError={saveError}
+            roleName={roleName}
           />
         );
       }
@@ -751,6 +790,10 @@ const PdfSummary = ({ pdfText, fileName, profilePicture, profilePicturePreview }
               // NEW: Props for role selection
               roleName={roleName}
               onRoleNameChange={setRoleName}
+              // NEW: Props for document data
+              resumeData={resumeData}
+              tenderData={tenderResponseData}
+              proposalData={proposalSummaryData}
             />
             {tenderError && (
               <div className="mx-4 mb-4">

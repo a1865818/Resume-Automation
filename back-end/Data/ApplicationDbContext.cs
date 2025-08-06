@@ -27,7 +27,9 @@ namespace ResumeAutomation.API.Data
                 entity.Property(e => e.Name).HasColumnName("Name").IsRequired().HasMaxLength(200);
                 entity.Property(e => e.Email).HasColumnName("Email").HasMaxLength(255);
                 entity.Property(e => e.Phone).HasColumnName("Phone").HasMaxLength(50);
-                entity.Property(e => e.DateOfBirth).HasColumnName("DateOfBirth");
+                entity.Property(e => e.DateOfBirth)
+        .HasColumnName("DateOfBirth")
+        .HasColumnType("date");
                 entity.Property(e => e.CSID_Number).HasColumnName("CSID_Number").HasMaxLength(100);
                 entity.Property(e => e.CreatedAt).HasColumnName("CreatedAt").HasDefaultValueSql("CURRENT_TIMESTAMP");
                 entity.Property(e => e.UpdatedAt).HasColumnName("UpdatedAt").HasDefaultValueSql("CURRENT_TIMESTAMP");
@@ -45,6 +47,9 @@ namespace ResumeAutomation.API.Data
                 entity.Property(e => e.RoleName).HasColumnName("RoleName").IsRequired().HasMaxLength(200);
                 entity.Property(e => e.Description).HasColumnName("Description").HasMaxLength(500);
                 entity.Property(e => e.CandidateId).HasColumnName("CandidateId");
+                entity.Property(e => e.GenerationMode).HasColumnName("GenerationMode").IsRequired().HasConversion<string>();
+                entity.Property(e => e.TemplateType).HasColumnName("TemplateType").IsRequired().HasConversion<string>();
+                entity.Property(e => e.JobDescription).HasColumnName("JobDescription");
                 entity.Property(e => e.CreatedAt).HasColumnName("CreatedAt").HasDefaultValueSql("CURRENT_TIMESTAMP");
                 entity.Property(e => e.UpdatedAt).HasColumnName("UpdatedAt").HasDefaultValueSql("CURRENT_TIMESTAMP");
                 
@@ -62,7 +67,7 @@ namespace ResumeAutomation.API.Data
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.Id).HasColumnName("Id").HasDefaultValueSql("gen_random_uuid()");
                 entity.Property(e => e.Title).HasColumnName("Title").IsRequired().HasMaxLength(200);
-                entity.Property(e => e.DocumentType).HasColumnName("DocumentType").IsRequired();
+                entity.Property(e => e.DocumentType).HasColumnName("DocumentType").IsRequired().HasConversion<string>();
                 entity.Property(e => e.ApplicationId).HasColumnName("ApplicationId");
                 entity.Property(e => e.CreatedAt).HasColumnName("CreatedAt").HasDefaultValueSql("CURRENT_TIMESTAMP");
                 entity.Property(e => e.UpdatedAt).HasColumnName("UpdatedAt").HasDefaultValueSql("CURRENT_TIMESTAMP");

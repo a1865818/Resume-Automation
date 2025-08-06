@@ -5,7 +5,7 @@ namespace ResumeAutomation.API.Models
         public string Name { get; set; } = string.Empty;
         public string? Email { get; set; }
         public string? Phone { get; set; }
-        public DateTime? DateOfBirth { get; set; }
+        public DateOnly? DateOfBirth { get; set; }
         public string? CSID_Number { get; set; }
         
         // Navigation properties

@@ -1,4 +1,7 @@
 
+import { useState } from 'react';
+import CandidateSelectionModal from './CandidateSelectionModal';
+
 const SaveBanner = ({ 
     uploadedProfilePictureUrl, 
     isJobTailored, 
@@ -24,8 +27,15 @@ const SaveBanner = ({
     saveError = '',
     // NEW: Props for role selection
     roleName = '',
-    onRoleNameChange = null
+    onRoleNameChange = null,
+    // NEW: Props for document data
+    resumeData = null,
+    tenderData = null,
+    proposalData = null
   }) => {
+    const [showCandidateModal, setShowCandidateModal] = useState(false);
+    const [currentDocumentType, setCurrentDocumentType] = useState(null);
+    const [currentDocumentData, setCurrentDocumentData] = useState(null);
     // Sector-specific button text
     const getTenderButtonText = () => {
       const sectorLabels = {
@@ -71,6 +81,43 @@ const SaveBanner = ({
         'Government': 'Back to Proposal Summary'
       };
       return sectorLabels[detectedSector] || 'Back to Proposal Summary';
+    };
+
+    // Handler functions for save buttons
+    const handleSaveResume = () => {
+      setCurrentDocumentType('resume');
+      setCurrentDocumentData(resumeData);
+      setShowCandidateModal(true);
+    };
+
+    const handleSaveTenderResponse = () => {
+      setCurrentDocumentType('tenderResponse');
+      setCurrentDocumentData(tenderData);
+      setShowCandidateModal(true);
+    };
+
+    const handleSaveProposalSummary = () => {
+      setCurrentDocumentType('proposalSummary');
+      setCurrentDocumentData(proposalData);
+      setShowCandidateModal(true);
+    };
+
+    const handleCandidateModalConfirm = (result) => {
+      setShowCandidateModal(false);
+      // Call the original save handlers with the result
+      if (onSaveResume && currentDocumentType === 'resume') {
+        onSaveResume(result);
+      } else if (onSaveTenderResponse && currentDocumentType === 'tenderResponse') {
+        onSaveTenderResponse(result);
+      } else if (onSaveProposalSummary && currentDocumentType === 'proposalSummary') {
+        onSaveProposalSummary(result);
+      }
+    };
+
+    const handleCandidateModalCancel = () => {
+      setShowCandidateModal(false);
+      setCurrentDocumentType(null);
+      setCurrentDocumentData(null);
     };
   
     return (
@@ -125,7 +172,7 @@ const SaveBanner = ({
             {/* Save buttons */}
             {onSaveResume && (
               <button
-                onClick={onSaveResume}
+                onClick={handleSaveResume}
                 disabled={isSavingDocument || isWordLoading}
                 className={`px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200 ${
                   isSavingDocument || isWordLoading
@@ -149,7 +196,7 @@ const SaveBanner = ({
 
             {onSaveTenderResponse && hasTenderResponse && (
               <button
-                onClick={onSaveTenderResponse}
+                onClick={handleSaveTenderResponse}
                 disabled={isSavingDocument || isWordLoading}
                 className={`px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200 ${
                   isSavingDocument || isWordLoading
@@ -173,7 +220,7 @@ const SaveBanner = ({
 
             {onSaveProposalSummary && hasProposalSummary && (
               <button
-                onClick={onSaveProposalSummary}
+                onClick={handleSaveProposalSummary}
                 disabled={isSavingDocument || isWordLoading}
                 className={`px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200 ${
                   isSavingDocument || isWordLoading
@@ -342,8 +389,19 @@ const SaveBanner = ({
             </div>
           )}
         </div>
+          {/* Candidate Selection Modal */}
+      <CandidateSelectionModal
+        visible={showCandidateModal}
+        onCancel={handleCandidateModalCancel}
+        onConfirm={handleCandidateModalConfirm}
+        documentData={currentDocumentData}
+        documentType={currentDocumentType}
+        roleName={roleName || 'default'}
+      />
       </div>
-    );
-  };
-  
-  export default SaveBanner;
+
+    
+  );
+};
+
+export default SaveBanner;

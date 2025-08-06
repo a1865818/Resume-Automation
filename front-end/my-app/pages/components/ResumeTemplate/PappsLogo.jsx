@@ -13,7 +13,7 @@ const PappsLogo = () => {
       <div
         style={{
           background:
-            "url(assets/images/rectangle.png) 100% / contain no-repeat",
+            "url(/assets/images/rectangle.png) 100% / contain no-repeat",
           height: "100.98%",
           width: "100.12%",
         }}

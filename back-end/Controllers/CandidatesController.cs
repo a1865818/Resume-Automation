@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using ResumeAutomation.API.DTOs;
 using ResumeAutomation.API.Services;
 
@@ -57,7 +58,7 @@ public class CandidatesController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public async Task<ActionResult<CandidateDto>> Update(Guid id, UpdateCandidateDto updateDto)
+    public async Task<ActionResult<CandidateDto>> Update(Guid id, [FromBody] UpdateCandidateDto updateDto)
     {
         try
         {
@@ -71,6 +72,10 @@ public class CandidatesController : ControllerBase
         catch (InvalidOperationException ex)
         {
             return BadRequest(ex.Message);
+        }
+        catch (DbUpdateException dbEx)
+        {
+            return BadRequest($"Database update failed: {dbEx.InnerException?.Message ?? dbEx.Message}");
         }
     }
 

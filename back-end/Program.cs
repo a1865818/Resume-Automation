@@ -4,6 +4,7 @@ using ResumeAutomation.API.Services;
 using ResumeAutomation.API.Repositories;
 using Supabase;
 using DotNetEnv;
+using System.Text.Json.Serialization;
 
 // Load environment variables from .env file
 Env.Load(".env");
@@ -11,9 +12,21 @@ Env.Load(".env");
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
+    });
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    // Ensure DateOnly is represented as an OpenAPI "date"
+    c.MapType<DateOnly>(() => new Microsoft.OpenApi.Models.OpenApiSchema
+    {
+        Type = "string",
+        Format = "date"
+    });
+});
 
 // Configure CORS
 builder.Services.AddCors(options =>
