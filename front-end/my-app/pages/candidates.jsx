@@ -135,6 +135,26 @@ export default function CandidatesPage() {
         }
     };
 
+    const handleDeleteDocument = async (documentId, documentType) => {
+        Modal.confirm({
+            title: 'Delete Document',
+            content: `Are you sure you want to delete this ${getDocumentTypeName(documentType)}? This action cannot be undone.`,
+            okText: 'Yes, Delete',
+            okType: 'danger',
+            cancelText: 'Cancel',
+            async onOk() {
+                try {
+                    await apiService.deleteDocument(documentId);
+                    message.success('Document deleted successfully');
+                    loadCandidates(); // Refresh the list
+                } catch (error) {
+                    console.error('Error deleting document:', error);
+                    message.error('Failed to delete document');
+                }
+            }
+        });
+    };
+
     const filteredCandidates = candidates.filter(candidate =>
         candidate.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         candidate.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -304,20 +324,31 @@ export default function CandidatesPage() {
                                                         {application.documents.map((document) => {
                                                             console.log('Document data:', document);
                                                             return (
-                                                            <Button
-                                                                key={document.id}
-                                                                size="small"
-                                                                icon={getDocumentTypeIcon(document.documentType)}
-                                                                onClick={() => {
-                                                                    const documentType = document.documentType && typeof document.documentType === 'string' 
-                                                                        ? document.documentType.toLowerCase() 
-                                                                        : 'resume';
-                                                                    const url = `/pdf-upload/${encodeURIComponent(candidate.name)}/roles/${encodeURIComponent(application.roleName)}/${documentType}/${document.id}`;
-                                                                    window.open(url, '_blank');
-                                                                }}
-                                                            >
-                                                                {getDocumentTypeName(document.documentType)}
-                                                            </Button>
+                                                            <div key={document.id} style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                                                <Button
+                                                                    size="small"
+                                                                    icon={getDocumentTypeIcon(document.documentType)}
+                                                                    onClick={() => {
+                                                                        const documentType = document.documentType && typeof document.documentType === 'string' 
+                                                                            ? document.documentType.toLowerCase() 
+                                                                            : 'resume';
+                                                                        const url = `/pdf-upload/${encodeURIComponent(candidate.name)}/roles/${encodeURIComponent(application.roleName)}/${documentType}/${document.id}`;
+                                                                        window.open(url, '_blank');
+                                                                    }}
+                                                                >
+                                                                    {getDocumentTypeName(document.documentType)}
+                                                                </Button>
+                                                                <Button
+                                                                    danger
+                                                                    size="small"
+                                                                    icon={<DeleteOutlined />}
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                        handleDeleteDocument(document.id, document.documentType);
+                                                                    }}
+                                                                    title="Delete document"
+                                                                />
+                                                            </div>
                                                             );
                                                         })}
                                                     </div>
