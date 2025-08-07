@@ -51,16 +51,27 @@ export const useExperiencePagination = (
           console.log('⚠️ Could not find experience page container, using fallback padding:', measuredPaddingHeight, 'px');
         }
 
-        // Calculate available height
-        const calculatedAvailableHeight = pageHeight
+        // Calculate available height with responsive adjustment
+        let calculatedAvailableHeight = pageHeight
           ? pageHeight - measuredHeaderHeight - measuredPaddingHeight
           : 645; // fallback
+
+        // RESPONSIVE: Reduce available height slightly for small screens to be more conservative
+        const screenHeight = window.innerHeight;
+        const isSmallScreenForCalc = screenHeight < 900;
+        if (isSmallScreenForCalc && calculatedAvailableHeight > 300) {
+          calculatedAvailableHeight = Math.floor(calculatedAvailableHeight * 0.95); // 5% reduction for safety
+          console.log('📱 Applied small screen reduction to available height:', calculatedAvailableHeight);
+        }
 
         console.log('📏 Page Layout Measurements:', {
           pageHeight,
           headerHeight: measuredHeaderHeight,
           paddingHeight: measuredPaddingHeight,
-          availableHeight: calculatedAvailableHeight
+          availableHeight: calculatedAvailableHeight,
+          screenHeight,
+          isSmallScreen: isSmallScreenForCalc,
+          appliedReduction: isSmallScreenForCalc && pageHeight && pageHeight > 300
         });
 
         setPageLayoutMeasurements({
@@ -182,6 +193,18 @@ export const useExperiencePagination = (
         console.log("🔄 Using fallback available height:", workingAvailableHeight, "px");
       }
 
+      // RESPONSIVE BUFFER: Scale buffer based on screen size
+      const screenHeight = window.innerHeight;
+      const isSmallScreen = screenHeight < 900; // 15-inch monitors typically have ~800-900px height
+      const baseMarginBuffer = isSmallScreen ? 20 : 32; // Smaller buffer for small screens
+
+      console.log("📱 Screen size detection:", {
+        screenHeight,
+        isSmallScreen,
+        baseMarginBuffer,
+        workingAvailableHeight
+      });
+
       // Column state
       let leftColumnHeight = 0;
       let rightColumnHeight = 0;
@@ -211,13 +234,13 @@ export const useExperiencePagination = (
       };
 
       const canFitInColumn = (itemHeight, columnHeight) => {
-        // More conservative buffer to prevent any cut-off
-        const marginBuffer = 32; // Increased buffer significantly to prevent cut-off
+        // RESPONSIVE BUFFER: Use screen-size appropriate buffer
+        const marginBuffer = baseMarginBuffer;
         const totalRequiredHeight = columnHeight + itemHeight + marginBuffer;
         const fits = totalRequiredHeight <= workingAvailableHeight;
 
         console.log(
-          `🔍 Can fit ${itemHeight}px in column?`,
+          `🔍 Can fit ${itemHeight}px in column? (${isSmallScreen ? 'Small' : 'Large'} screen)`,
           {
             currentHeight: columnHeight,
             itemHeight: itemHeight,
@@ -225,15 +248,16 @@ export const useExperiencePagination = (
             totalRequired: totalRequiredHeight,
             workingAvailableHeight: workingAvailableHeight,
             remainingSpace: workingAvailableHeight - columnHeight,
-            fits: fits
+            fits: fits,
+            screenType: isSmallScreen ? 'small' : 'large'
           }
         );
         return fits;
       };
 
       const getNextAvailableColumn = (itemHeight) => {
-        // Additional safety: check if we have minimum viable space remaining
-        const minimumRemainingSpace = 60; // Minimum space needed for any content
+        // RESPONSIVE MINIMUM SPACE: Scale based on screen size
+        const minimumRemainingSpace = isSmallScreen ? 40 : 60; // Smaller minimum for small screens
 
         // Try left column first
         if (canFitInColumn(itemHeight, leftColumnHeight) &&
@@ -252,7 +276,8 @@ export const useExperiencePagination = (
           rightColumnHeight,
           leftRemaining: workingAvailableHeight - leftColumnHeight,
           rightRemaining: workingAvailableHeight - rightColumnHeight,
-          minimumRequired: minimumRemainingSpace
+          minimumRequired: minimumRemainingSpace,
+          screenType: isSmallScreen ? 'small' : 'large'
         });
 
         // Both columns full or insufficient space
@@ -340,7 +365,7 @@ export const useExperiencePagination = (
 
         // Process responsibility bullets
         if (currentRespIndex < exp.responsibilities.length) {
-          // Accurate fallback calculation based on actual component styles
+          // RESPONSIVE HEIGHT ESTIMATION: Account for different screen sizes
           const responsibilityText = exp.responsibilities[currentRespIndex];
 
           // Based on actual ExperienceBullet styles:
@@ -350,10 +375,19 @@ export const useExperiencePagination = (
 
           const containerPadding = 12; // padding + margins
           const lineHeightPx = 17.7; // fontSize * lineHeight
-          const avgCharPerLine = 45; // More accurate for the column width
+
+          // RESPONSIVE: Adjust characters per line based on screen size
+          const avgCharPerLine = isSmallScreen ? 35 : 45; // Fewer chars per line on small screens
 
           const estimatedLines = Math.max(1, Math.ceil(responsibilityText.length / avgCharPerLine));
           const estimatedBulletHeight = Math.ceil(containerPadding + (estimatedLines * lineHeightPx));
+
+          console.log(`📏 Responsive bullet estimation (${isSmallScreen ? 'small' : 'large'} screen):`, {
+            textLength: responsibilityText.length,
+            avgCharPerLine,
+            estimatedLines,
+            estimatedHeight: estimatedBulletHeight
+          });
 
           const measuredHeight = itemHeights[`bullet-${currentExpIndex}-${currentRespIndex}`];
           const bulletHeight = measuredHeight || estimatedBulletHeight;
