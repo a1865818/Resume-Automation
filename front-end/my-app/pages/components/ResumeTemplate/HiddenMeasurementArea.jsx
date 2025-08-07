@@ -29,7 +29,8 @@ const HiddenMeasurementArea = ({ experienceLayout, fullExperience }) => {
               <div 
                 id={`exp-header-${expIndex}`}
                 style={{ 
-                  marginBottom: '0.5rem' // Match ExperienceHeader marginBottom exactly
+                  marginBottom: '0.5rem', // Match ExperienceHeader marginBottom exactly
+                  padding: '4px' // CRITICAL: Match actual component padding
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'flex-start', marginBottom: '0.25rem' }}>
@@ -76,20 +77,20 @@ const HiddenMeasurementArea = ({ experienceLayout, fullExperience }) => {
                     marginLeft: '0.25rem', 
                     marginBottom: '0.25rem', // Match ExperienceBullet marginBottom exactly
                     display: 'flex', 
-                    alignItems: 'flex-start'
+                    alignItems: 'flex-start',
+                    padding: '2px' // CRITICAL: Match actual component padding
                   }}
                 >
                   <span style={{ 
                     color: '#1e293b', 
                     marginRight: '0.5rem', 
-                    marginTop: '0.125rem', 
                     fontSize: '0.875rem',
-                    lineHeight: '1.125' // Bullet line height
+                    lineHeight: '1.25' // Match actual component line height
                   }}>•</span>
                   <p style={{ 
-                    fontSize: '0.875rem', 
+                    fontSize: '0.885rem', // Match actual component font size
                     color: '#374151', 
-                    lineHeight: '1.125', // Bullet line height - CRITICAL
+                    lineHeight: '1.25', // Match actual component line height - CRITICAL
                     margin: 0,
                     flex: 1, // Ensure text takes available width for proper wrapping
                     wordBreak: 'break-word' // Handle long words
