@@ -46,7 +46,7 @@ const ResumeTemplate = ({
     const [isPdfLoading, setIsPdfLoading] = useState(false);
     const [isWordLoading, setIsWordLoading] = useState(false);
     const [showPdfSettings, setShowPdfSettings] = useState(false);
-    const [experienceLayout, setExperienceLayout] = useState('summary');
+    const [experienceLayout, setExperienceLayout] = useState('paginated');
     const [downloadFormat, setDownloadFormat] = useState('web'); // 'web', 'word'
     
     // Use ref to prevent infinite updates
