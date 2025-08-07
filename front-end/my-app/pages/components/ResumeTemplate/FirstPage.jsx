@@ -16,12 +16,12 @@ const FirstPage = ({ resumeData, mainExperience, templateType = 'sme-gateway' })
       fontFamily: 'Montserrat'
       }}
     >
-      <div style={{ display: 'grid', gridTemplateColumns: '350px 1fr' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '23.15% 76.85%' }}>
         <ProfileSection resumeData={resumeData} templateType={templateType} />
       
         {/* Right Section */}
         <div style={{ display: 'flex', flexDirection: 'column' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 610px', height: '100%' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '47.52% 52.48%', height: '100%' }}>
              {/* Middle Column - Profile and Skills */}
              <div style={{ display: 'flex', flexDirection: 'column', backgroundColor: '#ededed' }}>
               {/* Profile Section */}
