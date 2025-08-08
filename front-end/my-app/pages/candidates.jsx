@@ -15,6 +15,8 @@ export default function CandidatesPage() {
     const [editModalVisible, setEditModalVisible] = useState(false);
     const [selectedCandidate, setSelectedCandidate] = useState(null);
     const [candidateToEdit, setCandidateToEdit] = useState(null);
+    const [editingRoleId, setEditingRoleId] = useState(null);
+    const [editingRoleName, setEditingRoleName] = useState('');
     const [form] = Form.useForm();
     const [editForm] = Form.useForm();
 
@@ -153,6 +155,34 @@ export default function CandidatesPage() {
                 }
             }
         });
+    };
+
+    const handleEditRole = (application) => {
+        setEditingRoleId(application.id);
+        setEditingRoleName(application.roleName);
+    };
+
+    const handleSaveRoleEdit = async (applicationId) => {
+        if (!editingRoleName.trim()) {
+            message.error('Role name cannot be empty');
+            return;
+        }
+
+        try {
+            await apiService.updateApplication(applicationId, { roleName: editingRoleName });
+            message.success('Role updated successfully');
+            setEditingRoleId(null);
+            setEditingRoleName('');
+            loadCandidates(); // Refresh the list
+        } catch (error) {
+            console.error('Error updating role:', error);
+            message.error('Failed to update role');
+        }
+    };
+
+    const handleCancelRoleEdit = () => {
+        setEditingRoleId(null);
+        setEditingRoleName('');
     };
 
     const filteredCandidates = candidates.filter(candidate =>
@@ -305,13 +335,48 @@ export default function CandidatesPage() {
                                                 size="small"
                                                 title={
                                                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                                        <span style={{ fontWeight: 'bold' }}>{application.roleName}</span>
-                                                        <Button
-                                                            danger
-                                                            size="small"
-                                                            icon={<DeleteOutlined />}
-                                                            onClick={() => handleDeleteApplication(application.id)}
-                                                        />
+                                                        {editingRoleId === application.id ? (
+                                                            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', flex: 1 }}>
+                                                                <Input
+                                                                    value={editingRoleName}
+                                                                    onChange={(e) => setEditingRoleName(e.target.value)}
+                                                                    onPressEnter={() => handleSaveRoleEdit(application.id)}
+                                                                    style={{ flex: 1 }}
+                                                                    autoFocus
+                                                                />
+                                                                <Button
+                                                                    type="primary"
+                                                                    size="small"
+                                                                    onClick={() => handleSaveRoleEdit(application.id)}
+                                                                >
+                                                                    ✓
+                                                                </Button>
+                                                                <Button
+                                                                    size="small"
+                                                                    onClick={handleCancelRoleEdit}
+                                                                >
+                                                                    ✕
+                                                                </Button>
+                                                            </div>
+                                                        ) : (
+                                                            <>
+                                                                <span style={{ fontWeight: 'bold' }}>{application.roleName}</span>
+                                                                <Button
+                                                                    type="text"
+                                                                    size="small"
+                                                                    icon={<EditOutlined />}
+                                                                    onClick={() => handleEditRole(application)}
+                                                                    title="Edit role name"
+                                                                />
+                                                                <Button
+                                                                    danger
+                                                                    size="small"
+                                                                    icon={<DeleteOutlined />}
+                                                                    onClick={() => handleDeleteApplication(application.id)}
+                                                                    title="Delete role"
+                                                                />
+                                                            </>
+                                                        )}
                                                     </div>
                                                 }
                                             >

@@ -25,9 +25,7 @@ const SaveBanner = ({
     isSavingDocument = false,
     savedDocumentUrl = '',
     saveError = '',
-    // NEW: Props for role selection
-    roleName = '',
-    onRoleNameChange = null,
+
     // NEW: Props for document data
     resumeData = null,
     tenderData = null,
@@ -152,20 +150,7 @@ const SaveBanner = ({
             )}
           </div>
 
-          {/* Center - Role selection */}
-          {onRoleNameChange && (
-            <div className="flex items-center gap-2">
-              <label className="text-sm font-medium text-gray-700">Role:</label>
-              <input
-                type="text"
-                value={roleName}
-                onChange={(e) => onRoleNameChange(e.target.value)}
-                placeholder="Enter role name (e.g., Senior Developer)"
-                className="px-3 py-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                style={{ minWidth: '200px' }}
-              />
-            </div>
-          )}
+
   
           {/* Right side - Navigation and Save buttons */}
           <div className="flex flex-wrap gap-3">
@@ -396,7 +381,7 @@ const SaveBanner = ({
         onConfirm={handleCandidateModalConfirm}
         documentData={currentDocumentData}
         documentType={currentDocumentType}
-        roleName={roleName || 'default'}
+        roleName={'default'}
       />
       </div>
 

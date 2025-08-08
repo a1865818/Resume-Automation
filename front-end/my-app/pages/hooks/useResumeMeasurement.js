@@ -21,7 +21,7 @@ export const useResumeMeasurement = (
       const buffer = 10;
       heightPx = Math.ceil(heightPx) + buffer;
 
-      const heightMm = Math.round((heightPx * 25.4) / 96);
+      const heightMm = Math.round(((heightPx * 25.4) / 96) * 10) / 10; // Round to 1 decimal place
 
       console.log(
         "First page height measured:",
@@ -48,7 +48,7 @@ export const useResumeMeasurement = (
 
       if (actualContent) {
         const contentRect = actualContent.getBoundingClientRect();
-        const widthMm = (contentRect.width * 25.4) / 96;
+        const widthMm = Math.round(((contentRect.width * 25.4) / 96) * 10) / 10; // Round to 1 decimal place
 
         setResumeDimensions((prev) => ({ ...prev, width: widthMm }));
       }
@@ -71,7 +71,7 @@ export const useResumeMeasurement = (
 
         if (actualContent) {
           const contentRect = actualContent.getBoundingClientRect();
-          const widthMm = Math.round((contentRect.width * 25.4) / 96);
+          const widthMm = Math.round(((contentRect.width * 25.4) / 96) * 10) / 10; // Round to 1 decimal place
 
           setResumeDimensions((prev) => ({ ...prev, width: widthMm }));
         }

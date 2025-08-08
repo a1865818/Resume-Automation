@@ -16,6 +16,7 @@ const CandidateSelectionModal = ({
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCandidate, setSelectedCandidate] = useState(null);
     const [showNewCandidateForm, setShowNewCandidateForm] = useState(false);
+    const [currentRoleName, setCurrentRoleName] = useState(roleName || 'default');
     const [newCandidateData, setNewCandidateData] = useState({
         name: '',
         email: '',
@@ -28,8 +29,9 @@ const CandidateSelectionModal = ({
     useEffect(() => {
         if (visible) {
             loadCandidates();
+            setCurrentRoleName(roleName || 'default');
         }
-    }, [visible]);
+    }, [visible, roleName]);
 
     const loadCandidates = async () => {
         try {
@@ -80,19 +82,24 @@ const CandidateSelectionModal = ({
             return;
         }
 
+        if (!currentRoleName.trim()) {
+            message.error('Please enter a role name');
+            return;
+        }
+
         try {
             setLoading(true);
             let result;
 
             switch (documentType) {
                 case 'resume':
-                    result = await apiService.saveResume(selectedCandidate.name, documentData, roleName);
+                    result = await apiService.saveResume(selectedCandidate.name, documentData, currentRoleName);
                     break;
                 case 'tenderResponse':
-                    result = await apiService.saveTenderResponse(selectedCandidate.name, documentData, roleName);
+                    result = await apiService.saveTenderResponse(selectedCandidate.name, documentData, currentRoleName);
                     break;
                 case 'proposalSummary':
-                    result = await apiService.saveProposalSummary(selectedCandidate.name, documentData, roleName);
+                    result = await apiService.saveProposalSummary(selectedCandidate.name, documentData, currentRoleName);
                     break;
                 default:
                     throw new Error('Invalid document type');
@@ -154,7 +161,7 @@ const CandidateSelectionModal = ({
                     type="primary" 
                     onClick={handleConfirm}
                     loading={loading}
-                    disabled={!selectedCandidate}
+                    disabled={!selectedCandidate || !currentRoleName.trim()}
                 >
                     Done
                 </Button>
@@ -162,6 +169,17 @@ const CandidateSelectionModal = ({
             width={500}
         >
             <div style={{ marginBottom: 16 }}>
+                <div style={{ marginBottom: 12 }}>
+                    <label style={{ display: 'block', marginBottom: 4, fontWeight: 'bold', color: '#333' }}>
+                        Role Name:
+                    </label>
+                    <Input
+                        placeholder="Enter role name (e.g., Senior Developer, Project Manager)"
+                        value={currentRoleName}
+                        onChange={(e) => setCurrentRoleName(e.target.value)}
+                        style={{ marginBottom: 8 }}
+                    />
+                </div>
                 <Input
                     placeholder="Search candidates..."
                     value={searchTerm}
@@ -271,7 +289,7 @@ const CandidateSelectionModal = ({
                         {getDocumentTypeIcon(documentType)} {getDocumentTypeName(documentType)} will be saved to:
                     </div>
                     <div style={{ color: '#666' }}>
-                        📁 {selectedCandidate.name} / {roleName}
+                        📁 {selectedCandidate.name} / {currentRoleName}
                     </div>
                 </div>
             )}

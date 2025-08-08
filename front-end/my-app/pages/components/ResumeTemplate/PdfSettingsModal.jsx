@@ -133,8 +133,9 @@ const PdfSettingsModal = ({
                   </label>
                   <input 
                     type="number" 
+                    step="0.1"
                     value={pdfSettings.customWidth}
-                    onChange={(e) => updatePdfSetting('customWidth', parseInt(e.target.value) || 0)}
+                    onChange={(e) => updatePdfSetting('customWidth', parseFloat(e.target.value) || 0)}
                     style={{ 
                       width: '100%', 
                       padding: '6px', 
@@ -150,8 +151,9 @@ const PdfSettingsModal = ({
                   </label>
                   <input 
                     type="number" 
+                    step="0.1"
                     value={pdfSettings.customHeight}
-                    onChange={(e) => updatePdfSetting('customHeight', parseInt(e.target.value) || 0)}
+                    onChange={(e) => updatePdfSetting('customHeight', parseFloat(e.target.value) || 0)}
                     style={{ 
                       width: '100%', 
                       padding: '6px', 

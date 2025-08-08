@@ -12,8 +12,8 @@ export const usePdfSettings = (resumeDimensions) => {
     qualityRatio: 1,
     compress: true,
     useCORS: true,
-    customWidth: 0,
-    customHeight: 0,
+    customWidth: 0.0,
+    customHeight: 0.0,
   });
 
   const updatePdfSetting = (key, value) => {

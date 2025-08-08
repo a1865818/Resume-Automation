@@ -58,7 +58,7 @@ const PdfSummary = ({ pdfText, fileName, profilePicture, profilePicturePreview }
     const [isSavingDocument, setIsSavingDocument] = useState(false);
     const [savedDocumentUrl, setSavedDocumentUrl] = useState('');
     const [saveError, setSaveError] = useState('');
-    const [roleName, setRoleName] = useState('');
+
     
 
     
@@ -422,7 +422,7 @@ const PdfSummary = ({ pdfText, fileName, profilePicture, profilePicturePreview }
             
             try {
                 const candidateName = resumeData.profile?.name || 'Unknown Candidate';
-                const finalRoleName = roleName || (jobDescription ? 'tailored' : 'standard');
+                const finalRoleName = jobDescription ? 'tailored' : 'standard';
                 
                 const saveResult = await apiService.saveResume(candidateName, resumeData, finalRoleName);
                 setSavedDocumentUrl(saveResult.url);
@@ -454,7 +454,7 @@ const PdfSummary = ({ pdfText, fileName, profilePicture, profilePicturePreview }
             
             try {
                 const candidateName = resumeData?.profile?.name || 'Unknown Candidate';
-                const finalRoleName = roleName || (jobDescription ? 'tailored' : 'standard');
+                const finalRoleName = jobDescription ? 'tailored' : 'standard';
                 
                 const saveResult = await apiService.saveTenderResponse(candidateName, tenderResponseData, finalRoleName);
                 setSavedDocumentUrl(saveResult.url);
@@ -486,7 +486,7 @@ const PdfSummary = ({ pdfText, fileName, profilePicture, profilePicturePreview }
             
             try {
                 const candidateName = resumeData?.profile?.name || 'Unknown Candidate';
-                const finalRoleName = roleName || (jobDescription ? 'tailored' : 'standard');
+                const finalRoleName = jobDescription ? 'tailored' : 'standard';
                 
                 const saveResult = await apiService.saveProposalSummary(candidateName, proposalSummaryData, finalRoleName);
                 setSavedDocumentUrl(saveResult.url);
@@ -721,7 +721,7 @@ const PdfSummary = ({ pdfText, fileName, profilePicture, profilePicturePreview }
             isSaving={isSavingDocument}
             savedDocumentUrl={savedDocumentUrl}
             saveError={saveError}
-            roleName={roleName}
+
           />
         );
       }
@@ -747,7 +747,7 @@ const PdfSummary = ({ pdfText, fileName, profilePicture, profilePicturePreview }
             isSaving={isSavingDocument}
             savedDocumentUrl={savedDocumentUrl}
             saveError={saveError}
-            roleName={roleName}
+
           />
         );
       }
@@ -787,9 +787,6 @@ const PdfSummary = ({ pdfText, fileName, profilePicture, profilePicturePreview }
               isSavingDocument={isSavingDocument}
               savedDocumentUrl={savedDocumentUrl}
               saveError={saveError}
-              // NEW: Props for role selection
-              roleName={roleName}
-              onRoleNameChange={setRoleName}
               // NEW: Props for document data
               resumeData={resumeData}
               tenderData={tenderResponseData}

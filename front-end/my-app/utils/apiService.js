@@ -150,6 +150,13 @@ class ApiService {
         });
     }
 
+    async updateApplication(id, updateData) {
+        return this.request(`/applications/${id}`, {
+            method: 'PUT',
+            body: JSON.stringify(updateData),
+        });
+    }
+
     async deleteDocument(id) {
         return this.request(`/documents/${id}`, {
             method: 'DELETE',
